@@ -45,7 +45,8 @@
     "preset": "jest-expo",
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}",
-      "app/**/*.{ts,tsx}"
+      "app/**/*.{ts,tsx}",
+      "!src/**/testing/**"
     ],
     "coverageThreshold": {
       "global": {
