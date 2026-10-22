@@ -1,4 +1,5 @@
 import type { LedgerEntry } from '../../domain/ledger';
+import type { Like } from '../../domain/like';
 import type { Prediction, PredictionStatus } from '../../domain/prediction';
 import type { Trend } from '../../domain/trend';
 import type { User } from '../../domain/user';
@@ -56,10 +57,21 @@ export interface PredictionRepository {
   updateStatus(id: string, status: PredictionStatus): Promise<Prediction>;
 }
 
+export interface LikeRepository {
+  /** One like per user and video: a second one throws DuplicateKeyError. */
+  add(like: Like): Promise<Like>;
+  /** Returns true if a like was removed, false if there was none. */
+  remove(userId: string, videoId: string): Promise<boolean>;
+  has(userId: string, videoId: string): Promise<boolean>;
+  /** Video ids the user liked, in the order they were liked. */
+  listVideoIds(userId: string): Promise<string[]>;
+}
+
 export type Repositories = Readonly<{
   users: UserRepository;
   trends: TrendRepository;
   videos: VideoRepository;
   wallet: WalletRepository;
   predictions: PredictionRepository;
+  likes: LikeRepository;
 }>;

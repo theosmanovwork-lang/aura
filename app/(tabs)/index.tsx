@@ -1,6 +1,7 @@
-import { PlaceholderScreen } from '../../src/components/PlaceholderScreen';
-import { ru } from '../../src/i18n/ru';
+import { useIsFocused } from 'expo-router';
 
-export default function FeedScreen() {
-  return <PlaceholderScreen title={ru.screens.feed.title} subtitle={ru.screens.feed.subtitle} />;
+import { FeedScreen } from '../../src/features/feed/FeedScreen';
+
+export default function FeedTab() {
+  return <FeedScreen focused={useIsFocused()} />;
 }

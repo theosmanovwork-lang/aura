@@ -1,7 +1,7 @@
 import type { SqlDatabase } from './database';
 
 /** Each entry is one schema version. Never edit an old entry: add a new one. */
-const MIGRATIONS: readonly string[] = [
+export const MIGRATIONS: readonly string[] = [
   `
   CREATE TABLE users (
     seq INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,6 +55,15 @@ const MIGRATIONS: readonly string[] = [
   );
   CREATE INDEX predictions_user ON predictions (user_id);
   `,
+  `
+  CREATE TABLE likes (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    video_id TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    UNIQUE (user_id, video_id)
+  );
+  `,
 ];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.length;
@@ -65,16 +74,16 @@ async function readVersion(db: SqlDatabase): Promise<number> {
 }
 
 /** Applies the next migration, if any, in one transaction. Returns the resulting version. */
-async function applyNext(db: SqlDatabase): Promise<number> {
+async function applyNext(db: SqlDatabase, migrations: readonly string[]): Promise<number> {
   await db.exec('BEGIN IMMEDIATE');
   try {
     // Read again under the write lock: another start may have migrated in the meantime.
     const version = await readVersion(db);
-    if (version >= LATEST_SCHEMA_VERSION) {
+    if (version >= migrations.length) {
       await db.exec('COMMIT');
       return version;
     }
-    await db.exec(MIGRATIONS[version] as string);
+    await db.exec(migrations[version] as string);
     await db.exec(`PRAGMA user_version = ${version + 1}`);
     await db.exec('COMMIT');
     return version + 1;
@@ -85,12 +94,15 @@ async function applyNext(db: SqlDatabase): Promise<number> {
 }
 
 /** Brings the database up to the latest schema. Safe to call on every app start. */
-export async function migrate(db: SqlDatabase): Promise<void> {
+export async function migrate(
+  db: SqlDatabase,
+  migrations: readonly string[] = MIGRATIONS,
+): Promise<void> {
   let version = await readVersion(db);
-  if (version > LATEST_SCHEMA_VERSION) {
+  if (version > migrations.length) {
     throw new Error(
-      `Database schema v${version} is newer than this app supports (v${LATEST_SCHEMA_VERSION})`,
+      `Database schema v${version} is newer than this app supports (v${migrations.length})`,
     );
   }
-  while (version < LATEST_SCHEMA_VERSION) version = await applyNext(db);
+  while (version < migrations.length) version = await applyNext(db, migrations);
 }

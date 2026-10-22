@@ -5,4 +5,6 @@ export const colors = {
   text: '#F5F3FF',
   textMuted: '#A8A3C7',
   accent: '#8B5CF6',
+  like: '#F472B6',
+  overlay: 'rgba(14, 11, 26, 0.55)',
 } as const;

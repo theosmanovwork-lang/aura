@@ -1,5 +1,6 @@
 import type { LedgerEntry } from '../../domain/ledger';
 import type {
+  LikeRepository,
   PredictionRepository,
   TrendRepository,
   UserRepository,
@@ -318,6 +319,56 @@ export function runPredictionRepositoryContract(
       (first as { stake: number }).stake = 999;
 
       expect((await repo.getById('p1'))?.stake).toBe(50);
+    });
+  });
+}
+
+export function runLikeRepositoryContract(
+  createRepo: () => Promise<LikeRepository> | LikeRepository,
+) {
+  describe('LikeRepository contract', () => {
+    test('remembers a like', async () => {
+      const repo = await createRepo();
+      await repo.add({ userId: 'u1', videoId: 'v1', createdAt: 1 });
+
+      expect(await repo.has('u1', 'v1')).toBe(true);
+      expect(await repo.has('u1', 'v2')).toBe(false);
+      expect(await repo.has('u2', 'v1')).toBe(false);
+    });
+
+    test('rejects the same user liking the same video twice', async () => {
+      const repo = await createRepo();
+      await repo.add({ userId: 'u1', videoId: 'v1', createdAt: 1 });
+
+      await expect(repo.add({ userId: 'u1', videoId: 'v1', createdAt: 2 })).rejects.toThrow(
+        DuplicateKeyError,
+      );
+    });
+
+    test('lets different users like the same video', async () => {
+      const repo = await createRepo();
+      await repo.add({ userId: 'u1', videoId: 'v1', createdAt: 1 });
+
+      await expect(repo.add({ userId: 'u2', videoId: 'v1', createdAt: 2 })).resolves.toBeDefined();
+    });
+
+    test('remove reports whether a like existed', async () => {
+      const repo = await createRepo();
+      await repo.add({ userId: 'u1', videoId: 'v1', createdAt: 1 });
+
+      expect(await repo.remove('u1', 'v1')).toBe(true);
+      expect(await repo.remove('u1', 'v1')).toBe(false);
+      expect(await repo.has('u1', 'v1')).toBe(false);
+    });
+
+    test('lists the liked video ids of one user in the order they were liked', async () => {
+      const repo = await createRepo();
+      await repo.add({ userId: 'u1', videoId: 'b', createdAt: 1 });
+      await repo.add({ userId: 'u2', videoId: 'x', createdAt: 2 });
+      await repo.add({ userId: 'u1', videoId: 'a', createdAt: 3 });
+
+      expect(await repo.listVideoIds('u1')).toEqual(['b', 'a']);
+      expect(await repo.listVideoIds('nobody')).toEqual([]);
     });
   });
 }

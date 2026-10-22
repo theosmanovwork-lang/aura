@@ -1,4 +1,5 @@
 import {
+  createMemoryLikeRepository,
   createMemoryPredictionRepository,
   createMemoryRepositories,
   createMemoryTrendRepository,
@@ -7,6 +8,7 @@ import {
   createMemoryWalletRepository,
 } from '../../src/data/memory';
 import {
+  runLikeRepositoryContract,
   runPredictionRepositoryContract,
   runTrendRepositoryContract,
   runUserRepositoryContract,
@@ -20,6 +22,7 @@ runTrendRepositoryContract(() => createMemoryTrendRepository());
 runVideoRepositoryContract(() => createMemoryVideoRepository());
 runWalletRepositoryContract(() => createMemoryWalletRepository());
 runPredictionRepositoryContract(() => createMemoryPredictionRepository());
+runLikeRepositoryContract(() => createMemoryLikeRepository());
 
 describe('createMemoryRepositories', () => {
   test('starts empty without a seed', async () => {

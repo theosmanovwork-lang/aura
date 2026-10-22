@@ -1,9 +1,10 @@
 import { ensureSeeded } from '../../src/data/bootstrap';
 import { createMemoryRepositories } from '../../src/data/memory';
 import { seed } from '../../src/data/seed';
-import { migrate, LATEST_SCHEMA_VERSION } from '../../src/data/sqlite/migrations';
+import { migrate, LATEST_SCHEMA_VERSION, MIGRATIONS } from '../../src/data/sqlite/migrations';
 import { createSqliteRepositories } from '../../src/data/sqlite';
 import {
+  runLikeRepositoryContract,
   runPredictionRepositoryContract,
   runTrendRepositoryContract,
   runUserRepositoryContract,
@@ -24,6 +25,7 @@ runTrendRepositoryContract(async () => (await openRepositories()).trends);
 runVideoRepositoryContract(async () => (await openRepositories()).videos);
 runWalletRepositoryContract(async () => (await openRepositories()).wallet);
 runPredictionRepositoryContract(async () => (await openRepositories()).predictions);
+runLikeRepositoryContract(async () => (await openRepositories()).likes);
 
 describe('SQLite specifics', () => {
   test('the database enforces ledger rules itself (CHECK constraints)', async () => {
@@ -84,11 +86,24 @@ describe('migrate', () => {
     expect(user_version).toBe(LATEST_SCHEMA_VERSION);
     expect(tables.map((t) => t.name)).toEqual([
       'ledger',
+      'likes',
       'predictions',
       'trends',
       'users',
       'videos',
     ]);
+  });
+
+  test('upgrades a database that was created by the first schema version without losing data', async () => {
+    const db = await createTestDatabase();
+    await migrate(db, MIGRATIONS.slice(0, 1));
+    await createSqliteRepositories(db).users.create(makeUser());
+
+    await migrate(db);
+
+    expect(await createSqliteRepositories(db).users.getById('u1')).toEqual(makeUser());
+    const [{ user_version }] = await db.all<{ user_version: number }>('PRAGMA user_version');
+    expect(user_version).toBe(LATEST_SCHEMA_VERSION);
   });
 
   test('is safe to run twice and keeps existing data', async () => {

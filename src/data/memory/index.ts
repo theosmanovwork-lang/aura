@@ -1,10 +1,12 @@
 import { assertValidLedgerEntry, type LedgerEntry } from '../../domain/ledger';
+import type { Like } from '../../domain/like';
 import type { Prediction } from '../../domain/prediction';
 import type { Trend } from '../../domain/trend';
 import type { User } from '../../domain/user';
 import type { Video } from '../../domain/video';
 import { DuplicateKeyError } from '../repositories/errors';
 import type {
+  LikeRepository,
   PredictionRepository,
   Repositories,
   TrendRepository,
@@ -20,6 +22,7 @@ export type SeedData = Readonly<{
   videos?: readonly Video[];
   ledger?: readonly LedgerEntry[];
   predictions?: readonly Prediction[];
+  likes?: readonly Like[];
 }>;
 
 const definedOnly = <T extends object>(patch: T): Partial<T> =>
@@ -94,6 +97,32 @@ export function createMemoryPredictionRepository(
   };
 }
 
+export function createMemoryLikeRepository(initial: readonly Like[] = []): LikeRepository {
+  const likes: Like[] = [];
+  const same = (userId: string, videoId: string) => (like: Like) =>
+    like.userId === userId && like.videoId === videoId;
+  const add = (like: Like): Like => {
+    if (likes.some(same(like.userId, like.videoId))) {
+      throw new DuplicateKeyError('likes', `${like.userId}/${like.videoId}`);
+    }
+    likes.push({ ...like });
+    return { ...like };
+  };
+  initial.forEach(add);
+  return {
+    add: async (like) => add(like),
+    remove: async (userId, videoId) => {
+      const index = likes.findIndex(same(userId, videoId));
+      if (index === -1) return false;
+      likes.splice(index, 1);
+      return true;
+    },
+    has: async (userId, videoId) => likes.some(same(userId, videoId)),
+    listVideoIds: async (userId) =>
+      likes.filter((like) => like.userId === userId).map((like) => like.videoId),
+  };
+}
+
 export function createMemoryRepositories(seed: SeedData = {}): Repositories {
   return {
     users: createMemoryUserRepository(seed.users),
@@ -101,5 +130,6 @@ export function createMemoryRepositories(seed: SeedData = {}): Repositories {
     videos: createMemoryVideoRepository(seed.videos),
     wallet: createMemoryWalletRepository(seed.ledger),
     predictions: createMemoryPredictionRepository(seed.predictions),
+    likes: createMemoryLikeRepository(seed.likes),
   };
 }
