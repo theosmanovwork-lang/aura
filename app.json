@@ -6,10 +6,11 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "plugins": ["expo-router"],
-    "ios": { "supportsTablet": false },
+    "ios": { "supportsTablet": false, "bundleIdentifier": "ru.aura.demo" },
     "android": {
+      "package": "ru.aura.demo",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
