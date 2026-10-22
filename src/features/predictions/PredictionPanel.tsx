@@ -9,7 +9,7 @@ import type { Prediction } from '../../domain/prediction';
 import { formatPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, radii, spacing, typography } from '../../theme';
+import { lightColors as colors, radii, spacing, typography } from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import {

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, radii, spacing, typography } from '../../theme';
+import { lightColors as colors, radii, spacing, typography } from '../../theme';
 import { describeGrowth, formatGrowth } from './format';
 import { growthColor } from './growthColor';
 
@@ -12,7 +12,7 @@ type GrowthPillProps = Readonly<{
 }>;
 
 const pillBackground = (percent: number | null): string => {
-  if (percent === null || percent === 0) return colors.surfaceRaised;
+  if (percent === null || percent === 0) return colors.surfaceMuted;
   return percent > 0 ? colors.positiveSoft : colors.negativeSoft;
 };
 

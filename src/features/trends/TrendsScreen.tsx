@@ -1,10 +1,18 @@
 import { useCallback } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Icon } from '../../components/Icon';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { ru } from '../../i18n/ru';
-import { colors, spacing, typography } from '../../theme';
+import {
+  iconSizes,
+  lightColors as colors,
+  MIN_TOUCH_TARGET,
+  radii,
+  spacing,
+  typography,
+} from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { TrendRow } from './TrendRow';
@@ -23,11 +31,13 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
   const load = useCallback(() => loadTrendBoard(repos, clock.current()), [repos, clock]);
   const { state, reload } = useLoad(load, refreshKey);
 
-  if (state.status === 'loading') return <Message text={ru.trends.loading} />;
+  if (state.status === 'loading') return <Message light text={ru.trends.loading} />;
   if (state.status === 'error') {
-    return <Message text={ru.trends.error} action={{ label: ru.trends.retry, run: reload }} />;
+    return (
+      <Message light text={ru.trends.error} action={{ label: ru.trends.retry, run: reload }} />
+    );
   }
-  if (state.data.length === 0) return <Message text={ru.trends.empty} />;
+  if (state.data.length === 0) return <Message light text={ru.trends.empty} />;
 
   return (
     <FlatList
@@ -44,6 +54,16 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
             {ru.trends.title}
           </Text>
           <Text style={styles.subtitle}>{ru.trends.subtitle}</Text>
+          <Pressable
+            accessibilityRole="search"
+            accessibilityLabel={ru.trends.search}
+            accessibilityState={{ disabled: true }}
+            disabled
+            style={styles.search}
+          >
+            <Icon name="search" size={iconSizes.md} color={colors.iconInactive} />
+            <Text style={styles.searchText}>{ru.trends.search}</Text>
+          </Pressable>
         </View>
       }
       ListFooterComponent={<Text style={styles.disclaimer}>{ru.trends.disclaimer}</Text>}
@@ -58,6 +78,17 @@ const styles = StyleSheet.create({
   header: { gap: spacing.xs, marginBottom: spacing.md },
   title: { ...typography.title, color: colors.text },
   subtitle: { ...typography.body, color: colors.textMuted },
+  search: {
+    minHeight: MIN_TOUCH_TARGET,
+    marginTop: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surfaceMuted,
+  },
+  searchText: { ...typography.body, color: colors.textMuted },
   separator: { height: spacing.sm },
   disclaimer: {
     ...typography.caption,

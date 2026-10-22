@@ -51,10 +51,11 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
   const { state, reload } = useLoad(load, refreshKey);
   const [tab, setTab] = useState<TabKey>('predictions');
 
-  if (state.status === 'loading') return <Message text={ru.screens.profile.loading} />;
+  if (state.status === 'loading') return <Message light text={ru.screens.profile.loading} />;
   if (state.status === 'error') {
     return (
       <Message
+        light
         text={ru.screens.profile.error}
         action={{ label: ru.screens.profile.retry, run: reload }}
       />

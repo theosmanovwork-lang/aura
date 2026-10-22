@@ -7,7 +7,7 @@ import { seed } from '../../src/data/seed';
 import { ru } from '../../src/i18n/ru';
 import { TrendsScreen } from '../../src/features/trends/TrendsScreen';
 import { loadTrendBoard } from '../../src/features/trends/trendService';
-import { colors, radii } from '../../src/theme';
+import { colors, lightColors, radii } from '../../src/theme';
 
 const NOW = Date.UTC(2027, 0, 1);
 const styleOf = (element: { props: { style?: unknown } }) =>
@@ -41,7 +41,7 @@ describe('trends list design', () => {
     const first = screen.getByTestId(`trend-rank-${board[0]!.trend.id}`, { hidden: true });
     const second = screen.getByTestId(`trend-rank-${board[1]!.trend.id}`, { hidden: true });
     expect(styleOf(first).backgroundColor).toBe(colors.accent);
-    expect(styleOf(second).backgroundColor).toBe(colors.surfaceRaised);
+    expect(styleOf(second).backgroundColor).toBe(lightColors.surfaceMuted);
   });
 
   test('the rank badge is decoration: screen readers get the order from the list', async () => {
@@ -75,10 +75,10 @@ describe('trends list design', () => {
       const pill = screen.getByTestId(`growth-pill-${row.trend.id}`);
       const expected =
         row.growthPercent === null || row.growthPercent === 0
-          ? colors.surfaceRaised
+          ? lightColors.surfaceMuted
           : row.growthPercent > 0
-            ? colors.positiveSoft
-            : colors.negativeSoft;
+            ? lightColors.positiveSoft
+            : lightColors.negativeSoft;
       expect(styleOf(pill).backgroundColor).toBe(expected);
     }
   });
@@ -88,16 +88,16 @@ describe('trends list design', () => {
 
     const card = screen.getByTestId(`trend-row-${board[0]!.trend.id}`);
     expect(styleOf(card).borderRadius).toBe(radii.lg);
-    expect(styleOf(card).backgroundColor).toBe(colors.surface);
+    expect(styleOf(card).backgroundColor).toBe(lightColors.surface);
   });
 
-  test('the little chart is indigo with a gold newest bar', async () => {
+  test('the little chart is light indigo with an indigo newest bar', async () => {
     const board = await renderBoard();
 
     const bars = within(screen.getByTestId(`trend-row-${board[0]!.trend.id}`)).getAllByTestId(
       'chart-bar',
     );
-    expect(styleOf(bars[0]!).backgroundColor).toBe(colors.chartBar);
-    expect(styleOf(bars.at(-1)!).backgroundColor).toBe(colors.accent);
+    expect(styleOf(bars[0]!).backgroundColor).toBe(lightColors.chartBar);
+    expect(styleOf(bars.at(-1)!).backgroundColor).toBe(lightColors.primary);
   });
 });

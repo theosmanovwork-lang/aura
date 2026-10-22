@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
 import { Button } from '../../src/components/Button';
-import { colors, MIN_TOUCH_TARGET } from '../../src/theme';
+import { lightColors as colors, MIN_TOUCH_TARGET } from '../../src/theme';
 
 const styleOf = (el: { props: { style?: unknown } }) =>
   StyleSheet.flatten(el.props.style as never) as Record<string, unknown>;
@@ -34,7 +34,7 @@ describe('Button', () => {
     expect(styleOf(screen.getByTestId('b')).minHeight).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
   });
 
-  test('the main button is indigo, the option chip is quiet and a chosen chip gets a gold edge', async () => {
+  test('the main button is indigo, the option chip is quiet and a chosen chip gets an indigo edge', async () => {
     await render(
       <>
         <Button label="Главная" onPress={jest.fn()} testID="main" />
@@ -44,8 +44,8 @@ describe('Button', () => {
     );
 
     expect(styleOf(screen.getByTestId('main')).backgroundColor).toBe(colors.primary);
-    expect(styleOf(screen.getByTestId('chip')).backgroundColor).toBe(colors.surfaceRaised);
-    expect(styleOf(screen.getByTestId('chosen')).borderColor).toBe(colors.accent);
+    expect(styleOf(screen.getByTestId('chip')).backgroundColor).toBe(colors.surfaceMuted);
+    expect(styleOf(screen.getByTestId('chosen')).borderColor).toBe(colors.primary);
     expect(screen.getByTestId('chosen').props.accessibilityState).toMatchObject({ selected: true });
   });
 });

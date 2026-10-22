@@ -37,3 +37,14 @@ describe('light palette: visible icons (3:1)', () => {
     expect(contrast(c.iconInactive, c.surface)).toBeGreaterThanOrEqual(3);
   });
 });
+
+describe('light palette: chart and badges', () => {
+  test('chart bars are visible against a card (3:1 for graphics)', () => {
+    expect(contrast(c.chartBar, c.surface)).toBeGreaterThanOrEqual(3);
+    expect(contrast(c.primary, c.surface)).toBeGreaterThanOrEqual(3);
+  });
+
+  test('pressed primary button keeps white text readable', () => {
+    expect(contrast(c.onPrimary, c.primaryPressed)).toBeGreaterThanOrEqual(4.5);
+  });
+});

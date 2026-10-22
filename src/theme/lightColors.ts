@@ -14,6 +14,9 @@ export const lightColors = {
 
   primary: '#4F46E5',
   onPrimary: '#FFFFFF',
+  primaryPressed: '#4338CA',
+  /** Bars of the trend charts: 3:1 against a card. */
+  chartBar: '#8B84EE',
   primarySoft: '#E9E8FD',
   primarySoftText: '#3730A3',
 

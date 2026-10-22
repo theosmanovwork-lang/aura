@@ -8,7 +8,7 @@ import { formatCount } from '../../src/i18n/plural';
 import { ru } from '../../src/i18n/ru';
 import { TrendDetailScreen } from '../../src/features/trends/TrendDetailScreen';
 import { loadTrendDetail } from '../../src/features/trends/trendService';
-import { colors, radii, typography } from '../../src/theme';
+import { lightColors, radii, typography } from '../../src/theme';
 
 const NOW = Date.UTC(2027, 0, 1);
 const styleOf = (element: { props: { style?: unknown } }) =>
@@ -38,20 +38,20 @@ describe('trend detail design', () => {
     const summary = await renderDetail();
 
     const hero = screen.getByTestId('trend-hero');
-    expect(styleOf(hero).backgroundColor).toBe(colors.surface);
+    expect(styleOf(hero).backgroundColor).toBe(lightColors.surface);
     expect(styleOf(hero).borderRadius).toBe(radii.xl);
     expect(within(hero).getByText(summary.trend.name)).toBeTruthy();
     expect(within(hero).getByTestId(`growth-pill-${summary.trend.id}`)).toBeTruthy();
   });
 
-  test('the chart sits in its own card and uses the indigo and gold bars', async () => {
+  test('the chart sits in its own card and uses the light indigo bars and an indigo newest bar', async () => {
     await renderDetail();
 
     const card = screen.getByTestId('trend-chart-card');
     expect(styleOf(card).borderRadius).toBe(radii.lg);
     const bars = within(card).getAllByTestId('chart-bar');
-    expect(styleOf(bars[0]!).backgroundColor).toBe(colors.chartBar);
-    expect(styleOf(bars.at(-1)!).backgroundColor).toBe(colors.accent);
+    expect(styleOf(bars[0]!).backgroundColor).toBe(lightColors.chartBar);
+    expect(styleOf(bars.at(-1)!).backgroundColor).toBe(lightColors.primary);
   });
 
   test('the videos are a flat list (nothing that looks like a button) with a camera icon', async () => {

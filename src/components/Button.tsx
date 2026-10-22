@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../theme';
+import { lightColors as colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../theme';
 
 type ButtonProps = Readonly<{
   label: string;
@@ -38,7 +38,15 @@ export function Button({
         disabled && styles.disabled,
       ]}
     >
-      <Text style={[styles.text, isChip && selected && styles.selectedText]}>{label}</Text>
+      <Text
+        style={[
+          styles.text,
+          !isChip && styles.primaryText,
+          isChip && selected && styles.selectedText,
+        ]}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 }
@@ -55,10 +63,11 @@ const styles = StyleSheet.create({
   },
   primary: { backgroundColor: colors.primary },
   primaryPressed: { backgroundColor: colors.primaryPressed },
-  chip: { backgroundColor: colors.surfaceRaised },
+  chip: { backgroundColor: colors.surfaceMuted },
   pressed: { opacity: 0.8 },
-  selected: { borderColor: colors.accent },
-  selectedText: { color: colors.accent },
+  selected: { borderColor: colors.primary },
+  selectedText: { color: colors.primary },
   disabled: { opacity: 0.4 },
   text: { ...typography.bodyStrong, color: colors.text, textAlign: 'center' },
+  primaryText: { color: colors.onPrimary },
 });

@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { ru } from '../../i18n/ru';
-import { colors } from '../../theme';
+import { lightColors } from '../../theme';
 import { barHeights } from './chartMath';
 
 type BarChartProps = Readonly<{ values: readonly number[]; height: number }>;
@@ -31,6 +31,6 @@ export function BarChart({ values, height }: BarChartProps) {
 
 const styles = StyleSheet.create({
   chart: { flexDirection: 'row', alignItems: 'flex-end', gap: BAR_GAP },
-  bar: { flex: 1, borderRadius: 2, backgroundColor: colors.chartBar },
-  lastBar: { backgroundColor: colors.accent },
+  bar: { flex: 1, borderRadius: 2, backgroundColor: lightColors.chartBar },
+  lastBar: { backgroundColor: lightColors.primary },
 });

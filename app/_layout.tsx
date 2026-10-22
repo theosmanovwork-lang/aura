@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 
 import { RepositoriesProvider } from '../src/data/RepositoriesProvider';
 import { ru } from '../src/i18n/ru';
-import { colors } from '../src/theme';
+import { lightColors as colors } from '../src/theme';
 
 export default function RootLayout() {
   return (
