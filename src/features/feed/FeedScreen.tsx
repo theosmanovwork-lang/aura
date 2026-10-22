@@ -5,6 +5,7 @@ import { Message } from '../../components/Message';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { ru } from '../../i18n/ru';
 import { colors, spacing, typography } from '../../theme';
+import { SoonAction } from './SoonAction';
 import { pickActiveIndex, type ViewableItem } from './feedLogic';
 import { VideoCard } from './VideoCard';
 import { useFeed } from './useFeed';
@@ -78,6 +79,10 @@ export function FeedScreen({ focused = true }: FeedScreenProps) {
           windowSize={3}
         />
       ) : null}
+      <View testID="feed-top-bar" style={styles.topBar} pointerEvents="box-none">
+        <SoonAction testID="soon-add" icon="add" label={ru.feed.soon.add} />
+        <SoonAction testID="soon-search" icon="search" label={ru.feed.soon.search} />
+      </View>
       {actionFailed ? (
         <Text style={styles.toast} accessibilityRole="alert" accessibilityLiveRegion="polite">
           {ru.feed.actionError}
@@ -89,6 +94,14 @@ export function FeedScreen({ focused = true }: FeedScreenProps) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
+  topBar: {
+    position: 'absolute',
+    top: spacing.xl,
+    left: spacing.sm,
+    right: spacing.sm,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   toast: {
     ...typography.caption,
     position: 'absolute',

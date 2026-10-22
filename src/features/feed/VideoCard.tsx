@@ -16,6 +16,7 @@ import {
   typography,
 } from '../../theme';
 import { ActionRail } from './ActionRail';
+import { SoonRail } from './SoonAction';
 import type { FeedItem } from './feedService';
 import { resolveVideoSource, type PlayableSource } from './videoSources';
 
@@ -139,6 +140,7 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
           viewCount={video.viewCount}
           onToggleLike={() => onToggleLike(video.id)}
         />
+        <SoonRail />
       </View>
     </View>
   );
@@ -175,5 +177,11 @@ const styles = StyleSheet.create({
   chipAge: { borderWidth: 1, borderColor: colors.textMuted },
   chipText: { ...typography.caption, color: colors.text },
   title: { ...typography.bodyStrong, color: colors.text },
-  rail: { position: 'absolute', right: spacing.gutter, bottom: spacing.lg },
+  rail: {
+    position: 'absolute',
+    right: spacing.gutter,
+    bottom: spacing.lg,
+    alignItems: 'center',
+    gap: spacing.md,
+  },
 });
