@@ -8,6 +8,7 @@ import TabsLayout from '../app/(tabs)/_layout';
 import FeedScreen from '../app/(tabs)/index';
 import ProfileScreen from '../app/(tabs)/profile';
 import TrendsScreen from '../app/(tabs)/trends';
+import TrendDetailRoute from '../app/trend/[id]';
 import WalletScreen from '../app/(tabs)/wallet';
 import { ru } from '../src/i18n/ru';
 
@@ -27,6 +28,7 @@ const routes = {
   '(tabs)/trends': TrendsScreen,
   '(tabs)/wallet': WalletScreen,
   '(tabs)/profile': ProfileScreen,
+  'trend/[id]': TrendDetailRoute,
 };
 
 const getTabs = () => screen.findAllByRole('button', { name: /, tab, \d of \d$/ });
@@ -66,7 +68,7 @@ describe('bottom tabs', () => {
     await giveFeedASize();
 
     const steps = [
-      [ru.tabs.trends, ru.screens.trends.subtitle],
+      [ru.tabs.trends, seed.trends[0]!.name],
       [ru.tabs.wallet, ru.screens.wallet.subtitle],
       [ru.tabs.profile, ru.screens.profile.subtitle],
       [ru.tabs.feed, NEWEST_TITLE],
@@ -91,10 +93,21 @@ describe('bottom tabs', () => {
     const find = async (label: string) =>
       (await getTabs()).find((t) => labelOf(t).startsWith(`${label},`))!;
     await fireEvent.press(await find(ru.tabs.trends));
-    await screen.findByText(ru.screens.trends.subtitle);
+    await screen.findByText(seed.trends[0]!.name);
     expect(player.pause).toHaveBeenCalled();
 
     await fireEvent.press(await find(ru.tabs.feed));
     expect(player.play).toHaveBeenCalled();
+  });
+
+  test('opens the details of a wave from the list', async () => {
+    await renderRouter(routes);
+    await giveFeedASize();
+    const trendsTab = (await getTabs()).find((t) => labelOf(t).startsWith(`${ru.tabs.trends},`))!;
+    await fireEvent.press(trendsTab);
+
+    await fireEvent.press(await screen.findByLabelText(new RegExp(`^${seed.trends[0]!.name},`)));
+
+    expect(await screen.findByText(ru.trends.historyTitle)).toBeTruthy();
   });
 });

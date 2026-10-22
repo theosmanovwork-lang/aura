@@ -1,6 +1,7 @@
 import { createLedgerEntry, type LedgerEntry } from '../../domain/ledger';
 import { createPrediction, type Prediction } from '../../domain/prediction';
 import type { Trend } from '../../domain/trend';
+import type { TrendSnapshot } from '../../domain/trendSnapshot';
 import type { User } from '../../domain/user';
 import type { Video } from '../../domain/video';
 
@@ -54,5 +55,12 @@ export const makePrediction = (overrides: Partial<Prediction> = {}): Prediction 
     createdAt: 1000,
     closesAt: 2000,
   }),
+  ...overrides,
+});
+
+export const makeSnapshot = (overrides: Partial<TrendSnapshot> = {}): TrendSnapshot => ({
+  trendId: 't1',
+  at: 1000,
+  score: 100,
   ...overrides,
 });

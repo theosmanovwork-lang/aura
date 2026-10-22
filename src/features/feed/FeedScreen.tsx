@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
+import { FlatList, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 
+import { Message } from '../../components/Message';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { ru } from '../../i18n/ru';
 import { colors, spacing, typography } from '../../theme';
@@ -9,22 +10,6 @@ import { VideoCard } from './VideoCard';
 import { useFeed } from './useFeed';
 
 const VIEWABILITY = { itemVisiblePercentThreshold: 60 } as const;
-
-function Message({
-  text,
-  action,
-}: Readonly<{ text: string; action?: { label: string; run: () => void } }>) {
-  return (
-    <View style={styles.message}>
-      <Text style={styles.messageText}>{text}</Text>
-      {action ? (
-        <Pressable accessibilityRole="button" onPress={action.run} style={styles.button}>
-          <Text style={styles.buttonText}>{action.label}</Text>
-        </Pressable>
-      ) : null}
-    </View>
-  );
-}
 
 type FeedScreenProps = Readonly<{
   /** False while another tab is open: pauses the video and stops counting views. */
@@ -104,22 +89,6 @@ export function FeedScreen({ focused = true }: FeedScreenProps) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  message: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.md,
-    padding: spacing.lg,
-    backgroundColor: colors.background,
-  },
-  messageText: { ...typography.body, color: colors.textMuted, textAlign: 'center' },
-  button: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: spacing.sm,
-    backgroundColor: colors.accent,
-  },
-  buttonText: { ...typography.body, color: colors.text },
   toast: {
     ...typography.caption,
     position: 'absolute',

@@ -1,5 +1,6 @@
 import { createMemoryRepositories } from '../../src/data/memory';
-import { CURRENT_USER_ID, seed } from '../../src/data/seed';
+import { CURRENT_USER_ID, createSeed, seed } from '../../src/data/seed';
+import { calcTrendScore } from '../../src/domain/trendScore';
 
 describe('demo seed', () => {
   test('has enough demo content', () => {
@@ -42,6 +43,31 @@ describe('demo seed', () => {
     for (const video of seed.videos) {
       expect(Number.isInteger(video.likeCount)).toBe(true);
       expect(Number.isInteger(video.viewCount)).toBe(true);
+    }
+  });
+
+  test('has a growth history for every trend that ends at its current score', () => {
+    for (const trend of seed.trends) {
+      const history = seed.snapshots.filter((s) => s.trendId === trend.id);
+      const current = calcTrendScore(seed.videos.filter((v) => v.trendId === trend.id));
+
+      expect(history.length).toBeGreaterThanOrEqual(7);
+      expect(history.map((s) => s.at)).toEqual([...history.map((s) => s.at)].sort((a, b) => a - b));
+      expect(history.at(-1)?.score).toBe(current);
+      expect(history.every((s) => Number.isInteger(s.score) && s.score > 0)).toBe(true);
+    }
+  });
+
+  test('createSeed puts the end of every history at the given moment, one point per day', () => {
+    const now = Date.UTC(2030, 5, 15, 12);
+    const fresh = createSeed(now);
+
+    for (const trend of fresh.trends) {
+      const history = fresh.snapshots.filter((s) => s.trendId === trend.id);
+      expect(history.at(-1)?.at).toBe(now);
+      history.slice(1).forEach((point, i) => {
+        expect(point.at - history[i]!.at).toBe(24 * 60 * 60 * 1000);
+      });
     }
   });
 });

@@ -3,12 +3,20 @@ import type {
   LikeRepository,
   PredictionRepository,
   TrendRepository,
+  TrendSnapshotRepository,
   UserRepository,
   VideoRepository,
   WalletRepository,
 } from '../repositories';
 import { DuplicateKeyError, NotFoundError } from '../repositories';
-import { makeEntry, makePrediction, makeTrend, makeUser, makeVideo } from './fixtures';
+import {
+  makeEntry,
+  makePrediction,
+  makeSnapshot,
+  makeTrend,
+  makeUser,
+  makeVideo,
+} from './fixtures';
 
 /**
  * Rules every repository implementation (memory, SQLite, server) must follow:
@@ -369,6 +377,49 @@ export function runLikeRepositoryContract(
 
       expect(await repo.listVideoIds('u1')).toEqual(['b', 'a']);
       expect(await repo.listVideoIds('nobody')).toEqual([]);
+    });
+  });
+}
+
+export function runTrendSnapshotRepositoryContract(
+  createRepo: () => Promise<TrendSnapshotRepository> | TrendSnapshotRepository,
+) {
+  describe('TrendSnapshotRepository contract', () => {
+    test('stores snapshots and lists them of one trend, oldest first', async () => {
+      const repo = await createRepo();
+      await repo.add(makeSnapshot({ at: 30, score: 300 }));
+      await repo.add(makeSnapshot({ at: 10, score: 100 }));
+      await repo.add(makeSnapshot({ trendId: 'other', at: 20, score: 999 }));
+      await repo.add(makeSnapshot({ at: 20, score: 200 }));
+
+      expect((await repo.listByTrend('t1')).map((s) => s.score)).toEqual([100, 200, 300]);
+    });
+
+    test('lists nothing for a trend without snapshots', async () => {
+      expect(await (await createRepo()).listByTrend('nope')).toEqual([]);
+    });
+
+    test('rejects a second snapshot of the same trend at the same moment', async () => {
+      const repo = await createRepo();
+      await repo.add(makeSnapshot());
+
+      await expect(repo.add(makeSnapshot({ score: 5 }))).rejects.toThrow(DuplicateKeyError);
+    });
+
+    test('allows the same moment for different trends', async () => {
+      const repo = await createRepo();
+      await repo.add(makeSnapshot());
+
+      await expect(repo.add(makeSnapshot({ trendId: 'other' }))).resolves.toBeDefined();
+    });
+
+    test('returns copies, not internal objects', async () => {
+      const repo = await createRepo();
+      await repo.add(makeSnapshot());
+      const [first] = await repo.listByTrend('t1');
+      (first as { score: number }).score = 999;
+
+      expect((await repo.listByTrend('t1'))[0]?.score).toBe(100);
     });
   });
 }

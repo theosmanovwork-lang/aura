@@ -1,4 +1,6 @@
 import type { Trend } from '../../domain/trend';
+import type { TrendSnapshot } from '../../domain/trendSnapshot';
+import { calcTrendScore } from '../../domain/trendScore';
 import type { User } from '../../domain/user';
 import type { AgeRating, ModerationStatus, Video } from '../../domain/video';
 import type { SeedData } from '../memory';
@@ -66,8 +68,30 @@ const videos: readonly Video[] = drafts.map(
   }),
 );
 
-export const seed: SeedData & Required<Pick<SeedData, 'users' | 'trends' | 'videos'>> = {
-  users,
-  trends,
-  videos,
+/** How the index of each demo trend grew over 14 days, as a share of today's score. */
+const HISTORY_CURVES: Readonly<Record<string, readonly number[]>> = {
+  'trend-neirokot': [0.3, 0.34, 0.38, 0.41, 0.46, 0.5, 0.54, 0.58, 0.62, 0.67, 0.72, 0.76, 0.8, 1],
+  'trend-gorod': [0.5, 0.52, 0.55, 0.58, 0.6, 0.64, 0.67, 0.7, 0.74, 0.78, 0.82, 0.86, 0.9, 1],
+  'trend-probezhka': [0.9, 0.95, 0.92, 0.98, 1.0, 1.02, 1.0, 1.05, 1.03, 1.06, 1.04, 1.05, 1.04, 1],
+  'trend-kofe': [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.18, 1.25, 1.3, 1.28, 1.22, 1.17, 1.12, 1],
+  'trend-roboty': [0.4, 0.55, 0.5, 0.65, 0.6, 0.75, 0.7, 0.85, 0.8, 0.9, 0.84, 0.93, 0.95, 1],
 };
+
+type SeedContent = SeedData & Required<Pick<SeedData, 'users' | 'trends' | 'videos' | 'snapshots'>>;
+
+/** Demo content whose 14-day growth history ends at `now` (the moment of the first start). */
+export function createSeed(now: number): SeedContent {
+  const snapshots: readonly TrendSnapshot[] = trends.flatMap((trend) => {
+    const current = calcTrendScore(videos.filter((video) => video.trendId === trend.id));
+    const curve = HISTORY_CURVES[trend.id] ?? [1];
+    return curve.map((share, index) => ({
+      trendId: trend.id,
+      at: now - (curve.length - 1 - index) * DAY,
+      score: Math.round(current * share),
+    }));
+  });
+  return { users, trends, videos, snapshots };
+}
+
+/** A fixed moment, so tests and previews always see the same data. */
+export const seed: SeedContent = createSeed(BASE_TIME + 23 * DAY);

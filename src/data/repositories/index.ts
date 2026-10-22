@@ -2,6 +2,7 @@ import type { LedgerEntry } from '../../domain/ledger';
 import type { Like } from '../../domain/like';
 import type { Prediction, PredictionStatus } from '../../domain/prediction';
 import type { Trend } from '../../domain/trend';
+import type { TrendSnapshot } from '../../domain/trendSnapshot';
 import type { User } from '../../domain/user';
 import type { ModerationStatus, Video } from '../../domain/video';
 
@@ -67,6 +68,13 @@ export interface LikeRepository {
   listVideoIds(userId: string): Promise<string[]>;
 }
 
+export interface TrendSnapshotRepository {
+  /** One snapshot per trend and moment: a second one at the same time throws DuplicateKeyError. */
+  add(snapshot: TrendSnapshot): Promise<TrendSnapshot>;
+  /** All snapshots of the trend, oldest first. */
+  listByTrend(trendId: string): Promise<TrendSnapshot[]>;
+}
+
 export type Repositories = Readonly<{
   users: UserRepository;
   trends: TrendRepository;
@@ -74,4 +82,5 @@ export type Repositories = Readonly<{
   wallet: WalletRepository;
   predictions: PredictionRepository;
   likes: LikeRepository;
+  snapshots: TrendSnapshotRepository;
 }>;

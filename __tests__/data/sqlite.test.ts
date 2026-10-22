@@ -7,6 +7,7 @@ import {
   runLikeRepositoryContract,
   runPredictionRepositoryContract,
   runTrendRepositoryContract,
+  runTrendSnapshotRepositoryContract,
   runUserRepositoryContract,
   runVideoRepositoryContract,
   runWalletRepositoryContract,
@@ -26,6 +27,7 @@ runVideoRepositoryContract(async () => (await openRepositories()).videos);
 runWalletRepositoryContract(async () => (await openRepositories()).wallet);
 runPredictionRepositoryContract(async () => (await openRepositories()).predictions);
 runLikeRepositoryContract(async () => (await openRepositories()).likes);
+runTrendSnapshotRepositoryContract(async () => (await openRepositories()).snapshots);
 
 describe('SQLite specifics', () => {
   test('the database enforces ledger rules itself (CHECK constraints)', async () => {
@@ -88,6 +90,7 @@ describe('migrate', () => {
       'ledger',
       'likes',
       'predictions',
+      'trend_snapshots',
       'trends',
       'users',
       'videos',

@@ -2,6 +2,7 @@ import { assertValidLedgerEntry, type LedgerEntry } from '../../domain/ledger';
 import type { Like } from '../../domain/like';
 import type { Prediction } from '../../domain/prediction';
 import type { Trend } from '../../domain/trend';
+import type { TrendSnapshot } from '../../domain/trendSnapshot';
 import type { User } from '../../domain/user';
 import type { Video } from '../../domain/video';
 import { DuplicateKeyError } from '../repositories/errors';
@@ -10,6 +11,7 @@ import type {
   PredictionRepository,
   Repositories,
   TrendRepository,
+  TrendSnapshotRepository,
   UserRepository,
   VideoRepository,
   WalletRepository,
@@ -23,6 +25,7 @@ export type SeedData = Readonly<{
   ledger?: readonly LedgerEntry[];
   predictions?: readonly Prediction[];
   likes?: readonly Like[];
+  snapshots?: readonly TrendSnapshot[];
 }>;
 
 const definedOnly = <T extends object>(patch: T): Partial<T> =>
@@ -123,6 +126,28 @@ export function createMemoryLikeRepository(initial: readonly Like[] = []): LikeR
   };
 }
 
+export function createMemoryTrendSnapshotRepository(
+  initial: readonly TrendSnapshot[] = [],
+): TrendSnapshotRepository {
+  const snapshots: TrendSnapshot[] = [];
+  const add = (snapshot: TrendSnapshot): TrendSnapshot => {
+    if (snapshots.some((s) => s.trendId === snapshot.trendId && s.at === snapshot.at)) {
+      throw new DuplicateKeyError('trend_snapshots', `${snapshot.trendId}@${snapshot.at}`);
+    }
+    snapshots.push({ ...snapshot });
+    return { ...snapshot };
+  };
+  initial.forEach(add);
+  return {
+    add: async (snapshot) => add(snapshot),
+    listByTrend: async (trendId) =>
+      snapshots
+        .filter((s) => s.trendId === trendId)
+        .sort((a, b) => a.at - b.at)
+        .map((s) => ({ ...s })),
+  };
+}
+
 export function createMemoryRepositories(seed: SeedData = {}): Repositories {
   return {
     users: createMemoryUserRepository(seed.users),
@@ -131,5 +156,6 @@ export function createMemoryRepositories(seed: SeedData = {}): Repositories {
     wallet: createMemoryWalletRepository(seed.ledger),
     predictions: createMemoryPredictionRepository(seed.predictions),
     likes: createMemoryLikeRepository(seed.likes),
+    snapshots: createMemoryTrendSnapshotRepository(seed.snapshots),
   };
 }

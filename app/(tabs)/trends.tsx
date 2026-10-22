@@ -1,8 +1,19 @@
-import { PlaceholderScreen } from '../../src/components/PlaceholderScreen';
-import { ru } from '../../src/i18n/ru';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 
-export default function TrendsScreen() {
+import { TrendsScreen } from '../../src/features/trends/TrendsScreen';
+
+export default function TrendsTab() {
+  const router = useRouter();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Tabs stay mounted, so reload the waves each time this tab comes back into view.
+  useFocusEffect(useCallback(() => setRefreshKey((key) => key + 1), []));
+
   return (
-    <PlaceholderScreen title={ru.screens.trends.title} subtitle={ru.screens.trends.subtitle} />
+    <TrendsScreen
+      refreshKey={refreshKey}
+      onOpenTrend={(id) => router.push({ pathname: '/trend/[id]', params: { id } })}
+    />
   );
 }

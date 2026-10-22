@@ -3,6 +3,7 @@ import type { SqlDatabase } from './database';
 import { createSqliteLikeRepository } from './likes';
 import { createSqlitePredictionRepository } from './predictions';
 import { createSqliteTrendRepository } from './trends';
+import { createSqliteTrendSnapshotRepository } from './snapshots';
 import { createSqliteUserRepository } from './users';
 import { createSqliteVideoRepository } from './videos';
 import { createSqliteWalletRepository } from './wallet';
@@ -17,5 +18,6 @@ export function createSqliteRepositories(db: SqlDatabase): Repositories {
     wallet: createSqliteWalletRepository(db),
     predictions: createSqlitePredictionRepository(db),
     likes: createSqliteLikeRepository(db),
+    snapshots: createSqliteTrendSnapshotRepository(db),
   };
 }

@@ -64,6 +64,15 @@ export const MIGRATIONS: readonly string[] = [
     UNIQUE (user_id, video_id)
   );
   `,
+  `
+  CREATE TABLE trend_snapshots (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    trend_id TEXT NOT NULL,
+    at INTEGER NOT NULL,
+    score INTEGER NOT NULL CHECK (score >= 0),
+    UNIQUE (trend_id, at)
+  );
+  `,
 ];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.length;

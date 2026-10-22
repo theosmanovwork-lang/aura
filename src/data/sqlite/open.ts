@@ -1,6 +1,6 @@
 import { ensureSeeded } from '../bootstrap';
 import type { Repositories } from '../repositories';
-import { seed } from '../seed';
+import { createSeed } from '../seed';
 import type { SqlDatabase } from './database';
 import { openExpoDatabase } from './expoDatabase';
 import { createSqliteRepositories } from './index';
@@ -11,11 +11,14 @@ export const DATABASE_NAME = 'aura.db';
 
 let opening: Promise<Repositories> | undefined;
 
-async function open(openDb: (name: string) => Promise<SqlDatabase>): Promise<Repositories> {
+async function open(
+  openDb: (name: string) => Promise<SqlDatabase>,
+  now: () => number,
+): Promise<Repositories> {
   const db = await openDb(DATABASE_NAME);
   await migrate(db);
   const repos = createSqliteRepositories(db);
-  await ensureSeeded(repos, seed, (work) => inTransaction(db, work));
+  await ensureSeeded(repos, createSeed(now()), (work) => inTransaction(db, work));
   return repos;
 }
 
@@ -25,8 +28,9 @@ async function open(openDb: (name: string) => Promise<SqlDatabase>): Promise<Rep
  */
 export function openAppRepositories(
   openDb: (name: string) => Promise<SqlDatabase> = openExpoDatabase,
+  now: () => number = Date.now,
 ): Promise<Repositories> {
-  opening ??= open(openDb).finally(() => {
+  opening ??= open(openDb, now).finally(() => {
     opening = undefined;
   });
   return opening;

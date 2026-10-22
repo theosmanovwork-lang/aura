@@ -36,4 +36,16 @@ describe('openAppRepositories', () => {
 
     expect(openDb).toHaveBeenCalledTimes(2);
   });
+
+  test('the demo history ends at the moment of the first start', async () => {
+    const db = await createTestDatabase();
+    const now = Date.UTC(2030, 5, 15, 12);
+
+    const repos = await openAppRepositories(
+      () => Promise.resolve(db),
+      () => now,
+    );
+
+    expect((await repos.snapshots.listByTrend('trend-neirokot')).at(-1)?.at).toBe(now);
+  });
 });
