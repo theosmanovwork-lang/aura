@@ -114,6 +114,16 @@ export const ru = {
     profile: {
       title: 'Профиль',
       subtitle: 'Скоро здесь появится ваш профиль',
+      loading: 'Загружаем профиль…',
+      error: 'Не удалось загрузить профиль',
+      retry: 'Повторить',
+      add: 'Добавить видео (скоро)',
+      menu: 'Меню (скоро)',
+      edit: 'Изменить профиль',
+      editSoon: 'Скоро',
+      sparksLabel: 'искр',
+      available: 'доступно',
+      tabs: { videos: 'Видео', predictions: 'Прогнозы', likes: 'Лайки' },
     },
   },
 } as const;

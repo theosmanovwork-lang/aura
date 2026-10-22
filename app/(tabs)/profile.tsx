@@ -1,8 +1,11 @@
-import { PlaceholderScreen } from '../../src/components/PlaceholderScreen';
-import { ru } from '../../src/i18n/ru';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 
-export default function ProfileScreen() {
-  return (
-    <PlaceholderScreen title={ru.screens.profile.title} subtitle={ru.screens.profile.subtitle} />
-  );
+import { ProfileScreen } from '../../src/features/profile/ProfileScreen';
+
+export default function ProfileTab() {
+  const [refreshKey, setRefreshKey] = useState(0);
+  // Come back to the tab and the balance is read again.
+  useFocusEffect(useCallback(() => setRefreshKey((key) => key + 1), []));
+  return <ProfileScreen refreshKey={refreshKey} />;
 }

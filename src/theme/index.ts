@@ -1,4 +1,5 @@
 export { colors } from './colors';
+export { lightColors } from './lightColors';
 export { spacing } from './spacing';
 export {
   durations,

@@ -3,7 +3,18 @@ import type { BottomTabBarProps } from 'expo-router/build/layouts/Tabs';
 import { useEffect, useState } from 'react';
 import { AccessibilityInfo, Animated, Pressable, StyleSheet, View } from 'react-native';
 
-import { colors, MIN_TOUCH_TARGET, radii, spacing, TAB_BAR_HEIGHT, typography } from '../theme';
+import {
+  colors,
+  lightColors,
+  MIN_TOUCH_TARGET,
+  radii,
+  spacing,
+  TAB_BAR_HEIGHT,
+  typography,
+} from '../theme';
+
+/** Screens that are still dark; the strip under the pill matches the screen above it. */
+const DARK_SCREENS: ReadonlySet<string> = new Set(['index', 'trends', 'wallet']);
 
 const LABEL_FADE_MS = 180;
 const LABEL_MAX_WIDTH = 72;
@@ -55,9 +66,16 @@ export function FloatingTabBar({
   insets,
 }: BottomTabBarProps) {
   const count = state.routes.length;
+  const openName = state.routes[state.index]?.name ?? '';
+  const stripColor = DARK_SCREENS.has(openName) ? colors.background : lightColors.background;
 
   return (
-    <View style={[styles.strip, { paddingBottom: insets.bottom + spacing.sm }]}>
+    <View
+      style={[
+        styles.strip,
+        { backgroundColor: stripColor, paddingBottom: insets.bottom + spacing.sm },
+      ]}
+    >
       <View testID="tab-pill" accessibilityRole="tablist" style={styles.pill}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key]!;
