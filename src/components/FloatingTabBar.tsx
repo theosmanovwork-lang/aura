@@ -1,3 +1,4 @@
+// Not re-exported from the package root, so the build path is the only way to get this type.
 import type { BottomTabBarProps } from 'expo-router/build/layouts/Tabs';
 import { useEffect, useState } from 'react';
 import { AccessibilityInfo, Animated, Pressable, StyleSheet, View } from 'react-native';

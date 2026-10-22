@@ -1,5 +1,5 @@
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
-import { StyleSheet } from 'react-native';
+import { AccessibilityInfo, StyleSheet } from 'react-native';
 
 import TabsLayout from '../app/(tabs)/_layout';
 import FeedScreen from '../app/(tabs)/index';
@@ -81,5 +81,36 @@ describe('floating tab bar', () => {
       expect(style.minHeight).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
       expect(style.minWidth).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
     }
+  });
+});
+
+describe('floating tab bar motion and presses', () => {
+  const reduceMotion = (impl: () => Promise<boolean>) =>
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockImplementation(impl);
+
+  afterEach(() => jest.restoreAllMocks());
+
+  test('the name still shows when the phone asks for less motion', async () => {
+    reduceMotion(() => Promise.resolve(true));
+    await renderRouter(routes);
+
+    expect(await screen.findByTestId('tab-label-index', { hidden: true })).toBeTruthy();
+  });
+
+  test('the name still shows when the motion setting cannot be read', async () => {
+    reduceMotion(() => Promise.reject(new Error('unavailable')));
+    await renderRouter(routes);
+
+    expect(await screen.findByTestId('tab-label-index', { hidden: true })).toBeTruthy();
+  });
+
+  test('pressing the open tab keeps everything as it is', async () => {
+    await renderRouter(routes);
+    const feed = await screen.findByRole('button', { name: `${ru.tabs.feed}, tab, 1 of 4` });
+
+    await fireEvent.press(feed);
+
+    expect(screen.getByTestId('tab-label-index', { hidden: true })).toBeTruthy();
+    expect(screen.queryByTestId('tab-label-wallet', { hidden: true })).toBeNull();
   });
 });
