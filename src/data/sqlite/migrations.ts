@@ -73,6 +73,22 @@ export const MIGRATIONS: readonly string[] = [
     UNIQUE (trend_id, at)
   );
   `,
+  `
+  CREATE TRIGGER ledger_no_overdraft BEFORE INSERT ON ledger
+  WHEN NEW.amount < 0
+    AND COALESCE((SELECT SUM(amount) FROM ledger WHERE user_id = NEW.user_id), 0) + NEW.amount < 0
+  BEGIN
+    SELECT RAISE(ABORT, 'ledger:insufficient_points');
+  END;
+  CREATE TRIGGER ledger_no_update BEFORE UPDATE ON ledger
+  BEGIN
+    SELECT RAISE(ABORT, 'ledger is append-only');
+  END;
+  CREATE TRIGGER ledger_no_delete BEFORE DELETE ON ledger
+  BEGIN
+    SELECT RAISE(ABORT, 'ledger is append-only');
+  END;
+  `,
 ];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.length;

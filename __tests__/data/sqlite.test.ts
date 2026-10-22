@@ -43,6 +43,29 @@ describe('SQLite specifics', () => {
     await expect(insert(5, 'RUB')).rejects.toThrow();
   });
 
+  test('the database itself refuses to change or delete ledger entries', async () => {
+    const db = await createTestDatabase();
+    await migrate(db);
+    await createSqliteRepositories(db).wallet.append(makeEntry());
+
+    await expect(db.run('UPDATE ledger SET amount = 999999 WHERE id = ?', ['l1'])).rejects.toThrow(
+      'append-only',
+    );
+    await expect(db.run('DELETE FROM ledger WHERE id = ?', ['l1'])).rejects.toThrow('append-only');
+  });
+
+  test('the database itself refuses an overdraft, even if a bug skips the checks above it', async () => {
+    const db = await createTestDatabase();
+    await migrate(db);
+
+    await expect(
+      db.run(
+        'INSERT INTO ledger (id, user_id, amount, asset, kind, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+        ['x', 'u1', -5, 'POINTS', 'prediction_stake', 1],
+      ),
+    ).rejects.toThrow('ledger:insufficient_points');
+  });
+
   test('stores booleans and optional fields faithfully', async () => {
     const repos = await openRepositories();
     await repos.videos.add(makeVideo({ isAiGenerated: true }));
@@ -107,6 +130,21 @@ describe('migrate', () => {
     expect(await createSqliteRepositories(db).users.getById('u1')).toEqual(makeUser());
     const [{ user_version }] = await db.all<{ user_version: number }>('PRAGMA user_version');
     expect(user_version).toBe(LATEST_SCHEMA_VERSION);
+  });
+
+  test('upgrading from the previous version keeps the ledger and starts enforcing its rules', async () => {
+    const db = await createTestDatabase();
+    await migrate(db, MIGRATIONS.slice(0, 3));
+    await createSqliteRepositories(db).wallet.append(makeEntry());
+
+    await migrate(db);
+
+    expect(await createSqliteRepositories(db).wallet.getBalance('u1')).toBe(100);
+    await expect(
+      createSqliteRepositories(db).wallet.append(
+        makeEntry({ id: 'l2', amount: -500, kind: 'prediction_stake' }),
+      ),
+    ).rejects.toThrow('points');
   });
 
   test('is safe to run twice and keeps existing data', async () => {

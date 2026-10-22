@@ -11,3 +11,10 @@ export class NotFoundError extends Error {
     this.name = 'NotFoundError';
   }
 }
+
+export class InsufficientPointsError extends Error {
+  constructor(userId: string, amount: number) {
+    super(`ledger: user "${userId}" does not have ${Math.abs(amount)} points to spend`);
+    this.name = 'InsufficientPointsError';
+  }
+}

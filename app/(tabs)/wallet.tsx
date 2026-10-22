@@ -1,8 +1,13 @@
-import { PlaceholderScreen } from '../../src/components/PlaceholderScreen';
-import { ru } from '../../src/i18n/ru';
+import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 
-export default function WalletScreen() {
-  return (
-    <PlaceholderScreen title={ru.screens.wallet.title} subtitle={ru.screens.wallet.subtitle} />
-  );
+import { WalletScreen } from '../../src/features/wallet/WalletScreen';
+
+export default function WalletTab() {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Tabs stay mounted, so reload the wallet each time this tab comes back into view.
+  useFocusEffect(useCallback(() => setRefreshKey((key) => key + 1), []));
+
+  return <WalletScreen refreshKey={refreshKey} />;
 }

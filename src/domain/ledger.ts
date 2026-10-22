@@ -17,7 +17,7 @@ export type LedgerEntryInput = Omit<LedgerEntry, 'asset'>;
 
 /** Throws unless the entry is a whole, non-zero amount of POINTS. */
 export function assertValidLedgerEntry(entry: LedgerEntry): void {
-  if (!Number.isInteger(entry.amount) || entry.amount === 0) {
+  if (!Number.isSafeInteger(entry.amount) || entry.amount === 0) {
     throw new Error('amount must be a non-zero whole number');
   }
   if (entry.asset !== 'POINTS') {

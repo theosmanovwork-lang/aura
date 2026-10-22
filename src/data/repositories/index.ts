@@ -6,7 +6,7 @@ import type { TrendSnapshot } from '../../domain/trendSnapshot';
 import type { User } from '../../domain/user';
 import type { ModerationStatus, Video } from '../../domain/video';
 
-export { DuplicateKeyError, NotFoundError } from './errors';
+export { DuplicateKeyError, InsufficientPointsError, NotFoundError } from './errors';
 
 /*
  * Rules for every implementation (memory, SQLite, server):
@@ -44,7 +44,10 @@ export interface VideoRepository {
   update(id: string, patch: VideoUpdate): Promise<Video>;
 }
 
-/** Append-only: entries can be added and read, never changed or removed. */
+/**
+ * Append-only: entries can be added and read, never changed or removed.
+ * An entry that would take the user's balance below zero is refused (InsufficientPointsError).
+ */
 export interface WalletRepository {
   append(entry: LedgerEntry): Promise<LedgerEntry>;
   listByUser(userId: string): Promise<LedgerEntry[]>;

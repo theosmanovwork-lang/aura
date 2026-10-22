@@ -1,5 +1,6 @@
 import { assertValidLedgerEntry, type LedgerEntry, type LedgerKind } from '../../domain/ledger';
 import type { WalletRepository } from '../repositories';
+import { InsufficientPointsError } from '../repositories/errors';
 import type { SqlDatabase } from './database';
 import { insertRow } from './support';
 
@@ -22,26 +23,38 @@ const toEntry = (row: LedgerRow): LedgerEntry => ({
   createdAt: row.created_at,
 });
 
+function insertEntry(db: SqlDatabase, entry: LedgerEntry): Promise<void> {
+  return insertRow(
+    db,
+    'ledger',
+    `INSERT INTO ledger (id, user_id, amount, asset, kind, ref_id, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [
+      entry.id,
+      entry.userId,
+      entry.amount,
+      entry.asset,
+      entry.kind,
+      entry.refId ?? null,
+      entry.createdAt,
+    ],
+    { id: entry.id },
+  );
+}
+
 export function createSqliteWalletRepository(db: SqlDatabase): WalletRepository {
   return {
     append: async (entry) => {
       assertValidLedgerEntry(entry);
-      await insertRow(
-        db,
-        'ledger',
-        `INSERT INTO ledger (id, user_id, amount, asset, kind, ref_id, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          entry.id,
-          entry.userId,
-          entry.amount,
-          entry.asset,
-          entry.kind,
-          entry.refId ?? null,
-          entry.createdAt,
-        ],
-        { id: entry.id },
-      );
+      try {
+        await insertEntry(db, entry);
+      } catch (error) {
+        // The database trigger refuses an overdraft; report it like the memory store does.
+        if (error instanceof Error && error.message.includes('insufficient_points')) {
+          throw new InsufficientPointsError(entry.userId, entry.amount);
+        }
+        throw error;
+      }
       return entry;
     },
     listByUser: async (userId) =>

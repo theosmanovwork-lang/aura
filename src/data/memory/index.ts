@@ -5,7 +5,7 @@ import type { Trend } from '../../domain/trend';
 import type { TrendSnapshot } from '../../domain/trendSnapshot';
 import type { User } from '../../domain/user';
 import type { Video } from '../../domain/video';
-import { DuplicateKeyError } from '../repositories/errors';
+import { DuplicateKeyError, InsufficientPointsError } from '../repositories/errors';
 import type {
   LikeRepository,
   PredictionRepository,
@@ -78,13 +78,18 @@ export function createMemoryWalletRepository(
 ): WalletRepository {
   const entries = createCollection<LedgerEntry>('ledger', initial);
   const byUser = (userId: string) => entries.all().filter((entry) => entry.userId === userId);
+  const balanceOf = (userId: string) =>
+    byUser(userId).reduce((sum, entry) => sum + entry.amount, 0);
   return {
     append: async (entry) => {
       assertValidLedgerEntry(entry);
+      if (entry.amount < 0 && balanceOf(entry.userId) + entry.amount < 0) {
+        throw new InsufficientPointsError(entry.userId, entry.amount);
+      }
       return entries.add(entry);
     },
     listByUser: async (userId) => byUser(userId),
-    getBalance: async (userId) => byUser(userId).reduce((sum, entry) => sum + entry.amount, 0),
+    getBalance: async (userId) => balanceOf(userId),
   };
 }
 

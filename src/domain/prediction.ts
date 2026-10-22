@@ -15,7 +15,7 @@ export type Prediction = Readonly<{
 export type PredictionInput = Omit<Prediction, 'status'>;
 
 export function createPrediction(input: PredictionInput): Prediction {
-  if (!Number.isInteger(input.stake) || input.stake <= 0) {
+  if (!Number.isSafeInteger(input.stake) || input.stake <= 0) {
     throw new Error('stake must be a positive whole number');
   }
   if (!(input.closesAt > input.createdAt)) {

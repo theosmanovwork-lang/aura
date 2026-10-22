@@ -15,7 +15,7 @@ describe('createPrediction', () => {
     expect(createPrediction(base)).toEqual({ ...base, status: 'open' });
   });
 
-  test.each([0, -5, 2.5, Number.NaN])('rejects stake %p', (stake) => {
+  test.each([0, -5, 2.5, Number.NaN, 1e300, 2 ** 53])('rejects stake %p', (stake) => {
     expect(() => createPrediction({ ...base, stake })).toThrow('stake');
   });
 

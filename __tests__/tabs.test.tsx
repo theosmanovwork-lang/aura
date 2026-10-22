@@ -69,7 +69,7 @@ describe('bottom tabs', () => {
 
     const steps = [
       [ru.tabs.trends, seed.trends[0]!.name],
-      [ru.tabs.wallet, ru.screens.wallet.subtitle],
+      [ru.tabs.wallet, ru.wallet.disclaimer],
       [ru.tabs.profile, ru.screens.profile.subtitle],
       [ru.tabs.feed, NEWEST_TITLE],
     ];

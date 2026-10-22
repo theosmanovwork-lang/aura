@@ -13,9 +13,12 @@ describe('createLedgerEntry', () => {
     expect(createLedgerEntry({ ...base, kind: 'prediction_stake', amount: -30 }).amount).toBe(-30);
   });
 
-  test.each([0, 1.5, Number.NaN, Number.POSITIVE_INFINITY])('rejects amount %p', (amount) => {
-    expect(() => createLedgerEntry({ ...base, amount })).toThrow('amount');
-  });
+  test.each([0, 1.5, Number.NaN, Number.POSITIVE_INFINITY, 1e300, 2 ** 53, -(2 ** 53)])(
+    'rejects amount %p',
+    (amount) => {
+      expect(() => createLedgerEntry({ ...base, amount })).toThrow('amount');
+    },
+  );
 
   test('keeps the optional refId', () => {
     const entry = createLedgerEntry({ ...base, kind: 'prediction_payout', amount: 5, refId: 'p1' });

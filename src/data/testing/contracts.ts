@@ -8,7 +8,7 @@ import type {
   VideoRepository,
   WalletRepository,
 } from '../repositories';
-import { DuplicateKeyError, NotFoundError } from '../repositories';
+import { DuplicateKeyError, InsufficientPointsError, NotFoundError } from '../repositories';
 import {
   makeEntry,
   makePrediction,
@@ -246,6 +246,46 @@ export function runWalletRepositoryContract(
         await expect(repo.append(entry)).rejects.toThrow();
       }
       expect(await repo.listByUser('u1')).toEqual([]);
+    });
+
+    test('refuses to spend more points than the balance and leaves the ledger unchanged', async () => {
+      const repo = await createRepo();
+      await repo.append(makeEntry({ id: 'a', amount: 100 }));
+
+      await expect(
+        repo.append(makeEntry({ id: 'b', amount: -101, kind: 'prediction_stake' })),
+      ).rejects.toThrow(InsufficientPointsError);
+
+      expect(await repo.getBalance('u1')).toBe(100);
+      expect((await repo.listByUser('u1')).map((e) => e.id)).toEqual(['a']);
+    });
+
+    test('allows spending exactly the whole balance', async () => {
+      const repo = await createRepo();
+      await repo.append(makeEntry({ id: 'a', amount: 100 }));
+
+      await repo.append(makeEntry({ id: 'b', amount: -100, kind: 'prediction_stake' }));
+
+      expect(await repo.getBalance('u1')).toBe(0);
+    });
+
+    test('a user without points cannot spend, even if other users have some', async () => {
+      const repo = await createRepo();
+      await repo.append(makeEntry({ id: 'a', userId: 'rich', amount: 500 }));
+
+      await expect(
+        repo.append(makeEntry({ id: 'b', userId: 'poor', amount: -1, kind: 'prediction_stake' })),
+      ).rejects.toThrow(InsufficientPointsError);
+    });
+
+    test('earning points is always allowed, also after spending', async () => {
+      const repo = await createRepo();
+      await repo.append(makeEntry({ id: 'a', amount: 10 }));
+      await repo.append(makeEntry({ id: 'b', amount: -10, kind: 'prediction_stake' }));
+
+      await repo.append(makeEntry({ id: 'c', amount: 40, kind: 'prediction_payout' }));
+
+      expect(await repo.getBalance('u1')).toBe(40);
     });
 
     test('rejects a duplicate entry id', async () => {
