@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
+import { Icon } from '../../components/Icon';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
@@ -8,7 +9,14 @@ import type { LedgerEntry } from '../../domain/ledger';
 import { formatDateTime, formatPoints, formatSignedPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, spacing, typography } from '../../theme';
+import {
+  iconSizes,
+  lightColors as colors,
+  MIN_TOUCH_TARGET,
+  radii,
+  spacing,
+  typography,
+} from '../../theme';
 import { MyPredictions } from '../predictions/MyPredictions';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
@@ -56,9 +64,11 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
   );
   const { state, reload } = useLoad(load, refreshKey);
 
-  if (state.status === 'loading') return <Message text={ru.wallet.loading} />;
+  if (state.status === 'loading') return <Message light text={ru.wallet.loading} />;
   if (state.status === 'error') {
-    return <Message text={ru.wallet.error} action={{ label: ru.wallet.retry, run: reload }} />;
+    return (
+      <Message light text={ru.wallet.error} action={{ label: ru.wallet.retry, run: reload }} />
+    );
   }
 
   const { balance, entries } = state.data;
@@ -76,7 +86,12 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
             {ru.wallet.title}
           </Text>
           <View style={styles.card}>
-            <Text style={styles.cardLabel}>{ru.wallet.balanceLabel}</Text>
+            <View style={styles.cardHead}>
+              <View style={styles.sparkBadge}>
+                <Icon name="sparkles" size={iconSizes.md} color={colors.accentSoftText} />
+              </View>
+              <Text style={styles.cardLabel}>{ru.wallet.balanceLabel}</Text>
+            </View>
             <Text
               testID="wallet-balance"
               style={styles.balance}
@@ -106,6 +121,15 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     borderRadius: spacing.md,
     backgroundColor: colors.surface,
+  },
+  cardHead: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  sparkBadge: {
+    width: MIN_TOUCH_TARGET,
+    height: MIN_TOUCH_TARGET,
+    borderRadius: radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.accentSoft,
   },
   cardLabel: { ...typography.caption, color: colors.textMuted },
   balance: { fontSize: 44, fontWeight: '700', color: colors.text },

@@ -14,7 +14,7 @@ import {
 } from '../theme';
 
 /** Screens that are still dark; the strip under the pill matches the screen above it. */
-const DARK_SCREENS: ReadonlySet<string> = new Set(['index', 'wallet']);
+const DARK_SCREENS: ReadonlySet<string> = new Set(['index']);
 
 const LABEL_FADE_MS = 180;
 const LABEL_MAX_WIDTH = 72;

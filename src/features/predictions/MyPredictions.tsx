@@ -6,7 +6,7 @@ import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile 
 import { formatPoints, formatSignedPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, radii, spacing, typography } from '../../theme';
+import { lightColors as colors, radii, spacing, typography } from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { loadMyPredictions, type PredictionView } from './predictionService';
