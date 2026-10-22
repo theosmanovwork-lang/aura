@@ -42,3 +42,4 @@ yarn-error.*
 
 # local env files (never commit secrets)
 .env
+coverage/
