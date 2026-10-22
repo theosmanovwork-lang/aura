@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: spacing.sm,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.primary,
     overflow: 'hidden',
   },
   title: { ...typography.body, fontWeight: '700', color: colors.text },

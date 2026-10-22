@@ -58,7 +58,7 @@ export function RepositoriesProvider({ children, repositories, open = openReposi
         </>
       ) : (
         <>
-          <ActivityIndicator color={colors.accent} />
+          <ActivityIndicator color={colors.primaryText} />
           <Text style={styles.text}>{ru.app.loading}</Text>
         </>
       )}
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: spacing.sm,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.primary,
   },
   buttonText: { ...typography.body, color: colors.text },
 });

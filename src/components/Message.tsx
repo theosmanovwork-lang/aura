@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: spacing.sm,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.primary,
   },
   buttonText: { ...typography.body, color: colors.text },
 });
