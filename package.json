@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "check": "npm run lint && npm run typecheck && npm test",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@expo/metro-runtime": "~58.0.15",
@@ -44,6 +45,14 @@
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}",
       "app/**/*.{ts,tsx}"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 80,
+        "statements": 80,
+        "functions": 80,
+        "branches": 80
+      }
+    }
   }
 }
