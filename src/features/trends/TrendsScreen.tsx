@@ -35,8 +35,17 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
       contentContainerStyle={styles.content}
       data={state.data}
       keyExtractor={(row) => row.trend.id}
-      renderItem={({ item }) => <TrendRow summary={item} onPress={onOpenTrend} />}
-      ListHeaderComponent={<Text style={styles.title}>{ru.trends.title}</Text>}
+      renderItem={({ item, index }) => (
+        <TrendRow summary={item} rank={index + 1} onPress={onOpenTrend} />
+      )}
+      ListHeaderComponent={
+        <View style={styles.header}>
+          <Text style={styles.title} accessibilityRole="header">
+            {ru.trends.title}
+          </Text>
+          <Text style={styles.subtitle}>{ru.trends.subtitle}</Text>
+        </View>
+      }
       ListFooterComponent={<Text style={styles.disclaimer}>{ru.trends.disclaimer}</Text>}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
     />
@@ -45,8 +54,10 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
 
 const styles = StyleSheet.create({
   list: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.md, paddingTop: spacing.xl },
-  title: { ...typography.title, color: colors.text, marginBottom: spacing.md },
+  content: { padding: spacing.gutter, paddingTop: spacing.xl },
+  header: { gap: spacing.xs, marginBottom: spacing.md },
+  title: { ...typography.title, color: colors.text },
+  subtitle: { ...typography.body, color: colors.textMuted },
   separator: { height: spacing.sm },
   disclaimer: {
     ...typography.caption,

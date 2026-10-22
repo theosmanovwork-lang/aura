@@ -18,6 +18,8 @@ export const colors = {
   primary: '#4F46E5',
   primaryPressed: '#4338CA',
   primaryText: '#A5B4FC',
+  /** Bars of the trend charts: light enough for 3:1 against a card. */
+  chartBar: '#6366F1',
 
   // Accent: gold. Highlights, the active tab, key numbers and the sparks currency.
   accent: '#FBBF24',
@@ -28,6 +30,8 @@ export const colors = {
   // Meaning
   positive: '#34D399',
   negative: '#FB7185',
+  positiveSoft: 'rgba(52, 211, 153, 0.16)',
+  negativeSoft: 'rgba(251, 113, 133, 0.16)',
   like: '#F472B6',
 
   // Layers over video

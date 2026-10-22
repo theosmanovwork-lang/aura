@@ -31,6 +31,6 @@ export function BarChart({ values, height }: BarChartProps) {
 
 const styles = StyleSheet.create({
   chart: { flexDirection: 'row', alignItems: 'flex-end', gap: BAR_GAP },
-  bar: { flex: 1, borderRadius: 2, backgroundColor: colors.border },
+  bar: { flex: 1, borderRadius: 2, backgroundColor: colors.chartBar },
   lastBar: { backgroundColor: colors.accent },
 });

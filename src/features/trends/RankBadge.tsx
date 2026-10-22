@@ -1,0 +1,40 @@
+import { StyleSheet, Text, View } from 'react-native';
+
+import { colors, radii, typography } from '../../theme';
+
+const BADGE_SIZE = 28;
+/** The number stays inside the circle even when the system text size is very large. */
+const MAX_FONT_SCALE = 1.3;
+
+type RankBadgeProps = Readonly<{ rank: number; trendId: string }>;
+
+/** The place of a wave in the list. Decoration only: screen readers get the order from the list. */
+export function RankBadge({ rank, trendId }: RankBadgeProps) {
+  const first = rank === 1;
+  return (
+    <View
+      testID={`trend-rank-${trendId}`}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={[styles.badge, { backgroundColor: first ? colors.accent : colors.surfaceRaised }]}
+    >
+      <Text
+        maxFontSizeMultiplier={MAX_FONT_SCALE}
+        style={[styles.rank, { color: first ? colors.onAccent : colors.textMuted }]}
+      >
+        {rank}
+      </Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  badge: {
+    minWidth: BADGE_SIZE,
+    minHeight: BADGE_SIZE,
+    borderRadius: radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rank: { ...typography.caption, fontWeight: '700' },
+});

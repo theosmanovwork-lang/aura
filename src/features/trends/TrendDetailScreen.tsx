@@ -1,18 +1,20 @@
 import { useCallback } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { Icon } from '../../components/Icon';
 import { Message } from '../../components/Message';
 import { NotFoundError } from '../../data/repositories';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { countLabel, formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, spacing, typography } from '../../theme';
+import { colors, iconSizes, radii, spacing, typography } from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { BarChart } from './BarChart';
-import { describeGrowth, formatGrowth } from './format';
-import { growthColor } from './growthColor';
+import { GrowthPill } from './GrowthPill';
 import { loadTrendDetail } from './trendService';
+
+const CHART_HEIGHT = 140;
 
 type TrendDetailScreenProps = Readonly<{ trendId: string; now?: () => number }>;
 
@@ -35,28 +37,41 @@ export function TrendDetailScreen({ trendId, now = Date.now }: TrendDetailScreen
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <Text style={styles.name}>{summary.trend.name}</Text>
-      <View style={styles.figures}>
-        <View>
-          <Text style={styles.label}>{ru.trends.index}</Text>
-          <Text style={styles.score}>{formatCount(summary.score)}</Text>
-        </View>
-        <Text
-          style={[styles.growth, { color: growthColor(summary.growthPercent) }]}
-          accessibilityLabel={describeGrowth(summary.growthPercent)}
-        >
-          {formatGrowth(summary.growthPercent)}
+      <View testID="trend-hero" style={styles.hero}>
+        <Text style={styles.name} accessibilityRole="header">
+          {summary.trend.name}
         </Text>
+        <View style={styles.figures}>
+          <View>
+            <Text style={styles.label}>{ru.trends.index}</Text>
+            <Text style={styles.score}>{formatCount(summary.score)}</Text>
+          </View>
+          <GrowthPill percent={summary.growthPercent} trendId={summary.trend.id} large />
+        </View>
       </View>
 
-      <Text style={styles.section}>{ru.trends.historyTitle}</Text>
-      <BarChart values={summary.history} height={140} />
+      <View testID="trend-chart-card" style={styles.card}>
+        <Text style={styles.section} accessibilityRole="header">
+          {ru.trends.historyTitle}
+        </Text>
+        <BarChart values={summary.history} height={CHART_HEIGHT} />
+      </View>
 
-      <Text style={styles.section}>{ru.trends.videosTitle}</Text>
-      <Text style={styles.label}>{countLabel(summary.videoCount, ru.trends.videos)}</Text>
+      <View style={styles.videosHeader}>
+        <Text style={styles.section} accessibilityRole="header">
+          {ru.trends.videosTitle}
+        </Text>
+        <Text style={styles.label}>{countLabel(summary.videoCount, ru.trends.videos)}</Text>
+      </View>
       {videos.length === 0 ? <Text style={styles.label}>{ru.trends.noVideos}</Text> : null}
       {videos.map((video) => (
-        <View key={video.id} style={styles.video}>
+        <View key={video.id} testID={`trend-video-${video.id}`} style={styles.video}>
+          <Icon
+            testID={`trend-video-icon-${video.id}`}
+            name="videocam-outline"
+            size={iconSizes.lg}
+            color={colors.primaryText}
+          />
           <Text style={styles.videoTitle}>{video.title}</Text>
         </View>
       ))}
@@ -68,15 +83,34 @@ export function TrendDetailScreen({ trendId, now = Date.now }: TrendDetailScreen
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.md, gap: spacing.md },
+  content: { padding: spacing.gutter, gap: spacing.md },
+  hero: {
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radii.xl,
+    backgroundColor: colors.surface,
+  },
   name: { ...typography.title, color: colors.text },
   figures: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   label: { ...typography.caption, color: colors.textMuted },
-  score: { ...typography.title, color: colors.text },
-  growth: { ...typography.title },
-  section: { ...typography.body, fontWeight: '700', color: colors.text, marginTop: spacing.md },
-  video: { padding: spacing.md, borderRadius: spacing.sm, backgroundColor: colors.surface },
-  videoTitle: { ...typography.body, color: colors.text },
+  score: { ...typography.display, color: colors.text },
+  card: {
+    gap: spacing.md,
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
+  },
+  section: { ...typography.heading, color: colors.text },
+  videosHeader: { gap: spacing.xxs, marginTop: spacing.sm },
+  video: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+  },
+  videoTitle: { ...typography.body, flex: 1, color: colors.text },
   disclaimer: {
     ...typography.caption,
     color: colors.textMuted,
