@@ -9,10 +9,15 @@ export const ru = {
     wallet: 'Искры',
     profile: 'Профиль',
   },
+  a11y: {
+    /** Spoken name of a tab: «Раздел Лента, 1 из 4». */
+    tab: 'Раздел {title}, {position} из {total}',
+  },
   app: {
     loading: 'Загрузка…',
     storageError: 'Не удалось открыть данные приложения',
     retry: 'Повторить',
+    crash: 'Что-то пошло не так. Попробуйте ещё раз',
   },
   feed: {
     loading: 'Загружаем ленту…',

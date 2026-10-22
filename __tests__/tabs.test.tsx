@@ -31,7 +31,7 @@ const routes = {
   'trend/[id]': TrendDetailRoute,
 };
 
-const getTabs = () => screen.findAllByRole('button', { name: /, tab, \d of \d$/ });
+const getTabs = () => screen.findAllByRole('button', { name: /^Раздел .+, \d из \d$/ });
 const labelOf = (tab: { props: { accessibilityLabel?: string } }) =>
   String(tab.props.accessibilityLabel ?? '');
 
@@ -52,7 +52,7 @@ describe('bottom tabs', () => {
     const names = (await getTabs()).map(labelOf);
     expect(names).toHaveLength(4);
     for (const label of Object.values(ru.tabs)) {
-      expect(names.some((name) => name.startsWith(`${label},`))).toBe(true);
+      expect(names.some((name) => name.startsWith(`Раздел ${label},`))).toBe(true);
     }
   });
 
@@ -74,7 +74,7 @@ describe('bottom tabs', () => {
       [ru.tabs.feed, NEWEST_TITLE],
     ];
     for (const [tabLabel, subtitle] of steps) {
-      const tab = (await getTabs()).find((t) => labelOf(t).startsWith(`${tabLabel},`));
+      const tab = (await getTabs()).find((t) => labelOf(t).startsWith(`Раздел ${tabLabel},`));
       expect(tab).toBeDefined();
       await fireEvent.press(tab!);
 
@@ -91,7 +91,7 @@ describe('bottom tabs', () => {
     player.play.mockClear();
 
     const find = async (label: string) =>
-      (await getTabs()).find((t) => labelOf(t).startsWith(`${label},`))!;
+      (await getTabs()).find((t) => labelOf(t).startsWith(`Раздел ${label},`))!;
     await fireEvent.press(await find(ru.tabs.trends));
     await screen.findByText(seed.trends[0]!.name);
     expect(player.pause).toHaveBeenCalled();
@@ -103,7 +103,9 @@ describe('bottom tabs', () => {
   test('opens the details of a wave from the list', async () => {
     await renderRouter(routes);
     await giveFeedASize();
-    const trendsTab = (await getTabs()).find((t) => labelOf(t).startsWith(`${ru.tabs.trends},`))!;
+    const trendsTab = (await getTabs()).find((t) =>
+      labelOf(t).startsWith(`Раздел ${ru.tabs.trends},`),
+    )!;
     await fireEvent.press(trendsTab);
 
     await fireEvent.press(await screen.findByLabelText(new RegExp(`^${seed.trends[0]!.name},`)));

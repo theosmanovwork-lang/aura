@@ -55,7 +55,7 @@ describe('floating tab bar', () => {
 
   test('pressing a tab opens it and moves the name there', async () => {
     await renderRouter(routes);
-    const wallet = await screen.findByRole('button', { name: `${ru.tabs.wallet}, tab, 3 of 4` });
+    const wallet = await screen.findByRole('button', { name: `Раздел ${ru.tabs.wallet}, 3 из 4` });
 
     await fireEvent.press(wallet);
 
@@ -65,8 +65,8 @@ describe('floating tab bar', () => {
 
   test('the open tab reports itself as selected to screen readers', async () => {
     await renderRouter(routes);
-    const feed = await screen.findByRole('button', { name: `${ru.tabs.feed}, tab, 1 of 4` });
-    const trends = screen.getByRole('button', { name: `${ru.tabs.trends}, tab, 2 of 4` });
+    const feed = await screen.findByRole('button', { name: `Раздел ${ru.tabs.feed}, 1 из 4` });
+    const trends = screen.getByRole('button', { name: `Раздел ${ru.tabs.trends}, 2 из 4` });
 
     expect(feed.props.accessibilityState?.selected).toBe(true);
     expect(trends.props.accessibilityState?.selected).toBe(false);
@@ -106,7 +106,7 @@ describe('floating tab bar motion and presses', () => {
 
   test('pressing the open tab keeps everything as it is', async () => {
     await renderRouter(routes);
-    const feed = await screen.findByRole('button', { name: `${ru.tabs.feed}, tab, 1 of 4` });
+    const feed = await screen.findByRole('button', { name: `Раздел ${ru.tabs.feed}, 1 из 4` });
 
     await fireEvent.press(feed);
 

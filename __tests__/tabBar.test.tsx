@@ -56,9 +56,9 @@ describe('bottom tab bar icons', () => {
 
   test('opening another tab fills its icon and outlines the previous one', async () => {
     await renderRouter(routes);
-    const tabs = await screen.findAllByRole('button', { name: /, tab, \d of \d$/ });
+    const tabs = await screen.findAllByRole('button', { name: /^Раздел .+, \d из \d$/ });
     const wallet = tabs.find((t) =>
-      String(t.props.accessibilityLabel).startsWith(`${ru.tabs.wallet},`),
+      String(t.props.accessibilityLabel).startsWith(`Раздел ${ru.tabs.wallet},`),
     )!;
 
     await fireEvent.press(wallet);
@@ -73,12 +73,12 @@ describe('bottom tab bar icons', () => {
     const icon = await screen.findByTestId('tab-icon-home', { hidden: true });
 
     expect(icon.props.accessibilityElementsHidden).toBe(true);
-    const tabs = await screen.findAllByRole('button', { name: /, tab, \d of \d$/ });
+    const tabs = await screen.findAllByRole('button', { name: /^Раздел .+, \d из \d$/ });
     expect(tabs.map((t) => t.props.accessibilityLabel)).toEqual([
-      'Лента, tab, 1 of 4',
-      'Волны, tab, 2 of 4',
-      'Искры, tab, 3 of 4',
-      'Профиль, tab, 4 of 4',
+      'Раздел Лента, 1 из 4',
+      'Раздел Волны, 2 из 4',
+      'Раздел Искры, 3 из 4',
+      'Раздел Профиль, 4 из 4',
     ]);
   });
 });

@@ -3,6 +3,7 @@ import type { BottomTabBarProps } from 'expo-router/build/layouts/Tabs';
 import { useEffect, useState } from 'react';
 import { AccessibilityInfo, Animated, Pressable, StyleSheet, View } from 'react-native';
 
+import { ru } from '../i18n/ru';
 import {
   colors,
   lightColors,
@@ -19,6 +20,12 @@ const DARK_SCREENS: ReadonlySet<string> = new Set(['index']);
 const LABEL_FADE_MS = 180;
 const LABEL_MAX_WIDTH = 72;
 const MAX_FONT_SCALE = 1.2;
+
+const spokenName = (title: string, position: number, total: number): string =>
+  ru.a11y.tab
+    .replace('{title}', title)
+    .replace('{position}', String(position))
+    .replace('{total}', String(total));
 
 type TabLabelProps = Readonly<{ name: string; text: string }>;
 
@@ -97,7 +104,7 @@ export function FloatingTabBar({
               key={route.key}
               testID={`tab-item-${route.name}`}
               accessibilityRole="button"
-              accessibilityLabel={`${title}, tab, ${index + 1} of ${count}`}
+              accessibilityLabel={spokenName(title, index + 1, count)}
               accessibilityState={{ selected: focused }}
               onPress={onPress}
               style={[styles.item, focused && styles.itemOpen]}
