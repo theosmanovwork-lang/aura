@@ -33,6 +33,8 @@ export const colors = {
   // Layers over video
   overlay: 'rgba(14, 11, 26, 0.55)',
   scrimClear: 'rgba(14, 11, 26, 0)',
+  scrimMid: 'rgba(14, 11, 26, 0.55)',
   scrimTop: 'rgba(14, 11, 26, 0.55)',
   scrimBottom: 'rgba(14, 11, 26, 0.88)',
+  textShadow: 'rgba(14, 11, 26, 0.6)',
 } as const;

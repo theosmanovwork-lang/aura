@@ -1,14 +1,25 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { countLabel, formatCount } from '../../i18n/plural';
+import { Icon } from '../../components/Icon';
 import { ru } from '../../i18n/ru';
-import { colors, spacing, typography } from '../../theme';
+import {
+  colors,
+  iconSizes,
+  MIN_TOUCH_TARGET,
+  PAUSE_BUTTON_SIZE,
+  radii,
+  scrim,
+  spacing,
+  typography,
+} from '../../theme';
+import { ActionRail } from './ActionRail';
 import type { FeedItem } from './feedService';
 import { resolveVideoSource, type PlayableSource } from './videoSources';
 
-/** Decorative symbols: screen readers use the button label instead. */
+/** Decorative layers: screen readers use the button label instead. */
 const HIDDEN_FROM_READERS = {
   accessibilityElementsHidden: true,
   importantForAccessibility: 'no-hide-descendants',
@@ -69,69 +80,100 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
         onPress={() => setPaused((current) => !current)}
         style={StyleSheet.absoluteFill}
       />
+
+      <LinearGradient
+        testID="scrim-top"
+        pointerEvents="none"
+        colors={[colors.scrimTop, colors.scrimClear]}
+        style={styles.scrimTop}
+      />
+      <LinearGradient
+        testID="scrim-bottom"
+        pointerEvents="none"
+        colors={[colors.scrimClear, colors.scrimMid, colors.scrimBottom]}
+        locations={[...scrim.locations]}
+        style={styles.scrimBottom}
+      />
+
       {paused ? (
-        <Text style={styles.pauseGlyph} {...HIDDEN_FROM_READERS}>
-          ▶
-        </Text>
+        <View
+          testID="pause-indicator"
+          style={styles.pause}
+          pointerEvents="none"
+          {...HIDDEN_FROM_READERS}
+        >
+          <Icon name="play" size={iconSizes.xl} color={colors.text} />
+        </View>
       ) : null}
 
-      <View style={styles.info} pointerEvents="none">
-        <View style={styles.badges}>
-          {video.isAiGenerated ? <Text style={styles.badge}>{ru.feed.aiBadge}</Text> : null}
-          <Text style={styles.badge}>{video.ageRating}</Text>
+      <View testID="video-info" style={styles.info} pointerEvents="none">
+        <View style={styles.chips}>
+          {video.isAiGenerated ? (
+            <View
+              testID="chip-ai"
+              accessible
+              accessibilityLabel={ru.feed.aiBadge}
+              style={[styles.chip, styles.chipAi]}
+            >
+              <Text style={styles.chipText}>{ru.feed.aiBadge}</Text>
+            </View>
+          ) : null}
+          <View
+            testID="chip-age"
+            accessible
+            accessibilityLabel={`${ru.feed.age} ${video.ageRating}`}
+            style={[styles.chip, styles.chipAge]}
+          >
+            <Text style={styles.chipText}>{video.ageRating}</Text>
+          </View>
         </View>
-        <Text style={styles.title}>{video.title}</Text>
-        <Text style={styles.stats}>{countLabel(video.viewCount, ru.feed.views)}</Text>
+        <Text style={styles.title} numberOfLines={2}>
+          {video.title}
+        </Text>
       </View>
 
-      <Pressable
-        testID="like-button"
-        accessibilityRole="button"
-        accessibilityLabel={liked ? ru.feed.unlike : ru.feed.like}
-        accessibilityState={{ selected: liked }}
-        accessibilityValue={{ text: formatCount(video.likeCount) }}
-        onPress={() => onToggleLike(video.id)}
-        style={styles.like}
-      >
-        <Text style={[styles.heart, liked && styles.heartActive]} {...HIDDEN_FROM_READERS}>
-          {liked ? '♥' : '♡'}
-        </Text>
-        <Text style={styles.likeCount}>{formatCount(video.likeCount)}</Text>
-      </Pressable>
+      <View style={styles.rail}>
+        <ActionRail
+          liked={liked}
+          likeCount={video.likeCount}
+          viewCount={video.viewCount}
+          onToggleLike={() => onToggleLike(video.id)}
+        />
+      </View>
     </View>
   );
 }
 
+const PAUSE_TOP = '42%';
+/** The info text stays clear of the action rail on the right. */
+const INFO_RIGHT_SPACE = MIN_TOUCH_TARGET + spacing.gutter * 2;
+
 const styles = StyleSheet.create({
   card: { backgroundColor: colors.background, justifyContent: 'flex-end' },
-  pauseGlyph: {
+  scrimTop: { position: 'absolute', top: 0, left: 0, right: 0, height: scrim.topHeight },
+  scrimBottom: { position: 'absolute', bottom: 0, left: 0, right: 0, height: scrim.bottomHeight },
+  pause: {
     position: 'absolute',
     alignSelf: 'center',
-    top: '45%',
-    fontSize: 56,
-    color: colors.text,
-    opacity: 0.85,
-  },
-  info: {
-    padding: spacing.md,
-    paddingRight: 88,
-    gap: spacing.xs,
+    top: PAUSE_TOP,
+    width: PAUSE_BUTTON_SIZE,
+    height: PAUSE_BUTTON_SIZE,
+    borderRadius: radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.overlay,
   },
-  badges: { flexDirection: 'row', gap: spacing.sm },
-  badge: {
-    ...typography.caption,
-    color: colors.text,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: spacing.sm,
-    backgroundColor: colors.primary,
-    overflow: 'hidden',
+  info: {
+    paddingLeft: spacing.gutter,
+    paddingRight: INFO_RIGHT_SPACE,
+    paddingBottom: spacing.lg,
+    gap: spacing.sm,
   },
-  title: { ...typography.body, fontWeight: '700', color: colors.text },
-  stats: { ...typography.caption, color: colors.textMuted },
-  like: { position: 'absolute', right: spacing.md, bottom: spacing.xl, alignItems: 'center' },
-  heart: { fontSize: 40, color: colors.text },
-  heartActive: { color: colors.like },
-  likeCount: { ...typography.caption, color: colors.text },
+  chips: { flexDirection: 'row', gap: spacing.sm },
+  chip: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, borderRadius: radii.sm },
+  chipAi: { backgroundColor: colors.primary },
+  chipAge: { borderWidth: 1, borderColor: colors.textMuted },
+  chipText: { ...typography.caption, color: colors.text },
+  title: { ...typography.bodyStrong, color: colors.text },
+  rail: { position: 'absolute', right: spacing.gutter, bottom: spacing.lg },
 });
