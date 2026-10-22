@@ -1,0 +1,8 @@
+node_modules
+dist
+.expo
+.claude
+coverage
+package-lock.json
+CLAUDE.md
+docs
