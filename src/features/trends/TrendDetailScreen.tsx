@@ -8,6 +8,7 @@ import { useRepositories } from '../../data/RepositoriesProvider';
 import { countLabel, formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
 import { colors, iconSizes, radii, spacing, typography } from '../../theme';
+import { PredictionPanel } from '../predictions/PredictionPanel';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { BarChart } from './BarChart';
@@ -56,6 +57,8 @@ export function TrendDetailScreen({ trendId, now = Date.now }: TrendDetailScreen
         </Text>
         <BarChart values={summary.history} height={CHART_HEIGHT} />
       </View>
+
+      <PredictionPanel trendId={summary.trend.id} now={now} />
 
       <View style={styles.videosHeader}>
         <Text style={styles.section} accessibilityRole="header">

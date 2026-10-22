@@ -1,6 +1,7 @@
 import type { Repositories } from '../../data/repositories';
 import { DuplicateKeyError } from '../../data/repositories';
 import { createLedgerEntry, type LedgerEntry } from '../../domain/ledger';
+import { settleDuePredictions } from '../predictions/settlement';
 
 /** Points every new user starts with. Virtual: they cannot be bought, withdrawn or exchanged. */
 export const WELCOME_BONUS_POINTS = 1000;
@@ -39,6 +40,9 @@ export async function loadWallet(
   now: number,
 ): Promise<WalletView> {
   await ensureWelcomeBonus(repos, userId, now);
+  // Predictions whose time is up are paid out first, so the balance is already up to date.
+  // If one cannot be closed right now the balance must still show; it is tried again next time.
+  await settleDuePredictions(repos, userId, now).catch(() => undefined);
   const entries = await repos.wallet.listByUser(userId);
   // The balance comes from the very entries that are shown, so the two can never disagree.
   const balance = entries.reduce((sum, entry) => sum + entry.amount, 0);

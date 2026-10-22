@@ -1,6 +1,7 @@
 import type { Repositories } from '../../data/repositories';
 import { NotFoundError } from '../../data/repositories';
 import type { Video } from '../../domain/video';
+import { runInOrder } from '../runInOrder';
 
 export type FeedItem = Readonly<{ video: Video; liked: boolean }>;
 
@@ -12,22 +13,6 @@ export async function loadFeed(repos: Repositories, userId: string): Promise<Fee
   ]);
   const liked = new Set(likedIds);
   return videos.map((video) => ({ video, liked: liked.has(video.id) }));
-}
-
-const queues = new Map<string, Promise<unknown>>();
-
-/** Runs tasks with the same key one after another, so quick repeated taps cannot interleave. */
-function runInOrder<T>(key: string, task: () => Promise<T>): Promise<T> {
-  const result = (queues.get(key) ?? Promise.resolve()).then(task, task);
-  const tail = result.then(
-    () => undefined,
-    () => undefined,
-  );
-  queues.set(key, tail);
-  void tail.then(() => {
-    if (queues.get(key) === tail) queues.delete(key);
-  });
-  return result;
 }
 
 async function toggleLikeNow(

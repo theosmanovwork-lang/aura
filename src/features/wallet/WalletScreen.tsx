@@ -9,6 +9,7 @@ import { formatDateTime, formatPoints, formatSignedPoints } from '../../i18n/for
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
 import { colors, spacing, typography } from '../../theme';
+import { MyPredictions } from '../predictions/MyPredictions';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { loadWallet } from './walletService';
@@ -84,6 +85,7 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
               {formatPoints(balance)}
             </Text>
           </View>
+          <MyPredictions now={now} refreshKey={refreshKey} />
           <Text style={styles.section} accessibilityRole="header">
             {ru.wallet.historyTitle}
           </Text>
