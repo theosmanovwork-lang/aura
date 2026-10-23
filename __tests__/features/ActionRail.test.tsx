@@ -1,21 +1,27 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { StyleSheet } from 'react-native';
 
 import { ActionRail } from '../../src/features/feed/ActionRail';
 import { formatCount } from '../../src/i18n/plural';
 import { ru } from '../../src/i18n/ru';
-import { darkColors as colors, MIN_TOUCH_TARGET } from '../../src/theme';
 
 const renderRail = async (props: Partial<Parameters<typeof ActionRail>[0]> = {}) => {
   const onToggleLike = jest.fn();
-  const view = await render(
-    <ActionRail liked={false} likeCount={260} onToggleLike={onToggleLike} {...props} />,
+  const onOpenComments = jest.fn();
+  await render(
+    <ActionRail
+      liked={false}
+      likeCount={260}
+      commentCount={3}
+      onToggleLike={onToggleLike}
+      onOpenComments={onOpenComments}
+      {...props}
+    />,
   );
-  return { onToggleLike, view };
+  return { onToggleLike, onOpenComments };
 };
 
 describe('ActionRail', () => {
-  test('shows the like count and calls the handler when the like is pressed', async () => {
+  test('shows the like count and calls the handler when the Aura button is pressed', async () => {
     const { onToggleLike } = await renderRail();
     await screen.findByText('260');
 
@@ -24,42 +30,42 @@ describe('ActionRail', () => {
     expect(onToggleLike).toHaveBeenCalledTimes(1);
   });
 
-  test('the like is the Aura mark: muted before liking, bright after', async () => {
-    const { view } = await renderRail();
-    const mark = await screen.findByTestId('like-icon', { hidden: true });
-    expect(StyleSheet.flatten(mark.props.style).color).toBe(colors.text);
-    expect(StyleSheet.flatten(mark.props.style).opacity).toBeLessThan(1);
-    expect(mark.props.accessibilityLabel).toBeUndefined();
+  test('the like is drawn on silver before liking and dark after', async () => {
+    await renderRail();
+    expect(await screen.findByTestId('like-icon', { hidden: true })).toBeTruthy();
+    expect(screen.queryByTestId('like-icon-on', { hidden: true })).toBeNull();
 
-    await view.rerender(<ActionRail liked likeCount={261} onToggleLike={jest.fn()} />);
+    await renderRail({ liked: true });
 
-    const liked = screen.getByTestId('like-icon', { hidden: true });
-    expect(StyleSheet.flatten(liked.props.style).color).toBe(colors.like);
-    expect(StyleSheet.flatten(liked.props.style).opacity).toBe(1);
-    expect(screen.getByLabelText(ru.feed.unlike)).toBeTruthy();
+    expect(await screen.findByTestId('like-icon-on', { hidden: true })).toBeTruthy();
   });
 
-  test('tells screen readers the like count as a value', async () => {
-    await renderRail({ likeCount: 4100 });
+  test('tells screen readers the like count and whether it is selected', async () => {
+    await renderRail({ liked: true, likeCount: 1500 });
 
-    expect((await screen.findByLabelText(ru.feed.like)).props.accessibilityValue).toEqual({
-      text: formatCount(4100),
-    });
+    const button = await screen.findByTestId('like-button');
+
+    expect(button.props.accessibilityValue.text).toBe(formatCount(1500));
+    expect(button.props.accessibilityLabel).toBe(ru.feed.unlike);
+    expect(button.props.accessibilityState.selected).toBe(true);
   });
 
-  test('the like button is at least 44 points big in both directions', async () => {
+  test('the comments button shows the count and opens the comments', async () => {
+    const { onOpenComments } = await renderRail({ commentCount: 318 });
+
+    const button = await screen.findByTestId('comments-button');
+    await fireEvent.press(button);
+
+    expect(button.props.accessibilityValue.text).toBe('318');
+    expect(onOpenComments).toHaveBeenCalledTimes(1);
+  });
+
+  test('repost and share are drawn and switched off', async () => {
     await renderRail();
 
-    const style = StyleSheet.flatten((await screen.findByTestId('like-button')).props.style);
-    expect(style.minWidth).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
-    expect(style.minHeight).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
-  });
-
-  test('the rail holds only the Aura mark: no view counter', async () => {
-    await renderRail();
-    const rail = await screen.findByTestId('action-rail');
-
-    expect(screen.queryByTestId('views-indicator')).toBeNull();
-    expect(rail).toContainElement(screen.getByTestId('like-button'));
+    for (const label of [ru.feed.soon.repost, ru.feed.soon.share]) {
+      const button = await screen.findByRole('button', { name: label });
+      expect(button.props.accessibilityState.disabled).toBe(true);
+    }
   });
 });

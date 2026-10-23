@@ -1,0 +1,173 @@
+import { useState } from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+
+import { AuraCoin, AuraGlyph } from '../../components/AuraIcon';
+import { AuraText } from '../../components/AuraText';
+import { Glyph } from '../../components/Glyph';
+import { SilverView } from '../../components/SilverView';
+import { useTabScreenContent } from '../../components/useTabScreenContent';
+import { demoChests } from '../../data/seed/demoCommunity';
+import { formatPoints } from '../../i18n/format';
+import { countLabel } from '../../i18n/plural';
+import { ru } from '../../i18n/ru';
+import { fontFamilies, makeStyles, silver } from '../../theme';
+import { useBalance } from '../wallet/useBalance';
+import { CollectionGrid } from './CollectionGrid';
+import { QuestsCard } from './QuestsCard';
+
+type CardsScreenProps = Readonly<{
+  /** Change it to read the balance again (for example every time the tab comes into view). */
+  refreshKey?: number;
+}>;
+
+export function CardsScreen({ refreshKey = 0 }: CardsScreenProps) {
+  const styles = useStyles();
+  const content = useTabScreenContent(styles.content);
+  const balance = useBalance(refreshKey);
+  const [claimed, setClaimed] = useState(false);
+  const chests = countLabel(demoChests, ru.cards.chests);
+
+  return (
+    <ScrollView testID="cards-scroll" style={styles.page} contentContainerStyle={content}>
+      <View style={styles.header}>
+        <Text accessibilityRole="header" style={styles.title}>
+          {ru.cards.title}
+        </Text>
+        <Pressable
+          testID="open-chests"
+          accessibilityRole="button"
+          accessibilityLabel={ru.cards.openChests.replace('{count}', chests)}
+          style={styles.chests}
+        >
+          <SilverView style={styles.chestIcon}>
+            <Glyph name="chest" size={18} color="#1A1A1A" strokeWidth={2.2} />
+            <View style={styles.chestBadge}>
+              <Text style={styles.chestBadgeText}>{demoChests}</Text>
+            </View>
+          </SilverView>
+          <Text style={styles.chestsText}>{ru.cards.openChests.replace('{count}', chests)}</Text>
+        </Pressable>
+      </View>
+
+      <View testID="balance-card" style={styles.balanceCard}>
+        <View style={styles.bigGlyph}>
+          <AuraGlyph size={160} color={silver.coin} />
+        </View>
+        <Text style={styles.balanceLabel}>{ru.cards.balance}</Text>
+        <View style={styles.balanceRow}>
+          <AuraCoin size={34} tone="light" />
+          <AuraText testID="balance-value" style={styles.balance}>
+            {balance === null ? '—' : `${formatPoints(balance)} ${ru.wallet.sparks[0]}`}
+          </AuraText>
+        </View>
+        <Text style={styles.disclaimer}>{ru.wallet.disclaimer}</Text>
+      </View>
+
+      <QuestsCard claimed={claimed} onClaim={() => setClaimed(true)} />
+      <CollectionGrid />
+
+      <View style={styles.hint}>
+        <View style={styles.hintIcon}>
+          <Glyph name="chest" size={22} color="#4A4F57" strokeWidth={2.2} />
+        </View>
+        <View style={styles.hintTexts}>
+          <Text style={styles.hintTitle}>{ru.cards.hint}</Text>
+          <Text style={styles.hintText}>{ru.cards.hintMore}</Text>
+        </View>
+      </View>
+    </ScrollView>
+  );
+}
+
+const useStyles = makeStyles((colors) => ({
+  page: { flex: 1, backgroundColor: colors.background },
+  content: { paddingHorizontal: 16, gap: 12 },
+  header: {
+    height: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  title: {
+    fontFamily: fontFamilies.extrabold,
+    fontSize: 30,
+    letterSpacing: -0.9,
+    color: colors.text,
+  },
+  chests: {
+    height: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingLeft: 6,
+    paddingRight: 14,
+    borderRadius: 22,
+    backgroundColor: colors.primary,
+  },
+  chestIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chestBadge: {
+    position: 'absolute',
+    right: -4,
+    top: -4,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E5483A',
+  },
+  chestBadgeText: { fontFamily: fontFamilies.extrabold, fontSize: 10, color: '#FFFFFF' },
+  chestsText: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: colors.onPrimary },
+  balanceCard: {
+    overflow: 'hidden',
+    padding: 20,
+    borderRadius: 20,
+    gap: 6,
+    backgroundColor: colors.heroCard,
+  },
+  bigGlyph: { position: 'absolute', right: -40, top: -44, opacity: 0.14 },
+  balanceLabel: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.heroMuted },
+  balanceRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  balance: {
+    fontFamily: fontFamilies.displayHeavy,
+    fontSize: 30,
+    letterSpacing: -1,
+    color: colors.onHeroCard,
+  },
+  disclaimer: {
+    marginTop: 6,
+    fontFamily: fontFamilies.semibold,
+    fontSize: 12,
+    lineHeight: 16,
+    color: colors.heroMuted,
+  },
+  hint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 16,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: colors.fieldBorder,
+  },
+  hintIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surfaceMuted,
+  },
+  hintTexts: { flex: 1, gap: 2 },
+  hintTitle: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: colors.text },
+  hintText: { fontFamily: fontFamilies.semibold, fontSize: 12, color: colors.textMuted },
+}));

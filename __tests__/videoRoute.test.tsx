@@ -1,15 +1,6 @@
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
-import TabsLayout from '../app/(tabs)/_layout';
-import FeedTab from '../app/(tabs)/index';
-import ProfileTab from '../app/(tabs)/profile';
-import HubTab from '../app/(tabs)/hub';
-import TrendsTab from '../app/(tabs)/trends';
-import WalletTab from '../app/(tabs)/wallet';
-import RootLayout from '../app/_layout';
-import SettingsRoute from '../app/settings';
-import TrendDetailRoute from '../app/trend/[id]';
-import VideoRoute from '../app/video/[id]';
+import { routes } from '../test-utils/appRoutes';
 import { resetPlayers } from '../test-utils/expoVideoMock';
 
 jest.mock('expo-video', () => jest.requireActual('../test-utils/expoVideoMock'));
@@ -21,23 +12,10 @@ jest.mock('../src/data/openRepositories', () => ({
   },
 }));
 
-const routes = {
-  _layout: RootLayout,
-  '(tabs)/_layout': TabsLayout,
-  '(tabs)/index': FeedTab,
-  '(tabs)/trends': TrendsTab,
-  '(tabs)/hub': HubTab,
-  '(tabs)/wallet': WalletTab,
-  '(tabs)/profile': ProfileTab,
-  settings: SettingsRoute,
-  'trend/[id]': TrendDetailRoute,
-  'video/[id]': VideoRoute,
-};
-
 beforeEach(resetPlayers);
 
 describe('video page route', () => {
-  test('pressing the Aura plate in the feed opens the page of that video', async () => {
+  test('pressing the pool chip in the feed opens the page of that video', async () => {
     await renderRouter(routes);
     await fireEvent(await screen.findByTestId('feed-container'), 'layout', {
       nativeEvent: { layout: { x: 0, y: 0, width: 390, height: 700 } },

@@ -1,58 +1,69 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { Icon } from '../../components/Icon';
+import { Avatar } from '../../components/Avatar';
+import { Glyph } from '../../components/Glyph';
+import { SilverView } from '../../components/SilverView';
 import { ru } from '../../i18n/ru';
-import { makeStyles, radii, typography, useColors } from '../../theme';
+import { makeStyles } from '../../theme';
 
 const SIZE = 48;
-const BADGE = 20;
+const BADGE = 28;
 
-type AuthorAvatarProps = Readonly<{ name: string }>;
+type AuthorAvatarProps = Readonly<{
+  name: string;
+  following: boolean;
+  onToggleFollow: () => void;
+}>;
 
-/** The author's round avatar with a plus under it (follow); drawn, switched off until follows exist. */
-export function AuthorAvatar({ name }: AuthorAvatarProps) {
+/** The author's round avatar with a badge under it: «+» to follow, a check once followed. */
+export function AuthorAvatar({ name, following, onToggleFollow }: AuthorAvatarProps) {
   const styles = useStyles();
-  const colors = useColors();
+  const label = (following ? ru.feed.unfollow : ru.feed.follow).replace('{name}', name);
+  const badge = (
+    <Glyph name={following ? 'check' : 'plus'} size={12} color="#1A1A1A" strokeWidth={3.4} />
+  );
   return (
-    <Pressable
-      testID="author-avatar"
-      accessibilityRole="button"
-      accessibilityLabel={ru.feed.soon.follow}
-      accessibilityState={{ disabled: true }}
-      disabled
-      style={styles.wrap}
-    >
-      <View style={styles.circle}>
-        <Text style={styles.letter}>{name.slice(0, 1).toUpperCase()}</Text>
+    <View testID="author-avatar" style={styles.wrap}>
+      <View style={styles.ring}>
+        <Avatar initial={name.slice(0, 1).toUpperCase()} tone="brand" size={SIZE - 4} />
       </View>
-      <View style={styles.badge}>
-        <Icon name="add" size={14} color={colors.onAccent} />
-      </View>
-    </Pressable>
+      <Pressable
+        testID="follow-button"
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityState={{ selected: following }}
+        onPress={onToggleFollow}
+        style={styles.badgeHit}
+      >
+        {following ? (
+          <View style={[styles.badge, styles.badgeDone]}>{badge}</View>
+        ) : (
+          <SilverView style={styles.badge}>{badge}</SilverView>
+        )}
+      </Pressable>
+    </View>
   );
 }
 
-const useStyles = makeStyles((colors) => ({
-  wrap: { width: SIZE, height: SIZE + BADGE / 2, alignItems: 'center' },
-  circle: {
+const useStyles = makeStyles(() => ({
+  wrap: { width: 52, height: 60, alignItems: 'center' },
+  ring: {
     width: SIZE,
     height: SIZE,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.text,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.surfaceMuted,
+    borderRadius: SIZE / 2,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    overflow: 'hidden',
   },
-  letter: { ...typography.heading, color: colors.text },
+  badgeHit: { position: 'absolute', left: 12, top: 34, width: BADGE, height: BADGE },
   badge: {
-    position: 'absolute',
-    bottom: 0,
     width: BADGE,
     height: BADGE,
-    borderRadius: radii.pill,
+    borderRadius: BADGE / 2,
+    borderWidth: 2,
+    borderColor: '#1A1A1A',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.accent,
   },
+  badgeDone: { backgroundColor: '#FFFFFF' },
 }));

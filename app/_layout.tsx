@@ -1,18 +1,16 @@
+import { useFonts } from 'expo-font';
 import { Stack, usePathname } from 'expo-router';
 import { StatusBar } from 'react-native';
 
 import { RepositoriesProvider } from '../src/data/RepositoriesProvider';
 import { ru } from '../src/i18n/ru';
-import { ThemeProvider, typography, useColors, useScheme } from '../src/theme';
+import { fontAssets, fontFamilies, ThemeProvider, useColors, useScheme } from '../src/theme';
 
 export { AppErrorScreen as ErrorBoundary } from '../src/components/AppErrorScreen';
 
 const HEADER_TITLES = {
-  'trend/[id]': ru.trends.detailTitle,
   'video/[id]': ru.market.title,
   settings: ru.settings.title,
-  chats: ru.stubs.chats.title,
-  cards: ru.stubs.cards.title,
 } as const;
 
 function Screens() {
@@ -40,7 +38,7 @@ function Screens() {
               headerShadowVisible: false,
               headerStyle: { backgroundColor: colors.background },
               headerTintColor: colors.text,
-              headerTitleStyle: { fontWeight: typography.heading.fontWeight },
+              headerTitleStyle: { fontFamily: fontFamilies.extrabold },
             }}
           />
         ))}
@@ -50,6 +48,8 @@ function Screens() {
 }
 
 export default function RootLayout() {
+  // The app opens at once in the phone's font and switches when the fonts are ready (or stays if they fail).
+  useFonts(fontAssets);
   return (
     <ThemeProvider>
       <RepositoriesProvider>

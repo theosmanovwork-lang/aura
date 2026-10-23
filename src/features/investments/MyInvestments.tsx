@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
@@ -59,10 +59,12 @@ function Row({ view, onOpen }: Readonly<{ view: InvestmentView; onOpen?: (id: st
 type MyInvestmentsProps = Readonly<{
   refreshKey?: number;
   onOpenVideo?: (videoId: string) => void;
+  /** What to show when there is nothing yet; a plain line by default. */
+  renderEmpty?: () => ReactNode;
 }>;
 
 /** «Прошлые вложения»: every video the user put Aura into, with the result so far. */
-export function MyInvestments({ refreshKey = 0, onOpenVideo }: MyInvestmentsProps) {
+export function MyInvestments({ refreshKey = 0, onOpenVideo, renderEmpty }: MyInvestmentsProps) {
   const styles = useStyles();
   const repos = useRepositories();
   const load = useCallback(() => loadMyInvestments(repos, CURRENT_USER_ID), [repos]);
@@ -70,7 +72,13 @@ export function MyInvestments({ refreshKey = 0, onOpenVideo }: MyInvestmentsProp
 
   if (state.status === 'loading') return null;
   if (state.status === 'error') return <Text style={styles.caption}>{ru.investments.error}</Text>;
-  if (state.data.length === 0) return <Text style={styles.caption}>{ru.investments.empty}</Text>;
+  if (state.data.length === 0) {
+    return renderEmpty ? (
+      <>{renderEmpty()}</>
+    ) : (
+      <Text style={styles.caption}>{ru.investments.empty}</Text>
+    );
+  }
 
   return (
     <View style={styles.section}>

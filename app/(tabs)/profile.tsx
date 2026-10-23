@@ -12,6 +12,7 @@ export default function ProfileTab() {
       refreshKey={refreshKey}
       onOpenSettings={() => router.push('/settings')}
       onOpenVideo={(id) => router.push({ pathname: '/video/[id]', params: { id } })}
+      onOpenFeed={() => router.navigate('/')}
     />
   );
 }

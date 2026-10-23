@@ -8,7 +8,7 @@ import { ru } from '../../i18n/ru';
 import { makeStyles, spacing, ThemeProvider, typography } from '../../theme';
 import { CommentsSheet } from '../comments/CommentsSheet';
 import { FeedTopTabs } from './FeedTopTabs';
-import { SoonAction } from './SoonAction';
+import { TopButton } from './TopButton';
 import { pickActiveIndex, type ViewableItem } from './feedLogic';
 import { VideoCard } from './VideoCard';
 import { useFeed } from './useFeed';
@@ -104,9 +104,9 @@ function FeedContent({ focused = true, onOpenVideo }: FeedScreenProps) {
         style={[styles.topBar, { top: topInset }]}
         pointerEvents="box-none"
       >
-        <SoonAction testID="soon-add" icon="add" label={ru.feed.soon.add} />
+        <TopButton testID="soon-add" glyph="plus" label={ru.feed.soon.add} />
         <FeedTopTabs />
-        <SoonAction testID="soon-search" icon="search" label={ru.feed.soon.search} />
+        <TopButton testID="soon-search" glyph="search" label={ru.feed.soon.search} />
       </View>
       {/* The sheet is a normal page of text: it follows the phone's theme, not the video's. */}
       <ThemeProvider>

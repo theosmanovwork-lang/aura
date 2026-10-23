@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Button } from '../../components/Button';
+import { Glyph } from '../../components/Glyph';
 import { Message } from '../../components/Message';
 import { useBottomInset } from '../../components/useBottomInset';
 import { NotFoundError } from '../../data/repositories';
@@ -12,8 +13,7 @@ import { MAX_INVESTMENT_PER_VIDEO, MIN_INVESTMENT } from '../../domain/investmen
 import { videoPrice } from '../../domain/videoPrice';
 import { formatDateTime } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
-import { makeStyles, spacing, typography } from '../../theme';
-import { SoonAction } from '../feed/SoonAction';
+import { makeStyles, spacing, typography, useColors } from '../../theme';
 import { loadVideoMarket, type VideoMarket } from '../investments/investmentService';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
@@ -51,6 +51,7 @@ function changeOf(market: VideoMarket): { percent: number | null; label: string 
 
 function Header({ market }: Readonly<{ market: VideoMarket }>) {
   const styles = useStyles();
+  const colors = useColors();
   return (
     <View style={styles.header}>
       <View style={styles.titles}>
@@ -59,7 +60,16 @@ function Header({ market }: Readonly<{ market: VideoMarket }>) {
           {market.video.title}
         </Text>
       </View>
-      <SoonAction testID="market-share" icon="arrow-redo-outline" label={ru.market.actions.share} />
+      <Pressable
+        testID="market-share"
+        accessibilityRole="button"
+        accessibilityLabel={ru.market.actions.share}
+        accessibilityState={{ disabled: true }}
+        disabled
+        style={styles.share}
+      >
+        <Glyph name="share" size={24} color={colors.textMuted} />
+      </Pressable>
     </View>
   );
 }
@@ -204,6 +214,7 @@ export function VideoMarketScreen({
 const useStyles = makeStyles((colors) => ({
   screen: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.gutter, gap: spacing.md },
+  share: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', opacity: 0.85 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   titles: { flex: 1, gap: spacing.xxs },
   author: { ...typography.caption, color: colors.textMuted },

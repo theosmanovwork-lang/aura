@@ -82,17 +82,23 @@ describe('palettes', () => {
     }
   });
 
-  test('white page in the light palette, black page in the dark one', () => {
-    expect(lightColors.background).toBe('#FFFFFF');
-    expect(darkColors.background).toBe('#000000');
+  test('a warm cream page with white cards in the light palette, a warm dark page in the dark one', () => {
+    expect(lightColors.background).toBe('#F5F1E8');
+    expect(lightColors.surface).toBe('#FFFFFF');
+    expect(darkColors.background).toBe('#121110');
   });
 
-  test('the main button is blue in both palettes with white text on it', () => {
+  test('the main button is the ink colour with an opposite text in both palettes', () => {
+    expect(lightColors.primary).toBe('#1A1A1A');
+    expect(lightColors.onPrimary).toBe('#FFFFFF');
+    expect(darkColors.primary).toBe(darkColors.text);
+    expect(darkColors.onPrimary).toBe('#1A1A1A');
+  });
+
+  test('the avatar colour is the indigo of the design with white text on it', () => {
+    expect(lightColors.brand).toBe('#3A3FD4');
     for (const palette of [lightColors, darkColors]) {
-      expect(palette.onPrimary).toBe('#FFFFFF');
-      const [r, g, b] = rgb(palette.primary);
-      expect(b).toBeGreaterThan(r);
-      expect(b).toBeGreaterThan(g);
+      expect(contrast(rgb(palette.onBrand), rgb(palette.brand))).toBeGreaterThanOrEqual(TEXT_MIN);
     }
   });
 
@@ -102,6 +108,26 @@ describe('palettes', () => {
       const [nr, ng] = rgb(palette.negative);
       expect(pg).toBeGreaterThan(pr);
       expect(nr).toBeGreaterThan(ng);
+    }
+  });
+
+  test('the dark cards of the design keep their text readable in both palettes', () => {
+    for (const palette of [lightColors, darkColors]) {
+      expect(contrast(rgb(palette.onHeroCard), rgb(palette.heroCard))).toBeGreaterThanOrEqual(
+        TEXT_MIN,
+      );
+      expect(contrast(rgb(palette.heroMuted), rgb(palette.heroCard))).toBeGreaterThanOrEqual(
+        TEXT_MIN,
+      );
+    }
+  });
+
+  test('the tab bar names are readable on the bar in both palettes', () => {
+    for (const palette of [lightColors, darkColors]) {
+      expect(contrast(rgb(palette.text), rgb(palette.tabBar))).toBeGreaterThanOrEqual(TEXT_MIN);
+      expect(contrast(rgb(palette.iconInactive), rgb(palette.tabBar))).toBeGreaterThanOrEqual(
+        GRAPHIC_MIN,
+      );
     }
   });
 
@@ -150,11 +176,11 @@ describe('sizes and typography', () => {
     const scale = (style: { fontSize: number; lineHeight: number }) =>
       `${style.fontSize}/${style.lineHeight}`;
     expect(scale(typography.display)).toBe('34/40');
-    expect(scale(typography.title)).toBe('22/28');
-    expect(scale(typography.heading)).toBe('17/24');
+    expect(scale(typography.title)).toBe('30/36');
+    expect(scale(typography.heading)).toBe('18/24');
     expect(scale(typography.lead)).toBe('16/24');
     expect(scale(typography.body)).toBe('15/22');
-    expect(scale(typography.bodySmall)).toBe('14/20');
+    expect(scale(typography.bodySmall)).toBe('13/18');
     expect(scale(typography.titleSmall)).toBe('14/18');
     expect(scale(typography.caption)).toBe('12/16');
     expect(scale(typography.tabLabel)).toBe('10/14');
@@ -171,11 +197,12 @@ describe('sizes and typography', () => {
     }
   });
 
-  test('the own font of the phone is used: no text style names a font family', () => {
+  test('text is set in Onest and the big numbers in Unbounded', () => {
     for (const style of Object.values(typography)) {
-      expect(style).not.toHaveProperty('fontFamily');
-      expect(style).toHaveProperty('fontWeight');
+      expect(style.fontFamily).toMatch(/^(Onest|Unbounded)_/);
     }
+    expect(typography.figureDisplay.fontFamily).toMatch(/^Unbounded_/);
+    expect(typography.title.fontFamily).toMatch(/^Onest_/);
   });
 
   test('text is never smaller than 10 points', () => {

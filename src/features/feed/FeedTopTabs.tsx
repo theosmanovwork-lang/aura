@@ -1,12 +1,10 @@
 import { Pressable, Text, View } from 'react-native';
 
+import { SilverView } from '../../components/SilverView';
 import { ru } from '../../i18n/ru';
-import { MIN_TOUCH_TARGET, makeStyles, spacing, typography } from '../../theme';
+import { fontFamilies, makeStyles } from '../../theme';
 
-const INDICATOR_WIDTH = 24;
-const IDLE_OPACITY = 0.6;
-
-/** «Подписки | Для вас» drawn like the reference; both are switched off until feeds exist. */
+/** «Подписки | Рекомендации» drawn like the design; both are switched off until feeds exist. */
 export function FeedTopTabs() {
   const styles = useStyles();
   return (
@@ -27,28 +25,17 @@ export function FeedTopTabs() {
         disabled
         style={styles.tab}
       >
-        <Text style={[styles.label, styles.open]}>{ru.feed.tabs.forYou}</Text>
-        <View style={styles.indicator} />
+        <Text style={styles.label}>{ru.feed.tabs.forYou}</Text>
+        <SilverView style={styles.indicator} />
       </Pressable>
     </View>
   );
 }
 
 const useStyles = makeStyles((colors) => ({
-  tabs: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  tab: {
-    minHeight: MIN_TOUCH_TARGET,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.sm,
-  },
-  label: { ...typography.bodyStrong, color: colors.text },
-  idle: { opacity: IDLE_OPACITY },
-  open: { ...typography.heading, lineHeight: 22 },
-  indicator: {
-    width: INDICATOR_WIDTH,
-    height: 2,
-    marginTop: spacing.xxs,
-    backgroundColor: colors.text,
-  },
+  tabs: { flexDirection: 'row', alignItems: 'center', gap: 18 },
+  tab: { minHeight: 44, alignItems: 'center', justifyContent: 'center', gap: 4 },
+  label: { fontFamily: fontFamilies.bold, fontSize: 15, color: colors.onVideo },
+  idle: { color: '#D6D0E2' },
+  indicator: { width: 18, height: 3, borderRadius: 2 },
 }));

@@ -3,25 +3,14 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Icon } from '../../components/Icon';
+import { Glyph } from '../../components/Glyph';
 import { useTabBarInset } from '../../components/useTabBarInset';
+import { videoPrice } from '../../domain/videoPrice';
 import { ru } from '../../i18n/ru';
-import {
-  MIN_TOUCH_TARGET,
-  PAUSE_BUTTON_SIZE,
-  iconSizes,
-  makeStyles,
-  radii,
-  scrim,
-  spacing,
-  typography,
-  useColors,
-} from '../../theme';
+import { fontFamilies, makeStyles, PAUSE_BUTTON_SIZE, scrim, useColors } from '../../theme';
 import { ActionRail } from './ActionRail';
 import { AuraPlate } from './AuraPlate';
 import { AuthorAvatar } from './AuthorAvatar';
-import { CommentButton } from '../comments/CommentButton';
-import { SoonRail } from './SoonAction';
 import type { FeedItem } from './feedService';
 import { resolveVideoSource, type PlayableSource } from './videoSources';
 
@@ -88,6 +77,7 @@ function ActiveCard({
   const colors = useColors();
   const { video, liked, authorName, commentCount } = item;
   const [paused, setPaused] = useState(false);
+  const [following, setFollowing] = useState(false);
   const bottomInset = useTabBarInset();
   const source = useMemo(() => resolveVideoSource(video.videoUri), [video.videoUri]);
 
@@ -123,74 +113,66 @@ function ActiveCard({
           pointerEvents="none"
           {...HIDDEN_FROM_READERS}
         >
-          <Icon name="play" size={iconSizes.xl} color={colors.text} />
+          <Glyph name="video" size={36} color={colors.onVideo} filled />
         </View>
       ) : null}
 
       <View
         testID="video-info"
-        style={[styles.info, { paddingBottom: bottomInset + spacing.md }]}
+        style={[styles.info, { paddingBottom: bottomInset + 16 }]}
         pointerEvents="box-none"
       >
         <AuraPlate
-          amount={video.likeCount}
+          amount={videoPrice(video)}
           onPress={onOpenMarket ? () => onOpenMarket(video.id) : undefined}
         />
         <View pointerEvents="none" style={styles.caption}>
-          {authorName ? <Text style={styles.author}>{authorName}</Text> : null}
-          <Text style={styles.title} numberOfLines={2}>
+          {authorName ? <Text style={styles.author}>{`@${authorName}`}</Text> : null}
+          <Text style={styles.title} numberOfLines={3}>
             {video.title}
           </Text>
         </View>
       </View>
 
-      <View style={[styles.rail, { bottom: bottomInset + spacing.md }]}>
-        <AuthorAvatar name={authorName} />
+      <View style={[styles.rail, { bottom: bottomInset + 16 }]}>
+        <AuthorAvatar
+          name={authorName}
+          following={following}
+          onToggleFollow={() => setFollowing((on) => !on)}
+        />
         <ActionRail
           liked={liked}
           likeCount={video.likeCount}
+          commentCount={commentCount}
           onToggleLike={() => onToggleLike(video.id)}
+          onOpenComments={() => onOpenComments?.(video.id)}
         />
-        <CommentButton count={commentCount} onPress={() => onOpenComments?.(video.id)} />
-        <SoonRail />
       </View>
     </View>
   );
 }
 
-const PAUSE_TOP = '42%';
 /** The info text stays clear of the action rail on the right. */
-const INFO_RIGHT_SPACE = MIN_TOUCH_TARGET + spacing.gutter * 2;
+const INFO_RIGHT_SPACE = 90;
 
 const useStyles = makeStyles((colors) => ({
-  card: { backgroundColor: colors.background, justifyContent: 'flex-end' },
+  card: { backgroundColor: '#1A1A1A', justifyContent: 'flex-end' },
   scrimTop: { position: 'absolute', top: 0, left: 0, right: 0, height: scrim.topHeight },
   scrimBottom: { position: 'absolute', bottom: 0, left: 0, right: 0, height: scrim.bottomHeight },
   pause: {
     position: 'absolute',
     alignSelf: 'center',
-    top: PAUSE_TOP,
+    top: '42%',
     width: PAUSE_BUTTON_SIZE,
     height: PAUSE_BUTTON_SIZE,
-    borderRadius: radii.pill,
+    borderRadius: PAUSE_BUTTON_SIZE / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.overlay,
   },
-  info: {
-    paddingLeft: spacing.gutter,
-    paddingRight: INFO_RIGHT_SPACE,
-    paddingBottom: spacing.lg,
-    gap: spacing.xxs,
-  },
-  caption: { gap: spacing.xxs },
-  author: { ...typography.titleSmall, color: colors.text },
-  title: { ...typography.bodySmall, lineHeight: 18, color: colors.text },
-  rail: {
-    position: 'absolute',
-    right: spacing.gutter,
-    bottom: spacing.lg,
-    alignItems: 'center',
-    gap: spacing.md,
-  },
+  info: { paddingLeft: 16, paddingRight: INFO_RIGHT_SPACE, gap: 8 },
+  caption: { gap: 8 },
+  author: { fontFamily: fontFamilies.extrabold, fontSize: 16, color: colors.onVideo },
+  title: { fontFamily: fontFamilies.medium, fontSize: 14, lineHeight: 20, color: colors.onVideo },
+  rail: { position: 'absolute', right: 8, alignItems: 'center', gap: 16 },
 }));

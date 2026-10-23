@@ -1,17 +1,9 @@
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 
 import { seed } from '../src/data/seed';
-import { players, resetPlayers } from '../test-utils/expoVideoMock';
-
-import RootLayout from '../app/_layout';
-import TabsLayout from '../app/(tabs)/_layout';
-import FeedScreen from '../app/(tabs)/index';
-import ProfileScreen from '../app/(tabs)/profile';
-import HubScreen from '../app/(tabs)/hub';
-import TrendsScreen from '../app/(tabs)/trends';
-import TrendDetailRoute from '../app/trend/[id]';
-import WalletScreen from '../app/(tabs)/wallet';
 import { ru } from '../src/i18n/ru';
+import { FEED_LAYOUT, routes } from '../test-utils/appRoutes';
+import { players, resetPlayers } from '../test-utils/expoVideoMock';
 
 jest.mock('expo-video', () => jest.requireActual('../test-utils/expoVideoMock'));
 jest.mock('../src/data/openRepositories', () => ({
@@ -22,42 +14,16 @@ jest.mock('../src/data/openRepositories', () => ({
   },
 }));
 
-const routes = {
-  _layout: RootLayout,
-  '(tabs)/_layout': TabsLayout,
-  '(tabs)/index': FeedScreen,
-  '(tabs)/trends': TrendsScreen,
-  '(tabs)/hub': HubScreen,
-  '(tabs)/wallet': WalletScreen,
-  '(tabs)/profile': ProfileScreen,
-  'trend/[id]': TrendDetailRoute,
-};
+const NEWEST_TITLE = seed.videos.find((v) => v.id === 'video-7')!.title;
 
-const getTabs = () => screen.findAllByRole('button', { name: /^Раздел .+, \d из \d$/ });
-const labelOf = (tab: { props: { accessibilityLabel?: string } }) =>
-  String(tab.props.accessibilityLabel ?? '');
+const open = async (title: string, position: number) =>
+  fireEvent.press(await screen.findByRole('button', { name: `Раздел ${title}, ${position} из 5` }));
+const giveFeedASize = async () =>
+  fireEvent(await screen.findByTestId('feed-container'), 'layout', FEED_LAYOUT);
 
 beforeEach(resetPlayers);
 
-/** A phone tells the feed how big the screen is; tests have to do that by hand. */
-const giveFeedASize = async () =>
-  fireEvent(await screen.findByTestId('feed-container'), 'layout', {
-    nativeEvent: { layout: { x: 0, y: 0, width: 390, height: 700 } },
-  });
-
-const NEWEST_TITLE = seed.videos.find((v) => v.id === 'video-7')!.title;
-
 describe('bottom tabs', () => {
-  test('shows five tabs with Russian names from ru.ts', async () => {
-    await renderRouter(routes);
-
-    const names = (await getTabs()).map(labelOf);
-    expect(names).toHaveLength(5);
-    for (const label of Object.values(ru.tabs)) {
-      expect(names.some((name) => name.startsWith(`Раздел ${label},`))).toBe(true);
-    }
-  });
-
   test('opens the feed first', async () => {
     await renderRouter(routes);
     await giveFeedASize();
@@ -65,27 +31,25 @@ describe('bottom tabs', () => {
     expect(await screen.findByText(NEWEST_TITLE)).toBeTruthy();
   });
 
-  test('switches between all tabs and shows each placeholder', async () => {
+  test('switches between all five sections and shows each one', async () => {
     await renderRouter(routes);
     await giveFeedASize();
 
     const steps = [
-      [ru.tabs.trends, seed.trends[0]!.name],
-      [ru.tabs.hub, ru.hub.subtitle],
-      [ru.tabs.wallet, ru.wallet.disclaimer],
-      [ru.tabs.profile, ru.screens.profile.subtitle],
-      [ru.tabs.feed, NEWEST_TITLE],
-    ];
-    for (const [tabLabel, subtitle] of steps) {
-      const tab = (await getTabs()).find((t) => labelOf(t).startsWith(`Раздел ${tabLabel},`));
-      expect(tab).toBeDefined();
-      await fireEvent.press(tab!);
+      [ru.tabs.community, 2, ru.community.referral.eyebrow],
+      [ru.tabs.chats, 3, ru.chats.global],
+      [ru.tabs.cards, 4, ru.cards.quests.title],
+      [ru.tabs.profile, 5, ru.screens.profile.stats.rank],
+      [ru.tabs.feed, 1, NEWEST_TITLE],
+    ] as const;
+    for (const [title, position, text] of steps) {
+      await open(title, position);
 
-      expect(await screen.findByText(subtitle)).toBeTruthy();
+      expect(await screen.findByText(text)).toBeTruthy();
     }
   });
 
-  test('the feed video stops while another tab is open and plays again on return', async () => {
+  test('the feed video stops while another section is open and plays again on return', async () => {
     await renderRouter(routes);
     await giveFeedASize();
     await screen.findByText(NEWEST_TITLE);
@@ -93,26 +57,33 @@ describe('bottom tabs', () => {
     player.pause.mockClear();
     player.play.mockClear();
 
-    const find = async (label: string) =>
-      (await getTabs()).find((t) => labelOf(t).startsWith(`Раздел ${label},`))!;
-    await fireEvent.press(await find(ru.tabs.trends));
-    await screen.findByText(seed.trends[0]!.name);
+    await open(ru.tabs.chats, 3);
+    await screen.findByText(ru.chats.global);
     expect(player.pause).toHaveBeenCalled();
 
-    await fireEvent.press(await find(ru.tabs.feed));
+    await open(ru.tabs.feed, 1);
     expect(player.play).toHaveBeenCalled();
   });
 
-  test('opens the details of a wave from the list', async () => {
+  test('the settings button of the profile opens the settings screen', async () => {
+    await renderRouter(routes);
+    await open(ru.tabs.profile, 5);
+
+    await fireEvent.press(await screen.findByRole('button', { name: ru.screens.profile.settings }));
+
+    expect(await screen.findByText(ru.settings.soon)).toBeTruthy();
+  });
+
+  test('the empty investments tab of the profile leads back to the feed', async () => {
     await renderRouter(routes);
     await giveFeedASize();
-    const trendsTab = (await getTabs()).find((t) =>
-      labelOf(t).startsWith(`Раздел ${ru.tabs.trends},`),
-    )!;
-    await fireEvent.press(trendsTab);
+    await open(ru.tabs.profile, 5);
+    await fireEvent.press(
+      await screen.findByRole('tab', { name: ru.screens.profile.tabs.investments }),
+    );
 
-    await fireEvent.press(await screen.findByLabelText(new RegExp(`^${seed.trends[0]!.name},`)));
+    await fireEvent.press(await screen.findByTestId('profile-empty-action'));
 
-    expect(await screen.findByText(ru.trends.historyTitle)).toBeTruthy();
+    expect(await screen.findByText(NEWEST_TITLE)).toBeTruthy();
   });
 });

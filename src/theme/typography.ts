@@ -1,9 +1,10 @@
 import { Platform } from 'react-native';
 
+import { fontFamilies } from './fonts';
+
 /**
- * Type scale in the manner of Instagram and X: the phone's own font (San Francisco on iPhone,
- * Roboto on Android), sizes that follow the system text-size setting, numbers with equal-width
- * digits so columns line up.
+ * Type scale of the owner's design: Onest for text (weights 500 to 800), Unbounded for the big
+ * numbers, numbers with equal-width digits so columns line up. Sizes follow the system text-size setting.
  */
 
 /** The currency word «Аура» in a serif italic, set apart from the sans text around it. */
@@ -12,12 +13,10 @@ export const auraWordStyle = {
   fontStyle: 'italic',
 } as const;
 
-type Weight = '400' | '500' | '600' | '700';
-
 type TypeStyle = {
+  fontFamily: string;
   fontSize: number;
   lineHeight: number;
-  fontWeight: Weight;
   letterSpacing?: number;
   textTransform?: 'uppercase';
   fontVariant?: 'tabular-nums'[];
@@ -27,37 +26,60 @@ const TABULAR: 'tabular-nums'[] = ['tabular-nums'];
 
 export const typography = {
   /** The biggest text: a hero line. */
-  display: { fontSize: 34, lineHeight: 40, fontWeight: '700', letterSpacing: -0.8 },
-  /** The title of a screen. */
-  title: { fontSize: 22, lineHeight: 28, fontWeight: '700', letterSpacing: -0.3 },
-  /** The title of a card or a sheet. */
-  heading: { fontSize: 17, lineHeight: 24, fontWeight: '600' },
-  lead: { fontSize: 16, lineHeight: 24, fontWeight: '400' },
-  body: { fontSize: 15, lineHeight: 22, fontWeight: '400' },
-  bodyStrong: { fontSize: 15, lineHeight: 22, fontWeight: '600' },
-  bodySmall: { fontSize: 14, lineHeight: 20, fontWeight: '400' },
+  display: { fontFamily: fontFamilies.extrabold, fontSize: 34, lineHeight: 40, letterSpacing: -1 },
+  /** The title of a screen: «Сообщество», «Чаты». */
+  title: { fontFamily: fontFamilies.extrabold, fontSize: 30, lineHeight: 36, letterSpacing: -0.9 },
+  /** A section heading. */
+  heading: { fontFamily: fontFamilies.extrabold, fontSize: 18, lineHeight: 24 },
+  lead: { fontFamily: fontFamilies.medium, fontSize: 16, lineHeight: 24 },
+  body: { fontFamily: fontFamilies.medium, fontSize: 15, lineHeight: 22 },
+  bodyStrong: { fontFamily: fontFamilies.extrabold, fontSize: 15, lineHeight: 22 },
+  bodySmall: { fontFamily: fontFamilies.medium, fontSize: 13, lineHeight: 18 },
   /** A name in a list. */
-  titleSmall: { fontSize: 14, lineHeight: 18, fontWeight: '600' },
-  caption: { fontSize: 12, lineHeight: 16, fontWeight: '400' },
-  /** Label under an icon. */
-  tabLabel: { fontSize: 10, lineHeight: 14, fontWeight: '500' },
+  titleSmall: { fontFamily: fontFamilies.extrabold, fontSize: 14, lineHeight: 18 },
+  caption: { fontFamily: fontFamilies.semibold, fontSize: 12, lineHeight: 16 },
+  /** Label under an icon in the tab bar. */
+  tabLabel: { fontFamily: fontFamilies.bold, fontSize: 10, lineHeight: 14 },
   labelCaps: {
+    fontFamily: fontFamilies.extrabold,
     fontSize: 11,
     lineHeight: 15,
-    fontWeight: '600',
-    letterSpacing: 0.55,
-    textTransform: 'uppercase',
-  },
-  eyebrow: {
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: '500',
     letterSpacing: 0.6,
     textTransform: 'uppercase',
   },
-  /** A hero number (the balance, the index of a wave). */
-  figureDisplay: { fontSize: 40, lineHeight: 46, fontWeight: '700', fontVariant: TABULAR },
-  figureXL: { fontSize: 24, lineHeight: 32, fontWeight: '700', fontVariant: TABULAR },
-  figure: { fontSize: 14, lineHeight: 20, fontWeight: '600', fontVariant: TABULAR },
-  figureSmall: { fontSize: 11, lineHeight: 15, fontWeight: '600', fontVariant: TABULAR },
+  eyebrow: {
+    fontFamily: fontFamilies.extrabold,
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+  },
+  /** A hero number (the balance): Unbounded. */
+  figureDisplay: {
+    fontFamily: fontFamilies.displayHeavy,
+    fontSize: 34,
+    lineHeight: 40,
+    letterSpacing: -1,
+    fontVariant: TABULAR,
+  },
+  figureXL: {
+    fontFamily: fontFamilies.displayHeavy,
+    fontSize: 22,
+    lineHeight: 28,
+    fontVariant: TABULAR,
+  },
+  figure: {
+    fontFamily: fontFamilies.extrabold,
+    fontSize: 14,
+    lineHeight: 20,
+    fontVariant: TABULAR,
+  },
+  figureSmall: {
+    fontFamily: fontFamilies.extrabold,
+    fontSize: 11,
+    lineHeight: 15,
+    fontVariant: TABULAR,
+  },
+  /** The name written on a card. */
+  cardName: { fontFamily: fontFamilies.display, fontSize: 12, lineHeight: 13 },
 } satisfies Record<string, TypeStyle>;

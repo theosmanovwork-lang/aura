@@ -1,4 +1,5 @@
-export { darkColors, lightColors, palettes } from './colors';
+export { darkColors, lightColors, medals, palettes, silver } from './colors';
+export { fontAssets, fontFamilies } from './fonts';
 export type { ColorScheme, Palette } from './colors';
 export { makeStyles, ThemeProvider, useColors, useScheme } from './ThemeProvider';
 export { spacing } from './spacing';
