@@ -1,7 +1,8 @@
 import type { Repositories } from '../../data/repositories';
-import { NotFoundError } from '../../data/repositories';
+import { DuplicateKeyError, NotFoundError } from '../../data/repositories';
 import {
   addToPosition,
+  InvestmentRuleError,
   openPosition,
   positionValue,
   takableAmount,
@@ -28,7 +29,9 @@ const roundTo = (value: number, places: number): number => {
 async function publishedVideo(repos: Repositories, videoId: string): Promise<Video> {
   const video = await repos.videos.getById(videoId);
   if (!video) throw new NotFoundError('videos', videoId);
-  if (video.moderationStatus !== 'published') throw new Error('video is not published');
+  if (video.moderationStatus !== 'published') {
+    throw new InvestmentRuleError('not_published', 'video is not published');
+  }
   return video;
 }
 
@@ -41,6 +44,33 @@ async function nextEntryId(
 ): Promise<string> {
   const used = (await repos.wallet.listByUser(userId)).filter((e) => e.refId === positionId);
   return `${label}-${positionId}-${used.length + 1}`;
+}
+
+/** Raised when a move failed and putting things back failed too: the position and the ledger may disagree. */
+export class OutOfSyncError extends Error {
+  constructor(positionId: string) {
+    super(`investments: position "${positionId}" and the ledger may disagree, check the history`);
+    this.name = 'OutOfSyncError';
+  }
+}
+
+const RESTORE_ATTEMPTS = 3;
+
+/** Tries a few times to put a position back as it was; false when it did not work. */
+async function restorePosition(repos: Repositories, before: Investment): Promise<boolean> {
+  for (let attempt = 0; attempt < RESTORE_ATTEMPTS; attempt += 1) {
+    try {
+      await repos.investments.update(before.id, {
+        invested: before.invested,
+        units: before.units,
+        updatedAt: before.updatedAt,
+      });
+      return true;
+    } catch {
+      // try again
+    }
+  }
+  return false;
 }
 
 export type InvestInput = Readonly<{
@@ -95,7 +125,7 @@ async function investNow(repos: Repositories, input: InvestInput): Promise<Inves
         }),
       );
     } catch {
-      // Nothing more can be done here; the original error is the useful one to report.
+      throw new OutOfSyncError(position.id);
     }
     throw error;
   }
@@ -136,13 +166,7 @@ async function takeNow(repos: Repositories, input: TakeInput): Promise<TakeResul
       }),
     );
   } catch (error) {
-    await repos.investments
-      .update(before.id, {
-        invested: before.invested,
-        units: before.units,
-        updatedAt: before.updatedAt,
-      })
-      .catch(() => undefined);
+    if (!(await restorePosition(repos, before))) throw new OutOfSyncError(before.id);
     throw error;
   }
   return { position: saved, payout, price };
@@ -177,8 +201,14 @@ async function recordPriceIfDue(
   const history = await repos.videoSnapshots.listByVideo(videoId);
   const last = history.at(-1);
   if (last && now - last.at < SNAPSHOT_EVERY_MS) return history;
-  const snapshot = await repos.videoSnapshots.add({ videoId, at: now, price });
-  return [...history, snapshot];
+  try {
+    const snapshot = await repos.videoSnapshots.add({ videoId, at: now, price });
+    return [...history, snapshot];
+  } catch (error) {
+    // Another load of the same page just recorded this moment: that point is already there.
+    if (!(error instanceof DuplicateKeyError)) throw error;
+    return repos.videoSnapshots.listByVideo(videoId);
+  }
 }
 
 /** Everything the video page needs: the price, its history, the user's position and the balance. */

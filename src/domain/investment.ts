@@ -19,15 +19,33 @@ export type Investment = Readonly<{
   updatedAt: number;
 }>;
 
+export type InvestmentRuleCode =
+  'not_whole' | 'too_small' | 'over_cap' | 'too_much' | 'bad_price' | 'not_published';
+
+/** A broken investment rule; the code tells the screen what to say without reading the message. */
+export class InvestmentRuleError extends Error {
+  constructor(
+    readonly code: InvestmentRuleCode,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'InvestmentRuleError';
+  }
+}
+
 const isWhole = (value: number): boolean => Number.isSafeInteger(value);
 
 /** Throws unless the amount is whole, at least the minimum, and keeps the video within the cap. */
 export function assertValidInvestAmount(amount: number, alreadyInvested: number): void {
-  if (!isWhole(amount) || amount < MIN_INVESTMENT) {
-    throw new Error(`amount must be a whole number of at least ${MIN_INVESTMENT}`);
+  if (!isWhole(amount)) throw new InvestmentRuleError('not_whole', 'amount must be a whole number');
+  if (amount < MIN_INVESTMENT) {
+    throw new InvestmentRuleError('too_small', `amount must be at least ${MIN_INVESTMENT}`);
   }
   if (alreadyInvested + amount > MAX_INVESTMENT_PER_VIDEO) {
-    throw new Error(`amount takes the video over the cap of ${MAX_INVESTMENT_PER_VIDEO}`);
+    throw new InvestmentRuleError(
+      'over_cap',
+      `amount takes the video over the cap of ${MAX_INVESTMENT_PER_VIDEO}`,
+    );
   }
 }
 
@@ -41,7 +59,9 @@ type OpenInput = Readonly<{
 }>;
 
 function assertPrice(price: number): void {
-  if (!Number.isFinite(price) || price <= 0) throw new Error('price must be positive');
+  if (!Number.isFinite(price) || price <= 0) {
+    throw new InvestmentRuleError('bad_price', 'price must be positive');
+  }
 }
 
 /** Throws unless the amounts of a position are valid: invested whole, shares a number, none negative. */
@@ -102,11 +122,15 @@ export function takeFromPosition(
 ): Readonly<{ position: Investment; payout: number }> {
   assertPrice(input.price);
   if (!isWhole(input.amount) || input.amount <= 0) {
-    throw new Error('amount must be a positive whole number');
+    throw new InvestmentRuleError('not_whole', 'amount must be a positive whole number');
   }
   const takable = takableAmount(position, input.price);
-  if (input.amount > takable)
-    throw new Error(`amount is more than the position is worth (${takable})`);
+  if (input.amount > takable) {
+    throw new InvestmentRuleError(
+      'too_much',
+      `amount is more than the position is worth (${takable})`,
+    );
+  }
 
   if (input.amount === takable) {
     return {

@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AuraText } from '../../components/AuraText';
 import { Button } from '../../components/Button';
 import { Message } from '../../components/Message';
-import { useTabBarInset } from '../../components/useTabBarInset';
+import { useBottomInset } from '../../components/useBottomInset';
 import { NotFoundError } from '../../data/repositories';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
@@ -120,7 +120,7 @@ export function VideoMarketScreen({
     [repos, videoId, clock],
   );
   const { state, reload } = useLoad(load, refreshKey);
-  const bottomInset = useTabBarInset();
+  const bottomInset = useBottomInset();
   const moves = useMarketMoves(repos, videoId, now, () => setRefreshKey((key) => key + 1));
 
   if (state.status === 'loading') return <Message text={ru.market.loading} />;

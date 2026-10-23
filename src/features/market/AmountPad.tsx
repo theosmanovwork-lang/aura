@@ -61,7 +61,12 @@ export function AmountPad({
   return (
     <View style={styles.pad}>
       <Text style={styles.label}>{texts.amountLabel}</Text>
-      <Text testID="pad-amount" accessibilityLiveRegion="polite" style={styles.amount}>
+      <Text
+        testID="pad-amount"
+        accessibilityLabel={`${texts.amountLabel} ${digits === '' ? '0' : digits}`}
+        accessibilityLiveRegion="polite"
+        style={styles.amount}
+      >
         {digits === '' ? '0' : digits}
       </Text>
       <AuraText style={styles.hint}>{hint}</AuraText>

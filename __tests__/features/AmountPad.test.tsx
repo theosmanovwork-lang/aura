@@ -122,4 +122,13 @@ describe('AmountPad', () => {
       expect(style.minWidth ?? style.flexBasis ?? style.width).toBeDefined();
     }
   });
+
+  test('reads the amount aloud as «Сумма 50», not as bare digits', async () => {
+    await renderPad();
+    await press('50');
+
+    expect(screen.getByTestId('pad-amount').props.accessibilityLabel).toBe(
+      `${ru.market.pad.amountLabel} 50`,
+    );
+  });
 });

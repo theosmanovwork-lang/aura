@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { InsufficientPointsError, type Repositories } from '../../data/repositories';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { formatPoints } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
+import { InvestmentRuleError } from '../../domain/investment';
 import { investInVideo, takeFromVideo } from '../investments/investmentService';
 
 export type PadMode = 'invest' | 'take' | null;
@@ -11,9 +12,10 @@ export type Notice = Readonly<{ kind: 'done' | 'error'; text: string }>;
 
 const messageOf = (error: unknown): string => {
   if (error instanceof InsufficientPointsError) return ru.market.errors.notEnough;
-  const text = error instanceof Error ? error.message : '';
-  if (text.includes('cap')) return ru.market.errors.cap;
-  if (text.includes('worth')) return ru.market.errors.tooMuch;
+  if (error instanceof InvestmentRuleError) {
+    if (error.code === 'over_cap') return ru.market.errors.cap;
+    if (error.code === 'too_much') return ru.market.errors.tooMuch;
+  }
   return ru.market.errors.generic;
 };
 
@@ -27,9 +29,13 @@ export function useMarketMoves(
   const [mode, setMode] = useState<PadMode>(null);
   const [pending, setPending] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
+  // State updates after a render; this flag stops a second tap in the same frame.
+  const busy = useRef(false);
 
   const confirm = useCallback(
     async (amount: number) => {
+      if (busy.current) return;
+      busy.current = true;
       const input = { userId: CURRENT_USER_ID, videoId, amount, now: now() };
       const taking = mode === 'take';
       setPending(true);
@@ -43,6 +49,7 @@ export function useMarketMoves(
       } catch (error) {
         setNotice({ kind: 'error', text: messageOf(error) });
       } finally {
+        busy.current = false;
         setPending(false);
       }
     },
