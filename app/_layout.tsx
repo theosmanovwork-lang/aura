@@ -23,6 +23,16 @@ export default function RootLayout() {
             headerTitleStyle: { fontFamily: fontFamilies.semibold },
           }}
         />
+        <Stack.Screen
+          name="settings"
+          options={{
+            headerShown: true,
+            title: ru.settings.title,
+            headerStyle: { backgroundColor: colors.surface },
+            headerTintColor: colors.text,
+            headerTitleStyle: { fontFamily: fontFamilies.semibold },
+          }}
+        />
       </Stack>
     </RepositoriesProvider>
   );

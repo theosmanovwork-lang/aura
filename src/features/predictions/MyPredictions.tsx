@@ -43,10 +43,15 @@ function Row({ view }: Readonly<{ view: PredictionView }>) {
   );
 }
 
-type MyPredictionsProps = Readonly<{ now?: () => number; refreshKey?: number }>;
+type MyPredictionsProps = Readonly<{
+  now?: () => number;
+  refreshKey?: number;
+  /** Shown when there are no predictions; without it the list stays out of sight (the Aura screen). */
+  emptyText?: string;
+}>;
 
 /** The user's predictions with their results. Shows nothing until there is a first prediction. */
-export function MyPredictions({ now = Date.now, refreshKey = 0 }: MyPredictionsProps) {
+export function MyPredictions({ now = Date.now, refreshKey = 0, emptyText }: MyPredictionsProps) {
   const repos = useRepositories();
   const clock = useLatest(now);
   const load = useCallback(
@@ -57,7 +62,9 @@ export function MyPredictions({ now = Date.now, refreshKey = 0 }: MyPredictionsP
 
   if (state.status === 'loading') return null;
   if (state.status === 'error') return <Text style={styles.caption}>{ru.predictions.error}</Text>;
-  if (state.data.length === 0) return null;
+  if (state.data.length === 0) {
+    return emptyText ? <Text style={styles.caption}>{emptyText}</Text> : null;
+  }
 
   return (
     <View style={styles.section}>

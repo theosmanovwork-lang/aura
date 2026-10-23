@@ -11,6 +11,7 @@ import { formatPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
 import { iconSizes, colors as c, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import { MyPredictions } from '../predictions/MyPredictions';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { loadProfile } from './profileService';
@@ -18,16 +19,49 @@ import { ProfileTabs, type ProfileTabKey } from './ProfileTabs';
 
 const AVATAR_SIZE = 72;
 
-type ProfileScreenProps = Readonly<{ now?: () => number; refreshKey?: number }>;
+type TabContentProps = Readonly<{ tab: ProfileTabKey; now: () => number; refreshKey: number }>;
+
+/** What lies under the icon tabs: the predictions list, or an invitation where there is nothing yet. */
+function TabContent({ tab, now, refreshKey }: TabContentProps) {
+  const texts = ru.screens.profile;
+  if (tab === 'predictions') {
+    return (
+      <View style={styles.list}>
+        <MyPredictions now={now} refreshKey={refreshKey} emptyText={texts.predictionsEmpty} />
+      </View>
+    );
+  }
+  const reposts = tab === 'reposts';
+  return (
+    <View style={styles.empty}>
+      <Text style={styles.emptyTitle}>
+        {reposts ? texts.repostsEmptyTitle : texts.videosEmptyTitle}
+      </Text>
+      <Text style={styles.emptyText}>{reposts ? texts.repostsEmptyText : texts.subtitle}</Text>
+    </View>
+  );
+}
+
+type ProfileScreenProps = Readonly<{
+  now?: () => number;
+  refreshKey?: number;
+  onOpenSettings?: () => void;
+}>;
 
 /** A control that is drawn like the reference but does nothing yet. */
-function SoonButton({ name, label }: Readonly<{ name: 'add' | 'menu'; label: string }>) {
+function SoonButton({
+  name,
+  label,
+  onPress,
+}: Readonly<{ name: 'add' | 'menu'; label: string; onPress?: () => void }>) {
+  const disabled = onPress === undefined;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
-      accessibilityState={{ disabled: true }}
-      disabled
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
       style={styles.iconButton}
     >
       <Icon name={name === 'add' ? 'add' : 'menu'} size={iconSizes.lg} color={c.text} />
@@ -35,7 +69,11 @@ function SoonButton({ name, label }: Readonly<{ name: 'add' | 'menu'; label: str
   );
 }
 
-export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenProps) {
+export function ProfileScreen({
+  now = Date.now,
+  refreshKey = 0,
+  onOpenSettings,
+}: ProfileScreenProps) {
   const repos = useRepositories();
   const clock = useLatest(now);
   const load = useCallback(
@@ -44,7 +82,7 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
   );
   const { state, reload } = useLoad(load, refreshKey);
   const bottomInset = useTabBarInset();
-  const [tab, setTab] = useState<ProfileTabKey>('predictions');
+  const [tab, setTab] = useState<ProfileTabKey>('videos');
 
   if (state.status === 'loading') return <Message text={ru.screens.profile.loading} />;
   if (state.status === 'error') {
@@ -68,7 +106,7 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
         <Text style={styles.handle} accessibilityRole="header">
           @{nickname}
         </Text>
-        <SoonButton name="menu" label={texts.menu} />
+        <SoonButton name="menu" label={texts.menu} onPress={onOpenSettings} />
       </View>
 
       <View style={styles.head}>
@@ -87,6 +125,15 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
         </View>
       </View>
 
+      <View testID="profile-available" style={styles.available}>
+        <AuraText style={styles.availableText}>
+          {`${texts.available}: ${formatPoints(balance)} ${pluralRu(balance, ru.wallet.sparks)}`}
+        </AuraText>
+        <View accessible accessibilityLabel={texts.availableInfo}>
+          <Icon name="information-circle-outline" size={iconSizes.sm} color={c.iconInactive} />
+        </View>
+      </View>
+
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={texts.edit}
@@ -99,10 +146,7 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
 
       <ProfileTabs selected={tab} onSelect={setTab} />
 
-      <View style={styles.empty}>
-        <Text style={styles.emptyTitle}>{texts.tabs[tab]}</Text>
-        <Text style={styles.emptyText}>{texts.subtitle}</Text>
-      </View>
+      <TabContent tab={tab} now={now} refreshKey={refreshKey} />
     </ScrollView>
   );
 }
@@ -140,6 +184,9 @@ const styles = StyleSheet.create({
     backgroundColor: c.surfaceMuted,
   },
   editText: { ...typography.bodyStrong, color: c.textMuted },
+  available: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.sm },
+  availableText: { ...typography.bodySmall, color: c.textMuted },
+  list: { paddingTop: spacing.md },
   empty: { alignItems: 'center', gap: spacing.xs, paddingTop: spacing.xl },
   emptyTitle: { ...typography.heading, color: c.text },
   emptyText: { ...typography.body, color: c.textMuted, textAlign: 'center' },

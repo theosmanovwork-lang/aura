@@ -52,8 +52,8 @@ describe('ProfileScreen', () => {
     await renderProfile();
     await screen.findByText('@гость');
 
-    expect(screen.getByTestId('profile-tab-label-predictions')).toBeTruthy();
-    expect(screen.queryByTestId('profile-tab-label-videos')).toBeNull();
+    expect(screen.getByTestId('profile-tab-label-videos')).toBeTruthy();
+    expect(screen.queryByTestId('profile-tab-label-predictions')).toBeNull();
     expect(screen.queryByTestId('profile-tab-label-reposts')).toBeNull();
   });
 
@@ -64,10 +64,10 @@ describe('ProfileScreen', () => {
     await fireEvent.press(screen.getByRole('button', { name: ru.screens.profile.tabs.reposts }));
 
     expect(await screen.findByTestId('profile-tab-label-reposts')).toBeTruthy();
-    expect(screen.queryByTestId('profile-tab-label-predictions')).toBeNull();
+    expect(screen.queryByTestId('profile-tab-label-videos')).toBeNull();
     const reposts = screen.getByRole('button', { name: ru.screens.profile.tabs.reposts });
     expect(reposts.props.accessibilityState.selected).toBe(true);
-    expect(screen.getByText(ru.screens.profile.subtitle)).toBeTruthy();
+    expect(screen.getByText(ru.screens.profile.repostsEmptyText)).toBeTruthy();
   });
 
   test('there is a repost tab and no likes tab: aura replaces likes', async () => {
