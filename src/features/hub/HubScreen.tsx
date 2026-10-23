@@ -4,7 +4,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../components/Button';
 import { Icon } from '../../components/Icon';
 import { Message } from '../../components/Message';
-import { useTabBarInset } from '../../components/useTabBarInset';
+import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { formatCount, countLabel } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
@@ -34,7 +34,7 @@ export function HubScreen({
   const load = useCallback(() => loadRatings(repos), [repos]);
   const { state, reload } = useLoad(load, refreshKey);
   const [section, setSection] = useState<Section>('videos');
-  const bottomInset = useTabBarInset();
+  const content = useTabScreenContent(styles.content);
 
   if (state.status === 'loading') return <Message text={ru.hub.loading} />;
   if (state.status === 'error') {
@@ -84,7 +84,7 @@ export function HubScreen({
   const footer = <Text style={styles.disclaimer}>{ru.hub.disclaimer}</Text>;
   const common = {
     style: styles.list,
-    contentContainerStyle: [styles.content, { paddingBottom: bottomInset }],
+    contentContainerStyle: content,
     ListHeaderComponent: header,
     ListFooterComponent: footer,
     ItemSeparatorComponent: Separator,
@@ -169,7 +169,7 @@ function Separator() {
 
 const styles = StyleSheet.create({
   list: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.gutter, paddingTop: spacing.xl },
+  content: { padding: spacing.gutter },
   header: { gap: spacing.xs, marginBottom: spacing.md },
   title: { ...typography.title, color: colors.text },
   subtitle: { ...typography.body, color: colors.textMuted },

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 
 import { Message } from '../../components/Message';
+import { useTopInset } from '../../components/useTopInset';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { ru } from '../../i18n/ru';
 import { colors, spacing, typography } from '../../theme';
@@ -24,6 +25,7 @@ type FeedScreenProps = Readonly<{
 export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
   const { state, actionFailed, like, markViewed, setCommentCount, reload } =
     useFeed(CURRENT_USER_ID);
+  const topInset = useTopInset();
   const [commentsFor, setCommentsFor] = useState<string | null>(null);
   const [height, setHeight] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -87,7 +89,11 @@ export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
           windowSize={3}
         />
       ) : null}
-      <View testID="feed-top-bar" style={styles.topBar} pointerEvents="box-none">
+      <View
+        testID="feed-top-bar"
+        style={[styles.topBar, { top: topInset }]}
+        pointerEvents="box-none"
+      >
         <SoonAction testID="soon-add" icon="add" label={ru.feed.soon.add} />
         <FeedTopTabs />
         <SoonAction testID="soon-search" icon="search" label={ru.feed.soon.search} />
@@ -99,7 +105,11 @@ export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
         onCountChange={setCommentCount}
       />
       {actionFailed ? (
-        <Text style={styles.toast} accessibilityRole="alert" accessibilityLiveRegion="polite">
+        <Text
+          style={[styles.toast, { top: topInset }]}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="polite"
+        >
           {ru.feed.actionError}
         </Text>
       ) : null}
@@ -111,7 +121,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   topBar: {
     position: 'absolute',
-    top: spacing.xl,
     left: spacing.sm,
     right: spacing.sm,
     flexDirection: 'row',
@@ -121,7 +130,6 @@ const styles = StyleSheet.create({
   toast: {
     ...typography.caption,
     position: 'absolute',
-    top: spacing.xl,
     alignSelf: 'center',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,

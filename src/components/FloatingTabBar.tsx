@@ -4,7 +4,15 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { GlassSurface } from './GlassSurface';
 import { ru } from '../i18n/ru';
-import { colors, MIN_TOUCH_TARGET, radii, spacing, TAB_BAR_HEIGHT, typography } from '../theme';
+import {
+  colors,
+  contentColumn,
+  MIN_TOUCH_TARGET,
+  radii,
+  spacing,
+  TAB_BAR_HEIGHT,
+  typography,
+} from '../theme';
 
 const MAX_FONT_SCALE = 1.2;
 
@@ -79,6 +87,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
   },
   pill: {
+    ...contentColumn,
     height: TAB_BAR_HEIGHT,
     flexDirection: 'row',
     alignItems: 'center',

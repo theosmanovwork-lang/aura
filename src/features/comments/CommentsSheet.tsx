@@ -17,7 +17,15 @@ import { useRepositories } from '../../data/RepositoriesProvider';
 import { CommentRuleError } from '../../domain/comment';
 import { countLabel } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, iconSizes, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import {
+  colors,
+  contentColumn,
+  iconSizes,
+  MIN_TOUCH_TARGET,
+  radii,
+  spacing,
+  typography,
+} from '../../theme';
 import { useLoad } from '../useLoad';
 import { CommentInput } from './CommentInput';
 import { CommentRow } from './CommentRow';
@@ -168,6 +176,7 @@ const styles = StyleSheet.create({
   fill: { flex: 1, justifyContent: 'flex-end' },
   backdrop: { flex: 1, backgroundColor: colors.overlay },
   sheet: {
+    ...contentColumn,
     height: SHEET_HEIGHT,
     paddingHorizontal: spacing.gutter,
     paddingTop: spacing.sm,

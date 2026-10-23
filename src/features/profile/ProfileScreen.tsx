@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Icon } from '../../components/Icon';
-import { useTabBarInset } from '../../components/useTabBarInset';
+import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
@@ -90,7 +90,7 @@ export function ProfileScreen({
     [repos, clock],
   );
   const { state, reload } = useLoad(load, refreshKey);
-  const bottomInset = useTabBarInset();
+  const content = useTabScreenContent(styles.content);
   const [tab, setTab] = useState<ProfileTabKey>('videos');
 
   if (state.status === 'loading') return <Message text={ru.screens.profile.loading} />;
@@ -106,10 +106,7 @@ export function ProfileScreen({
   const { nickname, balance } = state.data;
   const texts = ru.screens.profile;
   return (
-    <ScrollView
-      style={styles.page}
-      contentContainerStyle={[styles.content, { paddingBottom: bottomInset }]}
-    >
+    <ScrollView style={styles.page} contentContainerStyle={content}>
       <View style={styles.topBar}>
         <SoonButton name="add" label={texts.add} />
         <Text style={styles.handle} accessibilityRole="header">
@@ -162,7 +159,7 @@ export function ProfileScreen({
 
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: c.background },
-  content: { paddingHorizontal: spacing.gutter, paddingTop: spacing.xl, paddingBottom: spacing.xl },
+  content: { paddingHorizontal: spacing.gutter, paddingBottom: spacing.xl },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   iconButton: {
     width: MIN_TOUCH_TARGET,

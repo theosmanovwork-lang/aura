@@ -38,3 +38,16 @@ export const durations = {
   fast: 160,
   normal: 250,
 } as const;
+
+/**
+ * The widest a column of content gets, in points. On a tablet or a wide browser window lists stay
+ * a readable column in the middle instead of stretching edge to edge.
+ */
+export const CONTENT_MAX_WIDTH = 640;
+
+/** Style for the content of a list or scroll view: full width on a phone, a centred column on wide screens. */
+export const contentColumn = {
+  width: '100%',
+  maxWidth: CONTENT_MAX_WIDTH,
+  alignSelf: 'center',
+} as const;

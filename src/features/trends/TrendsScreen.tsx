@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
-import { useTabBarInset } from '../../components/useTabBarInset';
+import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { ru } from '../../i18n/ru';
@@ -24,7 +24,7 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
   const clock = useLatest(now);
   const load = useCallback(() => loadTrendBoard(repos, clock.current()), [repos, clock]);
   const { state, reload } = useLoad(load, refreshKey);
-  const bottomInset = useTabBarInset();
+  const content = useTabScreenContent(styles.content);
 
   if (state.status === 'loading') return <Message text={ru.trends.loading} />;
   if (state.status === 'error') {
@@ -35,7 +35,7 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
   return (
     <FlatList
       style={styles.list}
-      contentContainerStyle={[styles.content, { paddingBottom: bottomInset }]}
+      contentContainerStyle={content}
       data={state.data}
       keyExtractor={(row) => row.trend.id}
       renderItem={({ item, index }) => (
@@ -67,7 +67,7 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
 
 const styles = StyleSheet.create({
   list: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.gutter, paddingTop: spacing.xl },
+  content: { padding: spacing.gutter },
   header: { gap: spacing.xs, marginBottom: spacing.md },
   title: { ...typography.title, color: colors.text },
   subtitle: { ...typography.body, color: colors.textMuted },

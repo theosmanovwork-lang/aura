@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Icon } from '../../components/Icon';
-import { useTabBarInset } from '../../components/useTabBarInset';
+import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
@@ -58,7 +58,7 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
     [repos, clock],
   );
   const { state, reload } = useLoad(load, refreshKey);
-  const bottomInset = useTabBarInset();
+  const content = useTabScreenContent(styles.content);
 
   if (state.status === 'loading') return <Message text={ru.wallet.loading} />;
   if (state.status === 'error') {
@@ -69,7 +69,7 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
   return (
     <FlatList
       style={styles.list}
-      contentContainerStyle={[styles.content, { paddingBottom: bottomInset }]}
+      contentContainerStyle={content}
       data={entries}
       keyExtractor={(entry) => entry.id}
       renderItem={({ item }) => <EntryRow entry={item} />}
@@ -107,7 +107,7 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
 
 const styles = StyleSheet.create({
   list: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.md, paddingTop: spacing.xl },
+  content: { padding: spacing.md },
   header: { gap: spacing.md, marginBottom: spacing.md },
   title: { ...typography.title, color: colors.text },
   card: {

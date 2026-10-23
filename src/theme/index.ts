@@ -2,6 +2,8 @@ export { colors } from './colors';
 export { lightColors } from './lightColors';
 export { spacing } from './spacing';
 export {
+  CONTENT_MAX_WIDTH,
+  contentColumn,
   durations,
   iconSizes,
   MIN_TOUCH_TARGET,

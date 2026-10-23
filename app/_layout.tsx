@@ -1,5 +1,6 @@
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
 import { RepositoriesProvider } from '../src/data/RepositoriesProvider';
 import { ru } from '../src/i18n/ru';
@@ -12,6 +13,8 @@ export default function RootLayout() {
   useFonts(fontAssets);
   return (
     <RepositoriesProvider>
+      {/* The app is dark everywhere: light clock and battery icons stay readable on a light phone. */}
+      <StatusBar style="light" />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen
           name="trend/[id]"
