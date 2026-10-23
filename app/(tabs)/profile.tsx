@@ -7,5 +7,11 @@ export default function ProfileTab() {
   const [refreshKey, setRefreshKey] = useState(0);
   // Come back to the tab and the balance is read again.
   useFocusEffect(useCallback(() => setRefreshKey((key) => key + 1), []));
-  return <ProfileScreen refreshKey={refreshKey} onOpenSettings={() => router.push('/settings')} />;
+  return (
+    <ProfileScreen
+      refreshKey={refreshKey}
+      onOpenSettings={() => router.push('/settings')}
+      onOpenVideo={(id) => router.push({ pathname: '/video/[id]', params: { id } })}
+    />
+  );
 }

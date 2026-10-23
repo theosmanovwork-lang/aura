@@ -5,12 +5,12 @@ import { RevealLabel } from '../../components/RevealLabel';
 import { ru } from '../../i18n/ru';
 import { colors, iconSizes, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
 
-export const PROFILE_TAB_KEYS = ['videos', 'predictions', 'reposts'] as const;
+export const PROFILE_TAB_KEYS = ['videos', 'investments', 'reposts'] as const;
 export type ProfileTabKey = (typeof PROFILE_TAB_KEYS)[number];
 
 const ICONS: Record<ProfileTabKey, Readonly<{ idle: IconName; open: IconName }>> = {
   videos: { idle: 'grid-outline', open: 'grid' },
-  predictions: { idle: 'trending-up-outline', open: 'trending-up' },
+  investments: { idle: 'stats-chart-outline', open: 'stats-chart' },
   reposts: { idle: 'repeat-outline', open: 'repeat' },
 };
 

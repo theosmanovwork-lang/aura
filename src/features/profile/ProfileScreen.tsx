@@ -11,6 +11,7 @@ import { formatPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
 import { iconSizes, colors as c, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import { MyInvestments } from '../investments/MyInvestments';
 import { MyPredictions } from '../predictions/MyPredictions';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
@@ -19,15 +20,21 @@ import { ProfileTabs, type ProfileTabKey } from './ProfileTabs';
 
 const AVATAR_SIZE = 72;
 
-type TabContentProps = Readonly<{ tab: ProfileTabKey; now: () => number; refreshKey: number }>;
+type TabContentProps = Readonly<{
+  tab: ProfileTabKey;
+  now: () => number;
+  refreshKey: number;
+  onOpenVideo?: (videoId: string) => void;
+}>;
 
 /** What lies under the icon tabs: the predictions list, or an invitation where there is nothing yet. */
-function TabContent({ tab, now, refreshKey }: TabContentProps) {
+function TabContent({ tab, now, refreshKey, onOpenVideo }: TabContentProps) {
   const texts = ru.screens.profile;
-  if (tab === 'predictions') {
+  if (tab === 'investments') {
     return (
       <View style={styles.list}>
-        <MyPredictions now={now} refreshKey={refreshKey} emptyText={texts.predictionsEmpty} />
+        <MyInvestments refreshKey={refreshKey} onOpenVideo={onOpenVideo} />
+        <MyPredictions now={now} refreshKey={refreshKey} />
       </View>
     );
   }
@@ -46,6 +53,7 @@ type ProfileScreenProps = Readonly<{
   now?: () => number;
   refreshKey?: number;
   onOpenSettings?: () => void;
+  onOpenVideo?: (videoId: string) => void;
 }>;
 
 /** A control that is drawn like the reference but does nothing yet. */
@@ -73,6 +81,7 @@ export function ProfileScreen({
   now = Date.now,
   refreshKey = 0,
   onOpenSettings,
+  onOpenVideo,
 }: ProfileScreenProps) {
   const repos = useRepositories();
   const clock = useLatest(now);
@@ -146,7 +155,7 @@ export function ProfileScreen({
 
       <ProfileTabs selected={tab} onSelect={setTab} />
 
-      <TabContent tab={tab} now={now} refreshKey={refreshKey} />
+      <TabContent tab={tab} now={now} refreshKey={refreshKey} onOpenVideo={onOpenVideo} />
     </ScrollView>
   );
 }
@@ -186,7 +195,7 @@ const styles = StyleSheet.create({
   editText: { ...typography.bodyStrong, color: c.textMuted },
   available: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.sm },
   availableText: { ...typography.bodySmall, color: c.textMuted },
-  list: { paddingTop: spacing.md },
+  list: { paddingTop: spacing.md, gap: spacing.lg },
   empty: { alignItems: 'center', gap: spacing.xs, paddingTop: spacing.xl },
   emptyTitle: { ...typography.heading, color: c.text },
   emptyText: { ...typography.body, color: c.textMuted, textAlign: 'center' },

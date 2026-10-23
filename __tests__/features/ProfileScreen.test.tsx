@@ -82,7 +82,7 @@ describe('ProfileScreen', () => {
     await renderProfile();
     await screen.findByText('@гость');
 
-    for (const key of ['videos', 'predictions', 'reposts'] as const) {
+    for (const key of ['videos', 'investments', 'reposts'] as const) {
       const tab = screen.getByRole('button', { name: ru.screens.profile.tabs[key] });
       const style = StyleSheet.flatten(tab.props.style);
       expect(style.minHeight).toBeGreaterThanOrEqual(44);

@@ -125,6 +125,15 @@ export const ru = {
       perDay: 'за сутки',
     },
   },
+  investments: {
+    title: 'Прошлые вложения',
+    empty: 'Вы ещё ничего не вложили',
+    holding: 'В видео',
+    closed: 'Забрано',
+    result: 'итог',
+    loading: 'Загружаем…',
+    error: 'Не удалось загрузить вложения',
+  },
   market: {
     title: 'Видео',
     loading: 'Загружаем видео…',
@@ -197,7 +206,6 @@ export const ru = {
       videosEmptyTitle: 'Создайте первое видео',
       repostsEmptyTitle: 'Ваши репосты',
       repostsEmptyText: 'Репостьте то, что вам нравится, и видео появятся здесь',
-      predictionsEmpty: 'Вы ещё не делали прогнозов',
       availableInfo: 'Аура — виртуальная валюта, у неё нет стоимости',
       loading: 'Загружаем профиль…',
       error: 'Не удалось загрузить профиль',
@@ -207,7 +215,7 @@ export const ru = {
       edit: 'Изменить профиль',
       available: 'Доступно',
       editSoon: 'Скоро',
-      tabs: { videos: 'Видео', predictions: 'Прогнозы', reposts: 'Репосты' },
+      tabs: { videos: 'Видео', investments: 'Вложения', reposts: 'Репосты' },
     },
   },
 } as const;
