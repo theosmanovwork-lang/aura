@@ -13,11 +13,11 @@ const DAY = 24 * 60 * 60 * 1000;
 const BASE_TIME = Date.UTC(2026, 0, 1);
 
 const users: readonly User[] = [
-  { id: CURRENT_USER_ID, nickname: 'гость', createdAt: BASE_TIME },
-  { id: 'user-lis', nickname: 'нейро_лис', createdAt: BASE_TIME },
-  { id: 'user-eter', nickname: 'тихий_эфир', createdAt: BASE_TIME },
-  { id: 'user-mila', nickname: 'мила_в_кадре', createdAt: BASE_TIME },
-  { id: 'user-ray', nickname: 'рэй_монтаж', createdAt: BASE_TIME },
+  { id: CURRENT_USER_ID, nickname: 'mira.wav', createdAt: BASE_TIME },
+  { id: 'user-lis', nickname: 'denis_f', createdAt: BASE_TIME },
+  { id: 'user-eter', nickname: 'kira', createdAt: BASE_TIME },
+  { id: 'user-mila', nickname: 'lulu.mp4', createdAt: BASE_TIME },
+  { id: 'user-ray', nickname: 'sasha.v', createdAt: BASE_TIME },
 ];
 
 const trends: readonly Trend[] = [

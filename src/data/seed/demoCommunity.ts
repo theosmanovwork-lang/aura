@@ -125,7 +125,7 @@ export const demoDialogs: readonly DemoDialog[] = [
     name: 'lulu.mp4',
     initial: 'L',
     tone: 'green',
-    message: 'спасибо за 200 Аура!!',
+    message: 'спасибо за 200 ауры!!',
     time: '18:03',
     unread: 1,
     online: true,
@@ -219,3 +219,10 @@ export const demoCollection: readonly DemoCollectionCard[] = [
 export const demoCollectionCounts = { have: 14, total: 60 } as const;
 
 export const demoChests = 3;
+
+/** The made-up details of the profile that the app does not store yet. */
+export const demoProfile = {
+  displayName: 'Мира',
+  bio: 'Снимаю закаты и крыши · Москва',
+  followers: 1204,
+} as const;

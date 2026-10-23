@@ -16,7 +16,7 @@ describe('postComment', () => {
 
     expect(comment.text).toBe('Отлично');
     expect(list[0]?.comment.id).toBe(comment.id);
-    expect(list[0]?.authorName).toBe('гость');
+    expect(list[0]?.authorName).toBe('mira.wav');
   });
 
   test('refuses an unknown or unpublished video', async () => {

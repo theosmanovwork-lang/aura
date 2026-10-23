@@ -50,7 +50,7 @@ describe('CommunityScreen', () => {
     expect(screen.getByTestId('player-user-eter')).toBeTruthy();
     expect(screen.queryByTestId('player-user-mila')).toBeNull();
     const places = screen.getAllByTestId(/^player-/).map((row) => row.props.accessibilityLabel);
-    expect(places[0]).toMatch(/^1\. тихий_эфир/);
+    expect(places[0]).toMatch(/^1\. kira/);
   });
 
   test('shows the clans and the three medals', async () => {

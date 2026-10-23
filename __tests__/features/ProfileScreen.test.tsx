@@ -25,8 +25,8 @@ describe('ProfileScreen', () => {
   test('shows the nickname, the first letter in the avatar and the balance', async () => {
     await renderProfile();
 
-    expect(await screen.findByText('@гость')).toBeTruthy();
-    expect(screen.getAllByText('Г').length).toBeGreaterThan(0);
+    expect(await screen.findByText('@mira.wav')).toBeTruthy();
+    expect(screen.getAllByText('M').length).toBeGreaterThan(0);
     expect(screen.getByTestId('profile-balance')).toHaveTextContent(
       formatPoints(WELCOME_BONUS_POINTS),
       {
@@ -37,7 +37,7 @@ describe('ProfileScreen', () => {
 
   test('shows the three numbers: balance, followers and the place today', async () => {
     await renderProfile();
-    await screen.findByText('@гость');
+    await screen.findByText('@mira.wav');
 
     expect(screen.getByText(ru.screens.profile.stats.balance)).toBeTruthy();
     expect(screen.getByText(ru.screens.profile.stats.followers)).toBeTruthy();
@@ -47,7 +47,7 @@ describe('ProfileScreen', () => {
 
   test('the edit and tasks buttons are drawn and switched off', async () => {
     await renderProfile();
-    await screen.findByText('@гость');
+    await screen.findByText('@mira.wav');
 
     for (const label of [ru.screens.profile.edit, ru.screens.profile.tasks]) {
       expect(screen.getByRole('button', { name: label }).props.accessibilityState.disabled).toBe(
@@ -79,7 +79,7 @@ describe('ProfileScreen', () => {
   test('the other tabs explain what will be there and offer the feed', async () => {
     const onOpenFeed = jest.fn();
     await renderProfile({ onOpenFeed });
-    await screen.findByText('@гость');
+    await screen.findByText('@mira.wav');
 
     await fireEvent.press(screen.getByRole('tab', { name: ru.screens.profile.tabs.reposts }));
     expect(screen.getByText(ru.screens.profile.empty.reposts[0])).toBeTruthy();
@@ -127,6 +127,6 @@ describe('ProfileScreen', () => {
 
     expect(await screen.findByText(ru.screens.profile.error)).toBeTruthy();
     await fireEvent.press(screen.getByRole('button', { name: ru.screens.profile.retry }));
-    expect(await screen.findByText('@гость')).toBeTruthy();
+    expect(await screen.findByText('@mira.wav')).toBeTruthy();
   });
 });

@@ -12,7 +12,7 @@ describe('loadProfile', () => {
 
     const profile = await loadProfile(repos, CURRENT_USER_ID, NOW);
 
-    expect(profile).toMatchObject({ nickname: 'гость', balance: 1000, inInvestments: 0 });
+    expect(profile).toMatchObject({ nickname: 'mira.wav', balance: 1000, inInvestments: 0 });
   });
 
   test('counts what is in videos now, and less once some of it is taken back', async () => {

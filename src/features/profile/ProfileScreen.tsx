@@ -10,6 +10,7 @@ import { Message } from '../../components/Message';
 import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
+import { demoProfile } from '../../data/seed/demoCommunity';
 import { formatPoints } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
@@ -124,8 +125,8 @@ function ProfileBody({
             size={88}
           />
         </View>
-        <Text style={styles.name}>{profile.nickname}</Text>
-        <Text style={styles.bio}>{t.bio}</Text>
+        <Text style={styles.name}>{demoProfile.displayName}</Text>
+        <Text style={styles.bio}>{demoProfile.bio}</Text>
       </View>
 
       <Stats profile={profile} />
@@ -187,12 +188,14 @@ function Stats({ profile }: Readonly<{ profile: ProfileView }>) {
       <View style={styles.stat}>
         <View style={styles.statRow}>
           <AuraCoin size={16} />
-          <Text style={styles.statValue}>{formatPoints(profile.balance)}</Text>
+          <Text style={styles.statValue}>
+            {formatPoints(profile.balance + profile.inInvestments)}
+          </Text>
         </View>
         <Text style={styles.statLabel}>{t.balance}</Text>
       </View>
       <View style={[styles.stat, styles.statMiddle]}>
-        <Text style={styles.statValue}>0</Text>
+        <Text style={styles.statValue}>{formatPoints(demoProfile.followers)}</Text>
         <Text style={styles.statLabel}>{t.followers}</Text>
       </View>
       <View style={styles.stat}>
@@ -314,7 +317,6 @@ const useStyles = makeStyles((colors) => ({
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    opacity: 0.6,
   },
   buttonLine: { borderWidth: 1.5, borderColor: colors.text, backgroundColor: colors.surface },
   buttonLineText: { fontFamily: fontFamilies.extrabold, fontSize: 15, color: colors.text },
