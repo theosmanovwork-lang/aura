@@ -38,3 +38,20 @@ describe('floating tab bar colors', () => {
     expect(contrast(rgb(colors.border), rgb(colors.background))).toBeGreaterThan(1);
   });
 });
+
+describe('glass pill over the brightest page', () => {
+  /** The blur lets the page show through, so the worst case is a white page behind the glass. */
+  const worstCase = blend(colors.glassFill, '#FFFFFF');
+
+  test('inactive icons stay visible (3:1 for graphics)', () => {
+    expect(contrast(rgb(colors.iconInactive), worstCase)).toBeGreaterThanOrEqual(3);
+  });
+
+  test('the open tab name keeps its contrast on the gold tint (4.5:1)', () => {
+    const tint = blend(
+      colors.accentSoft,
+      `#${worstCase.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('')}`,
+    );
+    expect(contrast(rgb(colors.accent), tint)).toBeGreaterThanOrEqual(4.5);
+  });
+});

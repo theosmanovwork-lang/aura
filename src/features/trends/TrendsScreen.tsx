@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
+import { useTabBarInset } from '../../components/useTabBarInset';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { ru } from '../../i18n/ru';
@@ -30,6 +31,7 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
   const clock = useLatest(now);
   const load = useCallback(() => loadTrendBoard(repos, clock.current()), [repos, clock]);
   const { state, reload } = useLoad(load, refreshKey);
+  const bottomInset = useTabBarInset();
 
   if (state.status === 'loading') return <Message light text={ru.trends.loading} />;
   if (state.status === 'error') {
@@ -42,7 +44,7 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
   return (
     <FlatList
       style={styles.list}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, { paddingBottom: bottomInset }]}
       data={state.data}
       keyExtractor={(row) => row.trend.id}
       renderItem={({ item, index }) => (

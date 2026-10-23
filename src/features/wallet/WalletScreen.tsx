@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
+import { useTabBarInset } from '../../components/useTabBarInset';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
@@ -63,6 +64,7 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
     [repos, clock],
   );
   const { state, reload } = useLoad(load, refreshKey);
+  const bottomInset = useTabBarInset();
 
   if (state.status === 'loading') return <Message light text={ru.wallet.loading} />;
   if (state.status === 'error') {
@@ -75,7 +77,7 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
   return (
     <FlatList
       style={styles.list}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, { paddingBottom: bottomInset }]}
       data={entries}
       keyExtractor={(entry) => entry.id}
       renderItem={({ item }) => <EntryRow entry={item} />}

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
+import { useTabBarInset } from '../../components/useTabBarInset';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
@@ -49,6 +50,7 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
     [repos, clock],
   );
   const { state, reload } = useLoad(load, refreshKey);
+  const bottomInset = useTabBarInset();
   const [tab, setTab] = useState<TabKey>('predictions');
 
   if (state.status === 'loading') return <Message light text={ru.screens.profile.loading} />;
@@ -65,7 +67,10 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
   const { nickname, balance } = state.data;
   const texts = ru.screens.profile;
   return (
-    <ScrollView style={styles.page} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.page}
+      contentContainerStyle={[styles.content, { paddingBottom: bottomInset }]}
+    >
       <View style={styles.topBar}>
         <SoonButton name="add" label={texts.add} />
         <Text style={styles.handle} accessibilityRole="header">

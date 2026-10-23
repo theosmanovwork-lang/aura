@@ -3,19 +3,9 @@ import type { BottomTabBarProps } from 'expo-router/build/layouts/Tabs';
 import { useEffect, useState } from 'react';
 import { AccessibilityInfo, Animated, Pressable, StyleSheet, View } from 'react-native';
 
+import { GlassSurface } from './GlassSurface';
 import { ru } from '../i18n/ru';
-import {
-  colors,
-  lightColors,
-  MIN_TOUCH_TARGET,
-  radii,
-  spacing,
-  TAB_BAR_HEIGHT,
-  typography,
-} from '../theme';
-
-/** Screens that are still dark; the strip under the pill matches the screen above it. */
-const DARK_SCREENS: ReadonlySet<string> = new Set(['index']);
+import { colors, MIN_TOUCH_TARGET, radii, spacing, TAB_BAR_HEIGHT, typography } from '../theme';
 
 const LABEL_FADE_MS = 180;
 const LABEL_MAX_WIDTH = 72;
@@ -73,17 +63,10 @@ export function FloatingTabBar({
   insets,
 }: BottomTabBarProps) {
   const count = state.routes.length;
-  const openName = state.routes[state.index]?.name ?? '';
-  const stripColor = DARK_SCREENS.has(openName) ? colors.background : lightColors.background;
 
   return (
-    <View
-      style={[
-        styles.strip,
-        { backgroundColor: stripColor, paddingBottom: insets.bottom + spacing.sm },
-      ]}
-    >
-      <View testID="tab-pill" accessibilityRole="tablist" style={styles.pill}>
+    <View style={[styles.strip, { paddingBottom: insets.bottom + spacing.sm }]}>
+      <GlassSurface testID="tab-pill" accessibilityRole="tablist" style={styles.pill}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key]!;
           const focused = state.index === index;
@@ -114,16 +97,19 @@ export function FloatingTabBar({
             </Pressable>
           );
         })}
-      </View>
+      </GlassSurface>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   strip: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
     paddingHorizontal: spacing.gutter,
     paddingTop: spacing.sm,
-    backgroundColor: colors.background,
   },
   pill: {
     height: TAB_BAR_HEIGHT,
@@ -134,12 +120,6 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
-    backgroundColor: colors.surface,
-    shadowColor: colors.background,
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 8,
   },
   item: {
     minWidth: MIN_TOUCH_TARGET,

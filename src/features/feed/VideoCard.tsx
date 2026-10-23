@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
+import { useTabBarInset } from '../../components/useTabBarInset';
 import { ru } from '../../i18n/ru';
 import {
   colors,
@@ -69,6 +70,7 @@ type ActiveCardProps = Omit<VideoCardProps, 'isActive'>;
 function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
   const { video, liked } = item;
   const [paused, setPaused] = useState(false);
+  const bottomInset = useTabBarInset();
   const source = useMemo(() => resolveVideoSource(video.videoUri), [video.videoUri]);
 
   return (
@@ -107,7 +109,11 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
         </View>
       ) : null}
 
-      <View testID="video-info" style={styles.info} pointerEvents="none">
+      <View
+        testID="video-info"
+        style={[styles.info, { paddingBottom: bottomInset + spacing.sm }]}
+        pointerEvents="none"
+      >
         <View style={styles.chips}>
           {video.isAiGenerated ? (
             <View
@@ -133,7 +139,7 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
         </Text>
       </View>
 
-      <View style={styles.rail}>
+      <View style={[styles.rail, { bottom: bottomInset + spacing.sm }]}>
         <ActionRail
           liked={liked}
           likeCount={video.likeCount}

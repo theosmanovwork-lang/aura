@@ -34,6 +34,9 @@ export const colors = {
   negativeSoft: 'rgba(251, 113, 133, 0.16)',
   like: '#F472B6',
 
+  // Glass panels (tab bar, buttons over video): the fill that tints the blur behind them
+  glassFill: 'rgba(27, 23, 48, 0.88)',
+
   // Layers over video
   overlay: 'rgba(14, 11, 26, 0.55)',
   scrimClear: 'rgba(14, 11, 26, 0)',
