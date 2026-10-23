@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { MAX_COMMENT_LENGTH } from '../../domain/comment';
 import { ru } from '../../i18n/ru';
-import { colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import { MIN_TOUCH_TARGET, makeStyles, radii, spacing, typography, useColors } from '../../theme';
 
 /** The counter appears once the text gets close to the limit. */
 const COUNTER_FROM = MAX_COMMENT_LENGTH - 60;
@@ -16,6 +16,8 @@ type CommentInputProps = Readonly<{
 }>;
 
 export function CommentInput({ sending, error, onSend }: CommentInputProps) {
+  const styles = useStyles();
+  const colors = useColors();
   const [text, setText] = useState('');
 
   const send = async () => {
@@ -65,7 +67,7 @@ export function CommentInput({ sending, error, onSend }: CommentInputProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   wrap: { gap: spacing.xs },
   row: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.sm },
   input: {
@@ -92,4 +94,4 @@ const styles = StyleSheet.create({
   sendText: { ...typography.titleSmall, color: colors.onPrimary },
   error: { ...typography.caption, color: colors.destructive },
   counter: { ...typography.caption, color: colors.textMuted, alignSelf: 'flex-end' },
-});
+}));

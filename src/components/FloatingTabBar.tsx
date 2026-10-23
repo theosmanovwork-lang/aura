@@ -1,17 +1,17 @@
 // Not re-exported from the package root, so the build path is the only way to get this type.
 import type { BottomTabBarProps } from 'expo-router/build/layouts/Tabs';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { GlassSurface } from './GlassSurface';
 import { ru } from '../i18n/ru';
 import {
-  colors,
   contentColumn,
+  makeStyles,
   MIN_TOUCH_TARGET,
-  radii,
   spacing,
   TAB_BAR_HEIGHT,
+  ThemeProvider,
   typography,
+  useColors,
 } from '../theme';
 
 const MAX_FONT_SCALE = 1.2;
@@ -22,24 +22,29 @@ const spokenName = (title: string, position: number, total: number): string =>
     .replace('{position}', String(position))
     .replace('{total}', String(total));
 
-/** A rounded pill under the screen: the open tab shows icon and name, the others only the icon. */
-export function FloatingTabBar({
-  state,
-  descriptors,
-  emitter,
-  navigateToTab,
-  insets,
-}: BottomTabBarProps) {
+/** The first tab is the feed: video under it, so the bar is dark there whatever the phone is set to. */
+export function FloatingTabBar(props: BottomTabBarProps) {
+  return (
+    <ThemeProvider scheme={props.state.index === 0 ? 'dark' : undefined}>
+      <TabBar {...props} />
+    </ThemeProvider>
+  );
+}
+
+/** A flat bar under the screen: a line on top, icon and name for every tab, the open one is bold. */
+function TabBar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBarProps) {
+  const styles = useStyles();
+  const colors = useColors();
   const count = state.routes.length;
 
   return (
-    <View style={[styles.strip, { paddingBottom: insets.bottom + spacing.sm }]}>
-      <GlassSurface testID="tab-pill" accessibilityRole="tablist" style={styles.pill}>
+    <View style={[styles.strip, { paddingBottom: insets.bottom }]}>
+      <View testID="tab-pill" accessibilityRole="tablist" style={styles.bar}>
         {state.routes.map((route, index) => {
           const { options } = descriptors[route.key]!;
           const focused = state.index === index;
           const title = options.title ?? route.name;
-          const color = focused ? colors.accent : colors.iconInactive;
+          const color = focused ? colors.text : colors.iconInactive;
 
           const onPress = () => {
             const event = emitter.emit({
@@ -65,37 +70,35 @@ export function FloatingTabBar({
                 testID={`tab-label-${route.name}`}
                 numberOfLines={1}
                 maxFontSizeMultiplier={MAX_FONT_SCALE}
-                style={[styles.label, { color }]}
+                style={[styles.label, { color }, focused && styles.labelOpen]}
               >
                 {title}
               </Text>
             </Pressable>
           );
         })}
-      </GlassSurface>
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   strip: {
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    paddingHorizontal: spacing.gutter,
-    paddingTop: spacing.sm,
+    backgroundColor: colors.background,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
-  pill: {
+  bar: {
     ...contentColumn,
     height: TAB_BAR_HEIGHT,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
     paddingHorizontal: spacing.sm,
-    borderRadius: radii.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
   },
   item: {
     flex: 1,
@@ -106,4 +109,5 @@ const styles = StyleSheet.create({
     gap: spacing.xxs,
   },
   label: { ...typography.tabLabel },
-});
+  labelOpen: { fontWeight: '700' },
+}));

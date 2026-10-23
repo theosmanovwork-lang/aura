@@ -10,7 +10,7 @@ import TrendDetailRoute from '../app/trend/[id]';
 import WalletScreen from '../app/(tabs)/wallet';
 import RootLayout from '../app/_layout';
 import { ru } from '../src/i18n/ru';
-import { colors, MIN_TOUCH_TARGET, radii, TAB_BAR_HEIGHT } from '../src/theme';
+import { darkColors as colors, MIN_TOUCH_TARGET, TAB_BAR_HEIGHT } from '../src/theme';
 import { resetPlayers } from '../test-utils/expoVideoMock';
 
 jest.mock('expo-video', () => jest.requireActual('../test-utils/expoVideoMock'));
@@ -41,13 +41,13 @@ const labelColor = (name: string) => styleOf(`tab-label-${name}`).color;
 beforeEach(resetPlayers);
 
 describe('floating tab bar', () => {
-  test('the four tabs sit inside one rounded pill', async () => {
+  test('the tabs sit in one flat bar with a line on top', async () => {
     await renderRouter(routes);
     const pill = await screen.findByTestId('tab-pill', { hidden: true });
 
     expect(pill.props.accessibilityRole).toBe('tablist');
-    expect(StyleSheet.flatten(pill.props.style).borderRadius).toBe(radii.pill);
     expect(StyleSheet.flatten(pill.props.style).height).toBe(TAB_BAR_HEIGHT);
+    expect(StyleSheet.flatten(pill.props.style).borderRadius).toBeUndefined();
   });
 
   test('every tab shows its name under the icon, open or not', async () => {
@@ -59,11 +59,11 @@ describe('floating tab bar', () => {
     }
   });
 
-  test('only the colour tells the open tab: gold-free accent for the open, quiet for the rest', async () => {
+  test('the open tab is in the text colour, the rest are quiet', async () => {
     await renderRouter(routes);
     await screen.findByTestId('tab-pill', { hidden: true });
 
-    expect(labelColor('index')).toBe(colors.accent);
+    expect(labelColor('index')).toBe(colors.text);
     expect(labelColor('wallet')).toBe(colors.iconInactive);
   });
 
@@ -83,7 +83,7 @@ describe('floating tab bar', () => {
     await fireEvent.press(wallet);
 
     await screen.findByTestId('tab-icon-sparkles', { hidden: true });
-    expect(labelColor('wallet')).toBe(colors.accent);
+    expect(labelColor('wallet')).toBe(colors.text);
     expect(labelColor('index')).toBe(colors.iconInactive);
     expect(screen.getByTestId('tab-label-index', { hidden: true })).toBeTruthy();
   });
@@ -116,7 +116,7 @@ describe('floating tab bar presses', () => {
 
     await fireEvent.press(feed);
 
-    expect(labelColor('index')).toBe(colors.accent);
+    expect(labelColor('index')).toBe(colors.text);
     expect(labelColor('wallet')).toBe(colors.iconInactive);
   });
 });

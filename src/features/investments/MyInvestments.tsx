@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { formatDateTime } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
-import { colors, radii, spacing, typography } from '../../theme';
+import { makeStyles, radii, spacing, typography } from '../../theme';
 import { formatPrice } from '../market/marketFormat';
 import { useLoad } from '../useLoad';
 import { loadMyInvestments, type InvestmentView } from './investmentService';
@@ -28,6 +28,7 @@ const spoken = (view: InvestmentView): string =>
   ].join(', ');
 
 function Row({ view, onOpen }: Readonly<{ view: InvestmentView; onOpen?: (id: string) => void }>) {
+  const styles = useStyles();
   return (
     <Pressable
       testID={`investment-row-${view.investment.id}`}
@@ -62,6 +63,7 @@ type MyInvestmentsProps = Readonly<{
 
 /** «Прошлые вложения»: every video the user put Aura into, with the result so far. */
 export function MyInvestments({ refreshKey = 0, onOpenVideo }: MyInvestmentsProps) {
+  const styles = useStyles();
   const repos = useRepositories();
   const load = useCallback(() => loadMyInvestments(repos, CURRENT_USER_ID), [repos]);
   const { state } = useLoad(load, refreshKey);
@@ -82,7 +84,7 @@ export function MyInvestments({ refreshKey = 0, onOpenVideo }: MyInvestmentsProp
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   section: { gap: spacing.sm },
   title: { ...typography.bodyStrong, color: colors.text },
   row: {
@@ -109,4 +111,4 @@ const styles = StyleSheet.create({
   caption: { ...typography.caption, color: colors.textMuted },
   result: { alignItems: 'flex-end', gap: spacing.xxs },
   amount: { ...typography.figure, color: colors.text },
-});
+}));

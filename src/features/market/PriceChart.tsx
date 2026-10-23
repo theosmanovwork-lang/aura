@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import type { VideoSnapshot } from '../../domain/videoPrice';
 import { ru } from '../../i18n/ru';
-import { colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import { MIN_TOUCH_TARGET, makeStyles, radii, spacing, typography } from '../../theme';
 import { BarChart } from '../trends/BarChart';
 import { filterHistory, PERIODS, type Period } from './marketFormat';
 
@@ -13,6 +13,7 @@ type PriceChartProps = Readonly<{ history: readonly VideoSnapshot[]; now: number
 
 /** The price history as bars, with the periods «1Д 1Н 1М Всё» under it. */
 export function PriceChart({ history, now }: PriceChartProps) {
+  const styles = useStyles();
   const [period, setPeriod] = useState<Period>('all');
   const prices = filterHistory(history, period, now).map((snapshot) => snapshot.price);
 
@@ -46,7 +47,7 @@ export function PriceChart({ history, now }: PriceChartProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     gap: spacing.md,
     padding: spacing.md,
@@ -66,4 +67,4 @@ const styles = StyleSheet.create({
   periodOpen: { backgroundColor: colors.surfaceMuted },
   periodText: { ...typography.figure, color: colors.textMuted },
   periodTextOpen: { color: colors.text },
-});
+}));

@@ -1,9 +1,17 @@
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
 import { useTabBarInset } from '../../components/useTabBarInset';
 import { ru } from '../../i18n/ru';
-import { colors, iconSizes, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import {
+  MIN_TOUCH_TARGET,
+  iconSizes,
+  makeStyles,
+  radii,
+  spacing,
+  typography,
+  useColors,
+} from '../../theme';
 
 type Item = Readonly<{ key: keyof typeof ru.settings.items; kind?: 'switch' | 'danger' }>;
 
@@ -18,6 +26,8 @@ const GROUPS: readonly Readonly<{
 ];
 
 function Row({ item }: Readonly<{ item: Item }>) {
+  const styles = useStyles();
+  const colors = useColors();
   const label = ru.settings.items[item.key];
   if (item.kind === 'switch') {
     return (
@@ -52,6 +62,7 @@ function Row({ item }: Readonly<{ item: Item }>) {
 
 /** The settings list of the reference; every line is drawn, none works yet. */
 export function SettingsScreen() {
+  const styles = useStyles();
   const bottomInset = useTabBarInset();
   return (
     <ScrollView
@@ -73,7 +84,7 @@ export function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   page: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.gutter, gap: spacing.md },
   soon: { ...typography.caption, color: colors.textMuted },
@@ -92,4 +103,4 @@ const styles = StyleSheet.create({
   },
   label: { ...typography.body, color: colors.text, flexShrink: 1 },
   danger: { color: colors.destructive },
-});
+}));

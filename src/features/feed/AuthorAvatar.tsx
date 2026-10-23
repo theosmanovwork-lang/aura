@@ -1,8 +1,8 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
 import { ru } from '../../i18n/ru';
-import { colors, radii, typography } from '../../theme';
+import { makeStyles, radii, typography, useColors } from '../../theme';
 
 const SIZE = 48;
 const BADGE = 20;
@@ -11,6 +11,8 @@ type AuthorAvatarProps = Readonly<{ name: string }>;
 
 /** The author's round avatar with a plus under it (follow); drawn, switched off until follows exist. */
 export function AuthorAvatar({ name }: AuthorAvatarProps) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <Pressable
       testID="author-avatar"
@@ -30,7 +32,7 @@ export function AuthorAvatar({ name }: AuthorAvatarProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   wrap: { width: SIZE, height: SIZE + BADGE / 2, alignItems: 'center' },
   circle: {
     width: SIZE,
@@ -53,4 +55,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.accent,
   },
-});
+}));

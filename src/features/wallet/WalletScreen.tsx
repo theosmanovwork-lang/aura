@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Icon } from '../../components/Icon';
@@ -11,7 +11,15 @@ import type { LedgerEntry } from '../../domain/ledger';
 import { formatDateTime, formatPoints, formatSignedPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { iconSizes, colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import {
+  MIN_TOUCH_TARGET,
+  iconSizes,
+  makeStyles,
+  radii,
+  spacing,
+  typography,
+  useColors,
+} from '../../theme';
 import { MyPredictions } from '../predictions/MyPredictions';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
@@ -30,6 +38,8 @@ const describeEntry = (entry: LedgerEntry): string => {
 };
 
 function EntryRow({ entry }: Readonly<{ entry: LedgerEntry }>) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <View
       testID={`wallet-entry-${entry.id}`}
@@ -51,6 +61,8 @@ function EntryRow({ entry }: Readonly<{ entry: LedgerEntry }>) {
 }
 
 export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenProps) {
+  const styles = useStyles();
+  const colors = useColors();
   const repos = useRepositories();
   const clock = useLatest(now);
   const load = useCallback(
@@ -105,7 +117,7 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   list: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.md },
   header: { gap: spacing.md, marginBottom: spacing.md },
@@ -151,4 +163,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.lg,
   },
-});
+}));

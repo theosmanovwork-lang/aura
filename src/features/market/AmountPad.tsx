@@ -1,11 +1,19 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Icon } from '../../components/Icon';
 import { formatPoints } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
-import { colors, iconSizes, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import {
+  MIN_TOUCH_TARGET,
+  iconSizes,
+  makeStyles,
+  radii,
+  spacing,
+  typography,
+  useColors,
+} from '../../theme';
 
 const MAX_DIGITS = 6;
 const KEY_ROWS = [
@@ -38,6 +46,8 @@ export function AmountPad({
   onConfirm,
   onCancel,
 }: AmountPadProps) {
+  const styles = useStyles();
+  const colors = useColors();
   const [digits, setDigits] = useState('');
   const amount = digits === '' ? 0 : Number(digits);
   const valid = amount >= min && amount <= max && !pending;
@@ -116,7 +126,7 @@ export function AmountPad({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   pad: {
     gap: spacing.sm,
     padding: spacing.md,
@@ -149,4 +159,4 @@ const styles = StyleSheet.create({
   confirmText: { ...typography.bodyStrong, color: colors.onPrimary },
   cancel: { minHeight: MIN_TOUCH_TARGET, alignItems: 'center', justifyContent: 'center' },
   cancelText: { ...typography.bodyStrong, color: colors.textMuted },
-});
+}));

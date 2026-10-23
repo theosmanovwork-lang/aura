@@ -8,7 +8,7 @@ import { formatPoints } from '../../src/i18n/format';
 import { ru } from '../../src/i18n/ru';
 import { ProfileScreen } from '../../src/features/profile/ProfileScreen';
 import { WELCOME_BONUS_POINTS } from '../../src/features/wallet/walletService';
-import { colors } from '../../src/theme';
+import { darkColors as colors } from '../../src/theme';
 
 const NOW = new Date(2026, 9, 22, 21, 5).getTime();
 

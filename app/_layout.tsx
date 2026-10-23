@@ -1,72 +1,60 @@
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { Stack, usePathname } from 'expo-router';
+import { StatusBar } from 'react-native';
 
 import { RepositoriesProvider } from '../src/data/RepositoriesProvider';
 import { ru } from '../src/i18n/ru';
-import { colors, fontAssets, fontFamilies } from '../src/theme';
+import { ThemeProvider, typography, useColors, useScheme } from '../src/theme';
 
 export { AppErrorScreen as ErrorBoundary } from '../src/components/AppErrorScreen';
 
-export default function RootLayout() {
-  // The app opens at once in the system font and switches when the fonts are ready (or stays if they fail).
-  useFonts(fontAssets);
+const HEADER_TITLES = {
+  'trend/[id]': ru.trends.detailTitle,
+  'video/[id]': ru.market.title,
+  settings: ru.settings.title,
+  chats: ru.stubs.chats.title,
+  cards: ru.stubs.cards.title,
+} as const;
+
+function Screens() {
+  const colors = useColors();
+  const scheme = useScheme();
+  // The feed (the first tab, at the root path) is video: its clock and battery icons are always light.
+  const onFeed = usePathname() === '/';
+  const light = scheme === 'dark' || onFeed;
   return (
-    <RepositoriesProvider>
-      {/* The app is dark everywhere: light clock and battery icons stay readable on a light phone. */}
-      <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name="trend/[id]"
-          options={{
-            headerShown: true,
-            title: ru.trends.detailTitle,
-            headerStyle: { backgroundColor: colors.surface },
-            headerTintColor: colors.text,
-            headerTitleStyle: { fontFamily: fontFamilies.semibold },
-          }}
-        />
-        <Stack.Screen
-          name="video/[id]"
-          options={{
-            headerShown: true,
-            title: ru.market.title,
-            headerStyle: { backgroundColor: colors.surface },
-            headerTintColor: colors.text,
-            headerTitleStyle: { fontFamily: fontFamilies.semibold },
-          }}
-        />
-        <Stack.Screen
-          name="settings"
-          options={{
-            headerShown: true,
-            title: ru.settings.title,
-            headerStyle: { backgroundColor: colors.surface },
-            headerTintColor: colors.text,
-            headerTitleStyle: { fontFamily: fontFamilies.semibold },
-          }}
-        />
-        <Stack.Screen
-          name="chats"
-          options={{
-            headerShown: true,
-            title: ru.stubs.chats.title,
-            headerStyle: { backgroundColor: colors.surface },
-            headerTintColor: colors.text,
-            headerTitleStyle: { fontFamily: fontFamilies.semibold },
-          }}
-        />
-        <Stack.Screen
-          name="cards"
-          options={{
-            headerShown: true,
-            title: ru.stubs.cards.title,
-            headerStyle: { backgroundColor: colors.surface },
-            headerTintColor: colors.text,
-            headerTitleStyle: { fontFamily: fontFamilies.semibold },
-          }}
-        />
+    <>
+      <StatusBar barStyle={light ? 'light-content' : 'dark-content'} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.background },
+        }}
+      >
+        {Object.entries(HEADER_TITLES).map(([name, title]) => (
+          <Stack.Screen
+            key={name}
+            name={name}
+            options={{
+              headerShown: true,
+              title,
+              headerShadowVisible: false,
+              headerStyle: { backgroundColor: colors.background },
+              headerTintColor: colors.text,
+              headerTitleStyle: { fontWeight: typography.heading.fontWeight },
+            }}
+          />
+        ))}
       </Stack>
-    </RepositoriesProvider>
+    </>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <RepositoriesProvider>
+        <Screens />
+      </RepositoriesProvider>
+    </ThemeProvider>
   );
 }

@@ -7,7 +7,7 @@ import { seed } from '../../src/data/seed';
 import { FeedScreen } from '../../src/features/feed/FeedScreen';
 import { formatPoints } from '../../src/i18n/format';
 import { ru } from '../../src/i18n/ru';
-import { colors, spacing } from '../../src/theme';
+import { darkColors as colors, spacing } from '../../src/theme';
 import { resetPlayers } from '../../test-utils/expoVideoMock';
 
 jest.mock('expo-video', () => jest.requireActual('../../test-utils/expoVideoMock'));

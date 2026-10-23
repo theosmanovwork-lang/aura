@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import type { Investment } from '../../domain/investment';
 import { formatPoints } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
-import { colors, radii, spacing, typography } from '../../theme';
+import { makeStyles, radii, spacing, typography } from '../../theme';
 import { formatPrice } from './marketFormat';
 
 type PositionCardProps = Readonly<{ position: Investment; value: number }>;
@@ -13,6 +13,7 @@ const MINUS = '−';
 
 /** What the user has put into the video, what it is worth now and the difference. */
 export function PositionCard({ position, value }: PositionCardProps) {
+  const styles = useStyles();
   const texts = ru.market.position;
   const diff = Math.round((value - position.invested) * 100) / 100;
   const sign = diff > 0 ? '+' : diff < 0 ? MINUS : '';
@@ -34,6 +35,7 @@ export function PositionCard({ position, value }: PositionCardProps) {
 }
 
 function Line({ label, value }: Readonly<{ label: string; value: string }>) {
+  const styles = useStyles();
   return (
     <View style={styles.line}>
       <Text style={styles.label}>{label}</Text>
@@ -42,7 +44,7 @@ function Line({ label, value }: Readonly<{ label: string; value: string }>) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     gap: spacing.sm,
     padding: spacing.md,
@@ -55,4 +57,4 @@ const styles = StyleSheet.create({
   line: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   label: { ...typography.bodySmall, color: colors.textMuted },
   value: { ...typography.figure, color: colors.text },
-});
+}));

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Button } from '../../components/Button';
@@ -12,7 +12,7 @@ import { MAX_INVESTMENT_PER_VIDEO, MIN_INVESTMENT } from '../../domain/investmen
 import { videoPrice } from '../../domain/videoPrice';
 import { formatDateTime } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
-import { colors, radii, spacing, typography } from '../../theme';
+import { makeStyles, radii, spacing, typography } from '../../theme';
 import { SoonAction } from '../feed/SoonAction';
 import { loadVideoMarket, type VideoMarket } from '../investments/investmentService';
 import { useLatest } from '../useLatest';
@@ -50,6 +50,7 @@ function changeOf(market: VideoMarket): { percent: number | null; label: string 
 }
 
 function Header({ market }: Readonly<{ market: VideoMarket }>) {
+  const styles = useStyles();
   return (
     <View style={styles.header}>
       <View style={styles.titles}>
@@ -64,6 +65,7 @@ function Header({ market }: Readonly<{ market: VideoMarket }>) {
 }
 
 function PriceBlock({ market }: Readonly<{ market: VideoMarket }>) {
+  const styles = useStyles();
   const change = changeOf(market);
   return (
     <View style={styles.priceBlock}>
@@ -82,6 +84,7 @@ function PriceBlock({ market }: Readonly<{ market: VideoMarket }>) {
 type RelatedProps = Readonly<{ videos: VideoMarket['related']; onOpen?: (id: string) => void }>;
 
 function Related({ videos, onOpen }: RelatedProps) {
+  const styles = useStyles();
   return (
     <View style={styles.related}>
       <Text style={styles.sectionTitle} accessibilityRole="header">
@@ -112,6 +115,7 @@ export function VideoMarketScreen({
   now = Date.now,
   onOpenVideo,
 }: VideoMarketScreenProps) {
+  const styles = useStyles();
   const repos = useRepositories();
   const clock = useLatest(now);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -197,7 +201,7 @@ export function VideoMarketScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   screen: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.gutter, gap: spacing.md },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
@@ -228,4 +232,4 @@ const styles = StyleSheet.create({
   relatedTitle: { ...typography.body, color: colors.text, flex: 1 },
   relatedPrice: { ...typography.figure, color: colors.textMuted },
   disclaimer: { ...typography.caption, color: colors.textMuted, textAlign: 'center' },
-});
+}));

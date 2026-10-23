@@ -1,5 +1,5 @@
 import { growthColor } from '../../src/features/trends/growthColor';
-import { colors } from '../../src/theme';
+import { darkColors as colors } from '../../src/theme';
 
 describe('growthColor', () => {
   test.each([
@@ -8,6 +8,6 @@ describe('growthColor', () => {
     [0, colors.textMuted],
     [null, colors.textMuted],
   ])('%p -> %s', (percent, expected) => {
-    expect(growthColor(percent)).toBe(expected);
+    expect(growthColor(percent, colors)).toBe(expected);
   });
 });

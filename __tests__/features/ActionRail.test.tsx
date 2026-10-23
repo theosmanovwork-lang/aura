@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 import { ActionRail } from '../../src/features/feed/ActionRail';
 import { formatCount } from '../../src/i18n/plural';
 import { ru } from '../../src/i18n/ru';
-import { colors, MIN_TOUCH_TARGET } from '../../src/theme';
+import { darkColors as colors, MIN_TOUCH_TARGET } from '../../src/theme';
 
 const renderRail = async (props: Partial<Parameters<typeof ActionRail>[0]> = {}) => {
   const onToggleLike = jest.fn();

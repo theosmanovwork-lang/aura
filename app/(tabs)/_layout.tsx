@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router/js-tabs';
 import { FloatingTabBar } from '../../src/components/FloatingTabBar';
 import { Icon, type IconName } from '../../src/components/Icon';
 import { ru } from '../../src/i18n/ru';
-import { colors, iconSizes } from '../../src/theme';
+import { iconSizes, useColors } from '../../src/theme';
 
 type TabSpec = Readonly<{ name: string; title: string; icon: IconName; iconOpen: IconName }>;
 
@@ -16,6 +16,7 @@ const TABS: readonly TabSpec[] = [
 ];
 
 export default function TabsLayout() {
+  const colors = useColors();
   return (
     <Tabs
       tabBar={(props) => <FloatingTabBar {...props} />}

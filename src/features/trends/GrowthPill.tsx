@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { colors, radii, spacing, typography } from '../../theme';
+import { makeStyles, radii, spacing, typography, useColors, type Palette } from '../../theme';
 import { describeGrowth, formatGrowth } from './format';
 import { growthColor } from './growthColor';
 
@@ -11,20 +11,22 @@ type GrowthPillProps = Readonly<{
   large?: boolean;
 }>;
 
-const pillBackground = (percent: number | null): string => {
+const pillBackground = (percent: number | null, colors: Palette): string => {
   if (percent === null || percent === 0) return colors.surfaceMuted;
   return percent > 0 ? colors.positiveSoft : colors.negativeSoft;
 };
 
 /** Growth over the last day in a pill: light with ▲ for growth, muted with ▼ for a fall. */
 export function GrowthPill({ percent, trendId, large = false }: GrowthPillProps) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <View
       testID={`growth-pill-${trendId}`}
-      style={[styles.pill, { backgroundColor: pillBackground(percent) }]}
+      style={[styles.pill, { backgroundColor: pillBackground(percent, colors) }]}
     >
       <Text
-        style={[large ? styles.large : styles.small, { color: growthColor(percent) }]}
+        style={[large ? styles.large : styles.small, { color: growthColor(percent, colors) }]}
         accessibilityLabel={describeGrowth(percent)}
       >
         {formatGrowth(percent)}
@@ -33,7 +35,7 @@ export function GrowthPill({ percent, trendId, large = false }: GrowthPillProps)
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   pill: {
     alignSelf: 'flex-start',
     paddingHorizontal: spacing.sm,
@@ -42,4 +44,4 @@ const styles = StyleSheet.create({
   },
   small: { ...typography.figureSmall },
   large: { ...typography.figure },
-});
+}));

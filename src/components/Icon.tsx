@@ -2,7 +2,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 
-import { colors, iconSizes } from '../theme';
+import { iconSizes, useColors } from '../theme';
 
 export type IconName = ComponentProps<typeof Ionicons>['name'];
 
@@ -14,12 +14,13 @@ type IconProps = Readonly<{
 }>;
 
 /** A decorative icon: screen readers skip it, the button or tab around it carries the name. */
-export function Icon({ name, size = iconSizes.md, color = colors.text, testID }: IconProps) {
+export function Icon({ name, size = iconSizes.md, color, testID }: IconProps) {
+  const colors = useColors();
   return (
     <Ionicons
       name={name}
       size={size}
-      color={color}
+      color={color ?? colors.text}
       testID={testID}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"

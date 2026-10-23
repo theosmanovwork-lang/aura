@@ -1,7 +1,7 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable } from 'react-native';
 
 import { AuraText } from './AuraText';
-import { colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../theme';
+import { MIN_TOUCH_TARGET, makeStyles, radii, spacing, typography } from '../theme';
 
 /** A pressed button shrinks a little (Prufbase: scale 0.98). */
 const PRESS_SCALE = 0.98;
@@ -25,6 +25,7 @@ export function Button({
   disabled = false,
   testID,
 }: ButtonProps) {
+  const styles = useStyles();
   const isChip = variant === 'chip';
   return (
     <Pressable
@@ -55,7 +56,7 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   base: {
     minHeight: MIN_TOUCH_TARGET,
     alignItems: 'center',
@@ -69,9 +70,9 @@ const styles = StyleSheet.create({
   primaryPressed: { backgroundColor: colors.primaryPressed, transform: [{ scale: PRESS_SCALE }] },
   chip: { backgroundColor: colors.surfaceMuted },
   pressed: { opacity: 0.8, transform: [{ scale: PRESS_SCALE }] },
-  selected: { borderColor: colors.primary },
-  selectedText: { color: colors.primary },
+  selected: { backgroundColor: colors.text, borderColor: colors.text },
+  selectedText: { color: colors.background },
   disabled: { opacity: 0.4 },
   text: { ...typography.titleSmall, color: colors.text, textAlign: 'center' },
   primaryText: { color: colors.onPrimary },
-});
+}));

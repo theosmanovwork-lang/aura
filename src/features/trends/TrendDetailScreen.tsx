@@ -7,7 +7,7 @@ import { NotFoundError } from '../../data/repositories';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { countLabel, formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, iconSizes, radii, spacing, typography } from '../../theme';
+import { iconSizes, makeStyles, radii, spacing, typography, useColors } from '../../theme';
 import { PredictionPanel } from '../predictions/PredictionPanel';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
@@ -20,6 +20,8 @@ const CHART_HEIGHT = 140;
 type TrendDetailScreenProps = Readonly<{ trendId: string; now?: () => number }>;
 
 export function TrendDetailScreen({ trendId, now = Date.now }: TrendDetailScreenProps) {
+  const styles = useStyles();
+  const colors = useColors();
   const repos = useRepositories();
   const clock = useLatest(now);
   const load = useCallback(
@@ -84,7 +86,7 @@ export function TrendDetailScreen({ trendId, now = Date.now }: TrendDetailScreen
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   screen: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.gutter, gap: spacing.md },
   hero: {
@@ -124,4 +126,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.lg,
   },
-});
+}));

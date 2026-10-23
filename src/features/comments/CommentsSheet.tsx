@@ -5,7 +5,6 @@ import {
   Modal,
   Platform,
   Pressable,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -18,13 +17,14 @@ import { CommentRuleError } from '../../domain/comment';
 import { countLabel } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
 import {
-  colors,
+  MIN_TOUCH_TARGET,
   contentColumn,
   iconSizes,
-  MIN_TOUCH_TARGET,
+  makeStyles,
   radii,
   spacing,
   typography,
+  useColors,
 } from '../../theme';
 import { useLoad } from '../useLoad';
 import { CommentInput } from './CommentInput';
@@ -71,6 +71,8 @@ export function CommentsSheet({ videoId, userId, onClose, onCountChange }: Comme
 type SheetBodyProps = Readonly<Omit<CommentsSheetProps, 'videoId'> & { videoId: string }>;
 
 function SheetBody({ videoId, userId, onClose, onCountChange }: SheetBodyProps) {
+  const styles = useStyles();
+  const colors = useColors();
   const repos = useRepositories();
   const bottomInset = useBottomInset();
   const [refreshKey, setRefreshKey] = useState(0);
@@ -172,7 +174,7 @@ function CommentList({ state, reload, now }: CommentListProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   fill: { flex: 1, justifyContent: 'flex-end' },
   backdrop: { flex: 1, backgroundColor: colors.overlay },
   sheet: {
@@ -203,4 +205,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   list: { flex: 1 },
-});
+}));

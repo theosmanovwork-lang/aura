@@ -1,8 +1,8 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, radii, spacing, typography } from '../../theme';
+import { makeStyles, radii, spacing, typography } from '../../theme';
 import { BarChart } from './BarChart';
 import { describeGrowth } from './format';
 import { GrowthPill } from './GrowthPill';
@@ -20,6 +20,7 @@ type TrendRowProps = Readonly<{
 }>;
 
 export function TrendRow({ summary, rank, onPress }: TrendRowProps) {
+  const styles = useStyles();
   const { trend, score, growthPercent, history } = summary;
 
   return (
@@ -45,7 +46,7 @@ export function TrendRow({ summary, rank, onPress }: TrendRowProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -62,4 +63,4 @@ const styles = StyleSheet.create({
   index: { ...typography.caption, color: colors.textMuted },
   score: { ...typography.figureSmall, color: colors.text },
   chart: { width: MINI_CHART_WIDTH },
-});
+}));

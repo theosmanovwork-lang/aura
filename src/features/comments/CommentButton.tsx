@@ -1,14 +1,23 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 
 import { Icon } from '../../components/Icon';
 import { formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, iconSizes, MIN_TOUCH_TARGET, spacing, typography } from '../../theme';
+import {
+  MIN_TOUCH_TARGET,
+  iconSizes,
+  makeStyles,
+  spacing,
+  typography,
+  useColors,
+} from '../../theme';
 
 type CommentButtonProps = Readonly<{ count: number; onPress: () => void }>;
 
 /** The comments button in the action rail: a speech bubble with the number of comments. */
 export function CommentButton({ count, onPress }: CommentButtonProps) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <Pressable
       testID="comments-button"
@@ -24,7 +33,7 @@ export function CommentButton({ count, onPress }: CommentButtonProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   action: {
     minWidth: MIN_TOUCH_TARGET,
     minHeight: MIN_TOUCH_TARGET,
@@ -40,4 +49,4 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-});
+}));

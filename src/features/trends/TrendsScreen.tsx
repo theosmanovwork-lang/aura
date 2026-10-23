@@ -1,12 +1,20 @@
 import { useCallback } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
 import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { ru } from '../../i18n/ru';
-import { iconSizes, colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import {
+  MIN_TOUCH_TARGET,
+  iconSizes,
+  makeStyles,
+  radii,
+  spacing,
+  typography,
+  useColors,
+} from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { TrendRow } from './TrendRow';
@@ -20,6 +28,8 @@ type TrendsScreenProps = Readonly<{
 }>;
 
 export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: TrendsScreenProps) {
+  const styles = useStyles();
+  const colors = useColors();
   const repos = useRepositories();
   const clock = useLatest(now);
   const load = useCallback(() => loadTrendBoard(repos, clock.current()), [repos, clock]);
@@ -65,7 +75,7 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   list: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.gutter },
   header: { gap: spacing.xs, marginBottom: spacing.md },
@@ -89,4 +99,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: spacing.lg,
   },
-});
+}));

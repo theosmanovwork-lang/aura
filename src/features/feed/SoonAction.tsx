@@ -1,13 +1,15 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { Icon, type IconName } from '../../components/Icon';
 import { ru } from '../../i18n/ru';
-import { colors, iconSizes, MIN_TOUCH_TARGET, spacing } from '../../theme';
+import { MIN_TOUCH_TARGET, iconSizes, makeStyles, spacing, useColors } from '../../theme';
 
 type SoonActionProps = Readonly<{ icon: IconName; label: string; testID: string }>;
 
 /** A control drawn like the reference but switched off until its feature exists. */
 export function SoonAction({ icon, label, testID }: SoonActionProps) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <Pressable
       testID={testID}
@@ -24,6 +26,7 @@ export function SoonAction({ icon, label, testID }: SoonActionProps) {
 
 /** The reference's repost and share buttons, in a column under the working actions. */
 export function SoonRail() {
+  const styles = useStyles();
   return (
     <View testID="soon-rail" style={styles.rail}>
       <SoonAction testID="soon-repost" icon="repeat" label={ru.feed.soon.repost} />
@@ -32,7 +35,7 @@ export function SoonRail() {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   rail: { alignItems: 'center', gap: spacing.md },
   action: {
     minWidth: MIN_TOUCH_TARGET,
@@ -41,4 +44,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     opacity: 0.85,
   },
-});
+}));

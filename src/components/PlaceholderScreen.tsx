@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../theme';
+import { makeStyles, spacing, typography } from '../theme';
 
 type PlaceholderScreenProps = {
   title: string;
@@ -8,6 +8,7 @@ type PlaceholderScreenProps = {
 };
 
 export function PlaceholderScreen({ title, subtitle }: PlaceholderScreenProps) {
+  const styles = useStyles();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
@@ -16,7 +17,7 @@ export function PlaceholderScreen({ title, subtitle }: PlaceholderScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -31,4 +32,4 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     textAlign: 'center',
   },
-});
+}));

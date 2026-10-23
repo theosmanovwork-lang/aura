@@ -1,7 +1,7 @@
-import { StyleSheet, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { ru } from '../i18n/ru';
-import { auraWordStyle, colors, iconSizes } from '../theme';
+import { auraWordStyle, iconSizes, makeStyles } from '../theme';
 
 /** First letter of the currency word: the mark that takes the place of a heart. */
 const GLYPH = ru.wallet.sparks[0].slice(0, 1);
@@ -13,6 +13,7 @@ type AuraMarkProps = Readonly<{ active: boolean; testID?: string; size?: number 
 
 /** The currency mark: a serif italic letter, bright when active and muted when not. */
 export function AuraMark({ active, testID, size = iconSizes.lg }: AuraMarkProps) {
+  const styles = useStyles();
   return (
     <Text
       testID={testID}
@@ -30,7 +31,7 @@ export function AuraMark({ active, testID, size = iconSizes.lg }: AuraMarkProps)
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   mark: { ...auraWordStyle },
   idle: { color: colors.text, opacity: 0.7 },
   active: {
@@ -40,4 +41,4 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: GLOW_RADIUS,
   },
-});
+}));

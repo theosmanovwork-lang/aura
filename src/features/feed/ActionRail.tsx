@@ -1,9 +1,9 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { AuraMark } from '../../components/AuraMark';
 import { formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, MIN_TOUCH_TARGET, spacing, typography } from '../../theme';
+import { MIN_TOUCH_TARGET, makeStyles, spacing, typography } from '../../theme';
 
 type ActionRailProps = Readonly<{
   liked: boolean;
@@ -13,6 +13,7 @@ type ActionRailProps = Readonly<{
 
 /** The column of actions on the right edge of a video: the Aura mark (the like) with its counter. */
 export function ActionRail({ liked, likeCount, onToggleLike }: ActionRailProps) {
+  const styles = useStyles();
   return (
     <View testID="action-rail" style={styles.rail}>
       <Pressable
@@ -31,7 +32,7 @@ export function ActionRail({ liked, likeCount, onToggleLike }: ActionRailProps) 
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   rail: { alignItems: 'center', gap: spacing.md },
   action: {
     minWidth: MIN_TOUCH_TARGET,
@@ -48,4 +49,4 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-});
+}));

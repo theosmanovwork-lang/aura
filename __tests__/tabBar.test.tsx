@@ -10,7 +10,7 @@ import TrendDetailRoute from '../app/trend/[id]';
 import WalletScreen from '../app/(tabs)/wallet';
 import RootLayout from '../app/_layout';
 import { ru } from '../src/i18n/ru';
-import { colors } from '../src/theme';
+import { darkColors as colors } from '../src/theme';
 import { resetPlayers } from '../test-utils/expoVideoMock';
 
 jest.mock('expo-video', () => jest.requireActual('../test-utils/expoVideoMock'));
@@ -53,11 +53,11 @@ describe('bottom tab bar icons', () => {
     }
   });
 
-  test('the open tab is gold and the others are the quiet icon color', async () => {
+  test('the open tab is in the text colour and the others are the quiet icon color', async () => {
     await renderRouter(routes);
     await screen.findByTestId('tab-icon-home', { hidden: true });
 
-    expect(colorOf('tab-icon-home')).toBe(colors.accent);
+    expect(colorOf('tab-icon-home')).toBe(colors.text);
     expect(colorOf('tab-icon-sparkles-outline')).toBe(colors.iconInactive);
   });
 
@@ -72,7 +72,7 @@ describe('bottom tab bar icons', () => {
 
     expect(await screen.findByTestId('tab-icon-sparkles', { hidden: true })).toBeTruthy();
     expect(screen.getByTestId('tab-icon-home-outline', { hidden: true })).toBeTruthy();
-    expect(colorOf('tab-icon-sparkles')).toBe(colors.accent);
+    expect(colorOf('tab-icon-sparkles')).toBe(colors.text);
   });
 
   test('the icons are hidden from screen readers, the tab keeps its spoken name', async () => {

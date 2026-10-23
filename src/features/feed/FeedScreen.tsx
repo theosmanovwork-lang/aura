@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
+import { FlatList, Text, View, type LayoutChangeEvent } from 'react-native';
 
 import { Message } from '../../components/Message';
 import { useTopInset } from '../../components/useTopInset';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { ru } from '../../i18n/ru';
-import { colors, spacing, typography } from '../../theme';
+import { makeStyles, spacing, ThemeProvider, typography } from '../../theme';
 import { CommentsSheet } from '../comments/CommentsSheet';
 import { FeedTopTabs } from './FeedTopTabs';
 import { SoonAction } from './SoonAction';
@@ -22,7 +22,17 @@ type FeedScreenProps = Readonly<{
   onOpenVideo?: (videoId: string) => void;
 }>;
 
-export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
+/** The feed is video: dark whatever the phone is set to. */
+export function FeedScreen(props: FeedScreenProps) {
+  return (
+    <ThemeProvider scheme="dark">
+      <FeedContent {...props} />
+    </ThemeProvider>
+  );
+}
+
+function FeedContent({ focused = true, onOpenVideo }: FeedScreenProps) {
+  const styles = useStyles();
   const { state, actionFailed, like, markViewed, setCommentCount, reload } =
     useFeed(CURRENT_USER_ID);
   const topInset = useTopInset();
@@ -98,12 +108,15 @@ export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
         <FeedTopTabs />
         <SoonAction testID="soon-search" icon="search" label={ru.feed.soon.search} />
       </View>
-      <CommentsSheet
-        videoId={commentsFor}
-        userId={CURRENT_USER_ID}
-        onClose={() => setCommentsFor(null)}
-        onCountChange={setCommentCount}
-      />
+      {/* The sheet is a normal page of text: it follows the phone's theme, not the video's. */}
+      <ThemeProvider>
+        <CommentsSheet
+          videoId={commentsFor}
+          userId={CURRENT_USER_ID}
+          onClose={() => setCommentsFor(null)}
+          onCountChange={setCommentCount}
+        />
+      </ThemeProvider>
       {actionFailed ? (
         <Text
           style={[styles.toast, { top: topInset }]}
@@ -117,7 +130,7 @@ export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   container: { flex: 1, backgroundColor: colors.background },
   topBar: {
     position: 'absolute',
@@ -138,4 +151,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     overflow: 'hidden',
   },
-});
+}));

@@ -8,7 +8,15 @@ import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { formatCount, countLabel } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, iconSizes, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import {
+  MIN_TOUCH_TARGET,
+  iconSizes,
+  makeStyles,
+  radii,
+  spacing,
+  typography,
+  useColors,
+} from '../../theme';
 import { useLoad } from '../useLoad';
 import { RankBadge } from '../trends/RankBadge';
 import { loadRatings } from './hubService';
@@ -30,6 +38,7 @@ export function HubScreen({
   onOpenCards,
   refreshKey = 0,
 }: HubScreenProps) {
+  const styles = useStyles();
   const repos = useRepositories();
   const load = useCallback(() => loadRatings(repos), [repos]);
   const { state, reload } = useLoad(load, refreshKey);
@@ -149,6 +158,8 @@ type LinkTileProps = Readonly<{
 }>;
 
 function LinkTile({ testID, icon, label, onPress }: LinkTileProps) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <Pressable
       testID={testID}
@@ -164,10 +175,11 @@ function LinkTile({ testID, icon, label, onPress }: LinkTileProps) {
 }
 
 function Separator() {
+  const styles = useStyles();
   return <View style={styles.separator} />;
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   list: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.gutter },
   header: { gap: spacing.xs, marginBottom: spacing.md },
@@ -192,17 +204,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radii.card,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
-  pressed: { opacity: 0.85 },
+  pressed: { backgroundColor: colors.hover },
   main: { flex: 1, gap: spacing.xxs },
   name: { ...typography.titleSmall, color: colors.text },
   meta: { ...typography.caption, color: colors.textMuted },
   price: { ...typography.figure, color: colors.text },
-  separator: { height: spacing.sm },
+  separator: { height: 0 },
   disclaimer: { ...typography.caption, color: colors.textMuted, marginTop: spacing.md },
-});
+}));

@@ -7,7 +7,7 @@ import { seed } from '../../src/data/seed';
 import { ru } from '../../src/i18n/ru';
 import { TrendsScreen } from '../../src/features/trends/TrendsScreen';
 import { loadTrendBoard } from '../../src/features/trends/trendService';
-import { colors, radii } from '../../src/theme';
+import { darkColors as colors, radii } from '../../src/theme';
 
 const NOW = Date.UTC(2027, 0, 1);
 const styleOf = (element: { props: { style?: unknown } }) =>
@@ -98,6 +98,6 @@ describe('trends list design', () => {
       'chart-bar',
     );
     expect(styleOf(bars[0]!).backgroundColor).toBe(colors.chartBar);
-    expect(styleOf(bars.at(-1)!).backgroundColor).toBe(colors.accent);
+    expect(styleOf(bars.at(-1)!).backgroundColor).toBe(colors.primary);
   });
 });

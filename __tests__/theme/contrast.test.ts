@@ -1,94 +1,127 @@
-import { colors, iconSizes, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../src/theme';
+import {
+  darkColors,
+  iconSizes,
+  lightColors,
+  MIN_TOUCH_TARGET,
+  palettes,
+  radii,
+  spacing,
+  typography,
+} from '../../src/theme';
+import { blend, contrast, GRAPHIC_MIN, rgb, TEXT_MIN } from '../../test-utils/colorMath';
 
-/** WCAG 2.x relative luminance and contrast ratio of two #RRGGBB colors. */
-const luminance = (hex: string): number => {
-  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-  const channel = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
-  return 0.2126 * channel(r!) + 0.7152 * channel(g!) + 0.0722 * channel(b!);
-};
-const contrast = (a: string, b: string): number => {
-  const [light, dark] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return (light! + 0.05) / (dark! + 0.05);
-};
-
-/** An 8-digit-alpha colour laid over a #RRGGBB base, as #RRGGBB. */
-const blendOver = (overlay: string, base: string): string => {
-  const [r, g, b, a] = overlay.match(/[\d.]+/g)!.map(Number);
-  const mix = (top: number, i: number) =>
-    Math.round(top * a! + parseInt(base.slice(i, i + 2), 16) * (1 - a!));
-  return `#${[mix(r!, 1), mix(g!, 3), mix(b!, 5)].map((v) => v.toString(16).padStart(2, '0')).join('')}`;
-};
-
-const TEXT_MIN = 4.5; // WCAG AA for normal text
-const GRAPHIC_MIN = 3; // WCAG AA for icons and large graphics
-
-describe('colors: readable text (AA 4.5:1)', () => {
+describe.each([
+  ['light', lightColors],
+  ['dark', darkColors],
+] as const)('%s palette: readable text (AA 4.5:1)', (_scheme, c) => {
   test.each([
-    ['text', colors.text, colors.background],
-    ['text', colors.text, colors.surface],
-    ['text', colors.text, colors.surfaceRaised],
-    ['textMuted', colors.textMuted, colors.background],
-    ['textMuted', colors.textMuted, colors.surface],
-    ['textMuted', colors.textMuted, colors.surfaceRaised],
-    ['primaryText', colors.primaryText, colors.background],
-    ['primaryText', colors.primaryText, colors.surface],
-    ['onPrimary on primary fills', colors.onPrimary, colors.primary],
-    ['onPrimary on pressed primary', colors.onPrimary, colors.primaryPressed],
-    ['onAccent on accent fills', colors.onAccent, colors.accent],
-    ['accent text', colors.accent, colors.background],
-    ['accent text', colors.accent, colors.surface],
-    ['positive', colors.positive, colors.surface],
-    ['negative', colors.negative, colors.surface],
+    ['text', c.text, c.background],
+    ['text', c.text, c.surface],
+    ['text', c.text, c.surfaceMuted],
+    ['textSecondary', c.textSecondary, c.background],
+    ['textMuted', c.textMuted, c.background],
+    ['textMuted', c.textMuted, c.surface],
+    ['textMuted', c.textMuted, c.surfaceMuted],
+    ['accentText', c.accentText, c.background],
+    ['accentText', c.accentText, c.surface],
+    ['primaryText', c.primaryText, c.background],
+    ['onPrimary on primary fills', c.onPrimary, c.primary],
+    ['onPrimary on pressed primary', c.onPrimary, c.primaryPressed],
+    ['onAccent on accent fills', c.onAccent, c.accent],
+    ['accent as text', c.accent, c.background],
+    ['positive', c.positive, c.background],
+    ['positive', c.positive, c.surface],
+    ['negative', c.negative, c.background],
+    ['negative', c.negative, c.surface],
+    ['destructive', c.destructive, c.background],
   ])('%s %s on %s', (_name, foreground, background) => {
-    expect(contrast(foreground, background)).toBeGreaterThanOrEqual(TEXT_MIN);
+    expect(contrast(rgb(foreground), rgb(background))).toBeGreaterThanOrEqual(TEXT_MIN);
   });
-});
 
-describe('colors: visible icons and chart parts (3:1)', () => {
   test.each([
-    ['iconInactive on background', colors.iconInactive, colors.background],
-    ['iconInactive on surface', colors.iconInactive, colors.surface],
-    ['accent on surface', colors.accent, colors.surface],
-    ['like on background', colors.like, colors.background],
-    ['border over background', blendOver(colors.border, colors.background), colors.background, 1.1],
-  ])('%s', (_name, foreground, background, minimum = GRAPHIC_MIN) => {
-    expect(contrast(foreground, background)).toBeGreaterThanOrEqual(minimum);
+    ['growth text on its pill over a card', c.positive, c.positiveSoft, c.surface],
+    ['fall text on its pill over a card', c.negative, c.negativeSoft, c.surface],
+    ['accent text on its soft fill', c.accentSoftText, c.accentSoft, c.background],
+  ])('%s', (_name, text, pill, card) => {
+    expect(contrast(rgb(text), blend(pill, card))).toBeGreaterThanOrEqual(TEXT_MIN);
   });
 });
 
-describe('colors: roles', () => {
-  test('the one accent is a neutral almost-white, and the main button uses it', () => {
-    expect(colors.accent).toBe('#E5E5E6');
-    expect(colors.primary).toBe(colors.accent);
-    expect(colors.background).toBe('#08090A');
+describe.each([
+  ['light', lightColors],
+  ['dark', darkColors],
+] as const)('%s palette: visible icons and chart parts (3:1)', (_scheme, c) => {
+  test.each([
+    ['iconInactive on background', c.iconInactive, c.background],
+    ['iconInactive on surface', c.iconInactive, c.surface],
+    ['accent on surface', c.accent, c.surface],
+    ['like on background', c.like, c.background],
+    ['chart bars on a card', c.chartBar, c.surface],
+    ['field border on the page', c.fieldBorder, c.background],
+  ])('%s', (_name, foreground, background) => {
+    expect(contrast(rgb(foreground), rgb(background))).toBeGreaterThanOrEqual(GRAPHIC_MIN);
   });
 
-  test('growth is brighter than a fall', () => {
-    expect(contrast(colors.positive, colors.surface)).toBeGreaterThan(
-      contrast(colors.negative, colors.surface),
-    );
+  test('the dividing line is visible but quiet', () => {
+    expect(contrast(rgb(c.border), rgb(c.background))).toBeGreaterThan(1.05);
+  });
+});
+
+describe('palettes', () => {
+  test('both palettes have the same set of colours', () => {
+    expect(Object.keys(lightColors).sort()).toEqual(Object.keys(darkColors).sort());
+    expect(palettes.light).toBe(lightColors);
+    expect(palettes.dark).toBe(darkColors);
   });
 
-  test('growth and a fall are told apart by brightness, not by hue', () => {
-    for (const value of [colors.positive, colors.negative]) {
-      const [r, g, b] = [1, 3, 5].map((i) => parseInt(value.slice(i, i + 2), 16));
-      expect(Math.max(r!, g!, b!) - Math.min(r!, g!, b!)).toBeLessThan(40);
+  test('every colour is a valid CSS colour string', () => {
+    for (const palette of [lightColors, darkColors]) {
+      for (const value of Object.values(palette)) {
+        expect(value).toMatch(/^(#[0-9A-Fa-f]{6}|rgba\(\s*\d+,\s*\d+,\s*\d+,\s*[\d.]+\s*\))$/);
+      }
     }
   });
 
-  test('sparks (the currency) use the accent', () => {
-    expect(colors.spark).toBe(colors.accent);
+  test('white page in the light palette, black page in the dark one', () => {
+    expect(lightColors.background).toBe('#FFFFFF');
+    expect(darkColors.background).toBe('#000000');
   });
 
-  test('every color is a valid CSS color string', () => {
-    for (const value of Object.values(colors)) {
-      expect(value).toMatch(/^(#[0-9A-Fa-f]{6}|rgba\(\s*\d+,\s*\d+,\s*\d+,\s*[\d.]+\s*\))$/);
+  test('the main button is blue in both palettes with white text on it', () => {
+    for (const palette of [lightColors, darkColors]) {
+      expect(palette.onPrimary).toBe('#FFFFFF');
+      const [r, g, b] = rgb(palette.primary);
+      expect(b).toBeGreaterThan(r);
+      expect(b).toBeGreaterThan(g);
     }
   });
 
-  test('the scrim fades from clear to dark with the same base color', () => {
-    expect(colors.scrimClear).toMatch(/^rgba\(8, 9, 10, 0\)$/);
-    expect(colors.scrimBottom).toMatch(/^rgba\(8, 9, 10, 0\.\d+\)$/);
+  test('growth is green and a fall is red in both palettes', () => {
+    for (const palette of [lightColors, darkColors]) {
+      const [pr, pg] = rgb(palette.positive);
+      const [nr, ng] = rgb(palette.negative);
+      expect(pg).toBeGreaterThan(pr);
+      expect(nr).toBeGreaterThan(ng);
+    }
+  });
+
+  test('the layers over video are the same in both palettes', () => {
+    for (const key of [
+      'overlay',
+      'scrimClear',
+      'scrimMid',
+      'scrimTop',
+      'scrimBottom',
+      'onVideo',
+    ] as const) {
+      expect(lightColors[key]).toBe(darkColors[key]);
+    }
+    expect(darkColors.onVideo).toBe('#FFFFFF');
+  });
+
+  test('the scrim fades from clear to dark with the same base colour', () => {
+    expect(darkColors.scrimClear).toMatch(/^rgba\(0, 0, 0, 0\)$/);
+    expect(darkColors.scrimBottom).toMatch(/^rgba\(0, 0, 0, 0\.\d+\)$/);
   });
 });
 
@@ -113,41 +146,41 @@ describe('sizes and typography', () => {
     expect(spacing.gutter).toBe(16);
   });
 
-  test('the type scale is the Prufbase mobile scale (size / line height)', () => {
+  test('the type scale (size / line height)', () => {
     const scale = (style: { fontSize: number; lineHeight: number }) =>
       `${style.fontSize}/${style.lineHeight}`;
-    expect(scale(typography.display)).toBe('36/39');
-    expect(scale(typography.title)).toBe('30/36');
-    expect(scale(typography.heading)).toBe('18/28');
-    expect(scale(typography.lead)).toBe('16/26');
-    expect(scale(typography.body)).toBe('15/24');
+    expect(scale(typography.display)).toBe('34/40');
+    expect(scale(typography.title)).toBe('22/28');
+    expect(scale(typography.heading)).toBe('17/24');
+    expect(scale(typography.lead)).toBe('16/24');
+    expect(scale(typography.body)).toBe('15/22');
     expect(scale(typography.bodySmall)).toBe('14/20');
     expect(scale(typography.titleSmall)).toBe('14/18');
     expect(scale(typography.caption)).toBe('12/16');
-    expect(scale(typography.tabLabel)).toBe('11/15');
+    expect(scale(typography.tabLabel)).toBe('10/14');
   });
 
-  test('every number style is mono with tabular digits', () => {
+  test('every number style has equal-width digits', () => {
     for (const style of [
       typography.figureDisplay,
       typography.figureXL,
       typography.figure,
       typography.figureSmall,
     ]) {
-      expect(style.fontFamily).toMatch(/^JetBrainsMono/);
       expect(style.fontVariant).toEqual(['tabular-nums']);
     }
   });
 
-  test('no text style sets a fontWeight (the weight is part of the font family)', () => {
+  test('the own font of the phone is used: no text style names a font family', () => {
     for (const style of Object.values(typography)) {
-      expect(style).not.toHaveProperty('fontWeight');
+      expect(style).not.toHaveProperty('fontFamily');
+      expect(style).toHaveProperty('fontWeight');
     }
   });
 
-  test('text is never smaller than 11 points', () => {
+  test('text is never smaller than 10 points', () => {
     for (const style of Object.values(typography)) {
-      expect(style.fontSize).toBeGreaterThanOrEqual(11);
+      expect(style.fontSize).toBeGreaterThanOrEqual(10);
     }
   });
 });

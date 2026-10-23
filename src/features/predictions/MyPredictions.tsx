@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
@@ -7,7 +7,7 @@ import { formatPoints, formatSignedPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { AuraText } from '../../components/AuraText';
 import { ru } from '../../i18n/ru';
-import { colors, radii, spacing, typography } from '../../theme';
+import { makeStyles, radii, spacing, typography } from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { loadMyPredictions, type PredictionView } from './predictionService';
@@ -22,6 +22,7 @@ function describe(view: PredictionView): string {
 }
 
 function Row({ view }: Readonly<{ view: PredictionView }>) {
+  const styles = useStyles();
   const { prediction, trendName, payout } = view;
   return (
     <View
@@ -52,6 +53,7 @@ type MyPredictionsProps = Readonly<{
 
 /** The user's predictions with their results. Shows nothing until there is a first prediction. */
 export function MyPredictions({ now = Date.now, refreshKey = 0, emptyText }: MyPredictionsProps) {
+  const styles = useStyles();
   const repos = useRepositories();
   const clock = useLatest(now);
   const load = useCallback(
@@ -78,7 +80,7 @@ export function MyPredictions({ now = Date.now, refreshKey = 0, emptyText }: MyP
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   section: { gap: spacing.sm },
   title: { ...typography.bodyStrong, color: colors.text },
   row: {
@@ -95,4 +97,4 @@ const styles = StyleSheet.create({
   name: { ...typography.body, color: colors.text },
   caption: { ...typography.caption, color: colors.textMuted },
   payout: { ...typography.bodyStrong, color: colors.positive },
-});
+}));

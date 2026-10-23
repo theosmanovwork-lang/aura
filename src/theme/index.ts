@@ -1,5 +1,6 @@
-export { colors } from './colors';
-export { lightColors } from './lightColors';
+export { darkColors, lightColors, palettes } from './colors';
+export type { ColorScheme, Palette } from './colors';
+export { makeStyles, ThemeProvider, useColors, useScheme } from './ThemeProvider';
 export { spacing } from './spacing';
 export {
   CONTENT_MAX_WIDTH,
@@ -12,4 +13,4 @@ export {
   scrim,
   TAB_BAR_HEIGHT,
 } from './sizes';
-export { auraWordStyle, fontAssets, fontFamilies, typography } from './typography';
+export { auraWordStyle, typography } from './typography';

@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Button } from '../../components/Button';
@@ -10,7 +10,7 @@ import type { Prediction } from '../../domain/prediction';
 import { formatPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, radii, spacing, typography } from '../../theme';
+import { makeStyles, radii, spacing, typography } from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import {
@@ -48,6 +48,7 @@ type PredictionPanelProps = Readonly<{
 
 /** "Support this wave": put sparks on the wave growing, or see the prediction that is waiting. */
 export function PredictionPanel({ trendId, now = Date.now, refreshKey = 0 }: PredictionPanelProps) {
+  const styles = useStyles();
   const repos = useRepositories();
   const clock = useLatest(now);
   const load = useCallback(
@@ -147,7 +148,7 @@ export function PredictionPanel({ trendId, now = Date.now, refreshKey = 0 }: Pre
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: {
     gap: spacing.md,
     padding: spacing.md,
@@ -162,4 +163,4 @@ const styles = StyleSheet.create({
   hint: { ...typography.caption, color: colors.textMuted },
   warning: { ...typography.caption, color: colors.destructive },
   options: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-});
+}));

@@ -1,7 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { AuraText } from './AuraText';
-import { colors, radii, spacing, typography } from '../theme';
+import { makeStyles, radii, spacing, typography } from '../theme';
 
 type MessageProps = Readonly<{
   text: string;
@@ -10,6 +10,7 @@ type MessageProps = Readonly<{
 
 /** A centered message with an optional button: loading, empty and error states. */
 export function Message({ text, action }: MessageProps) {
+  const styles = useStyles();
   return (
     <View style={styles.message}>
       <AuraText style={styles.text}>{text}</AuraText>
@@ -22,7 +23,7 @@ export function Message({ text, action }: MessageProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   message: {
     flex: 1,
     alignItems: 'center',
@@ -39,4 +40,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   buttonText: { ...typography.body, color: colors.onPrimary },
-});
+}));

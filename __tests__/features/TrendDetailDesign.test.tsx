@@ -8,7 +8,7 @@ import { formatCount } from '../../src/i18n/plural';
 import { ru } from '../../src/i18n/ru';
 import { TrendDetailScreen } from '../../src/features/trends/TrendDetailScreen';
 import { loadTrendDetail } from '../../src/features/trends/trendService';
-import { colors, radii, typography } from '../../src/theme';
+import { darkColors as colors, radii, typography } from '../../src/theme';
 
 const NOW = Date.UTC(2027, 0, 1);
 const styleOf = (element: { props: { style?: unknown } }) =>
@@ -31,7 +31,7 @@ describe('trend detail design', () => {
     const summary = await renderDetail();
 
     const score = screen.getByText(formatCount(summary.score));
-    expect(styleOf(score).fontSize).toBe(typography.display.fontSize);
+    expect(styleOf(score).fontSize).toBe(typography.figureDisplay.fontSize);
   });
 
   test('the top part is a rounded card with the name, the index and the growth pill', async () => {
@@ -51,7 +51,7 @@ describe('trend detail design', () => {
     expect(styleOf(card).borderRadius).toBe(radii.panel);
     const bars = within(card).getAllByTestId('chart-bar');
     expect(styleOf(bars[0]!).backgroundColor).toBe(colors.chartBar);
-    expect(styleOf(bars.at(-1)!).backgroundColor).toBe(colors.accent);
+    expect(styleOf(bars.at(-1)!).backgroundColor).toBe(colors.primary);
   });
 
   test('the videos are a flat list (nothing that looks like a button) with a camera icon', async () => {

@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Icon } from '../../components/Icon';
@@ -10,7 +10,15 @@ import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile 
 import { formatPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { iconSizes, colors as c, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import {
+  MIN_TOUCH_TARGET,
+  iconSizes,
+  makeStyles,
+  radii,
+  spacing,
+  typography,
+  useColors,
+} from '../../theme';
 import { MyInvestments } from '../investments/MyInvestments';
 import { MyPredictions } from '../predictions/MyPredictions';
 import { useLatest } from '../useLatest';
@@ -29,6 +37,7 @@ type TabContentProps = Readonly<{
 
 /** What lies under the icon tabs: the predictions list, or an invitation where there is nothing yet. */
 function TabContent({ tab, now, refreshKey, onOpenVideo }: TabContentProps) {
+  const styles = useStyles();
   const texts = ru.screens.profile;
   if (tab === 'investments') {
     return (
@@ -62,6 +71,8 @@ function SoonButton({
   label,
   onPress,
 }: Readonly<{ name: 'add' | 'menu'; label: string; onPress?: () => void }>) {
+  const c = useColors();
+  const styles = useStyles();
   const disabled = onPress === undefined;
   return (
     <Pressable
@@ -83,6 +94,8 @@ export function ProfileScreen({
   onOpenSettings,
   onOpenVideo,
 }: ProfileScreenProps) {
+  const c = useColors();
+  const styles = useStyles();
   const repos = useRepositories();
   const clock = useLatest(now);
   const load = useCallback(
@@ -157,7 +170,7 @@ export function ProfileScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((c) => ({
   page: { flex: 1, backgroundColor: c.background },
   content: { paddingHorizontal: spacing.gutter, paddingBottom: spacing.xl },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
@@ -196,4 +209,4 @@ const styles = StyleSheet.create({
   empty: { alignItems: 'center', gap: spacing.xs, paddingTop: spacing.xl },
   emptyTitle: { ...typography.heading, color: c.text },
   emptyText: { ...typography.body, color: c.textMuted, textAlign: 'center' },
-});
+}));

@@ -1,7 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { ru } from '../../i18n/ru';
-import { colors } from '../../theme';
+import { makeStyles } from '../../theme';
 import { barHeights } from './chartMath';
 
 type BarChartProps = Readonly<{ values: readonly number[]; height: number }>;
@@ -11,6 +11,7 @@ const BAR_GAP = 2;
 
 /** A simple bar chart; the newest value (last bar) is highlighted. */
 export function BarChart({ values, height }: BarChartProps) {
+  const styles = useStyles();
   const heights = barHeights(values, height, MIN_BAR_HEIGHT);
   return (
     <View accessible accessibilityLabel={ru.trends.chartLabel} style={[styles.chart, { height }]}>
@@ -29,8 +30,8 @@ export function BarChart({ values, height }: BarChartProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   chart: { flexDirection: 'row', alignItems: 'flex-end', gap: BAR_GAP },
   bar: { flex: 1, borderRadius: 2, backgroundColor: colors.chartBar },
   lastBar: { backgroundColor: colors.primary },
-});
+}));

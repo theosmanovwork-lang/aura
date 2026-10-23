@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
 import { Icon } from '../../src/components/Icon';
-import { colors, iconSizes } from '../../src/theme';
+import { darkColors as colors, iconSizes } from '../../src/theme';
 
 describe('Icon', () => {
   test('draws the named icon', async () => {

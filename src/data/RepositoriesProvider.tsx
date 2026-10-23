@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { ru } from '../i18n/ru';
-import { colors, spacing, typography } from '../theme';
+import { makeStyles, spacing, typography, useColors } from '../theme';
 import { openRepositories } from './openRepositories';
 import type { Repositories } from './repositories';
 
@@ -22,6 +22,8 @@ type Props = Readonly<{
 
 /** Opens the storage once and shows the app only when it is ready. */
 export function RepositoriesProvider({ children, repositories, open = openRepositories }: Props) {
+  const styles = useStyles();
+  const colors = useColors();
   const [state, setState] = useState<State>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
 
@@ -72,7 +74,7 @@ export function useRepositories(): Repositories {
   return repositories;
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   container: {
     flex: 1,
     alignItems: 'center',
@@ -88,4 +90,4 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   buttonText: { ...typography.body, color: colors.text },
-});
+}));

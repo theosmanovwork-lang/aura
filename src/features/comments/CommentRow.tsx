@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { formatAgo } from '../../i18n/format';
-import { colors, radii, spacing, typography } from '../../theme';
+import { makeStyles, radii, spacing, typography } from '../../theme';
 import type { CommentView } from './commentService';
 
 const AVATAR = 36;
@@ -10,6 +10,7 @@ type CommentRowProps = Readonly<{ view: CommentView; now: number }>;
 
 /** One comment: a round letter, the nickname with the time, and the text. */
 export function CommentRow({ view, now }: CommentRowProps) {
+  const styles = useStyles();
   const { comment, authorName } = view;
   return (
     <View testID="comment-row" accessible style={styles.row}>
@@ -31,7 +32,7 @@ export function CommentRow({ view, now }: CommentRowProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   row: { flexDirection: 'row', gap: spacing.sm, paddingVertical: spacing.sm },
   avatar: {
     width: AVATAR,
@@ -47,4 +48,4 @@ const styles = StyleSheet.create({
   body: { flex: 1, gap: spacing.xxs },
   meta: { ...typography.caption, color: colors.textMuted },
   text: { ...typography.bodySmall, color: colors.text },
-});
+}));

@@ -7,14 +7,15 @@ import { Icon } from '../../components/Icon';
 import { useTabBarInset } from '../../components/useTabBarInset';
 import { ru } from '../../i18n/ru';
 import {
-  colors,
-  iconSizes,
   MIN_TOUCH_TARGET,
   PAUSE_BUTTON_SIZE,
+  iconSizes,
+  makeStyles,
   radii,
   scrim,
   spacing,
   typography,
+  useColors,
 } from '../../theme';
 import { ActionRail } from './ActionRail';
 import { AuraPlate } from './AuraPlate';
@@ -67,6 +68,7 @@ type VideoCardProps = Readonly<{
 
 /** One full-screen video. Only the video on screen plays and takes taps. */
 export function VideoCard({ isActive, ...rest }: VideoCardProps) {
+  const styles = useStyles();
   if (!isActive) return <View style={[styles.card, { height: rest.height }]} />;
   return <ActiveCard {...rest} />;
 }
@@ -82,6 +84,8 @@ function ActiveCard({
   onOpenMarket,
   onOpenComments,
 }: ActiveCardProps) {
+  const styles = useStyles();
+  const colors = useColors();
   const { video, liked, authorName, commentCount } = item;
   const [paused, setPaused] = useState(false);
   const bottomInset = useTabBarInset();
@@ -158,7 +162,7 @@ const PAUSE_TOP = '42%';
 /** The info text stays clear of the action rail on the right. */
 const INFO_RIGHT_SPACE = MIN_TOUCH_TARGET + spacing.gutter * 2;
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   card: { backgroundColor: colors.background, justifyContent: 'flex-end' },
   scrimTop: { position: 'absolute', top: 0, left: 0, right: 0, height: scrim.topHeight },
   scrimBottom: { position: 'absolute', bottom: 0, left: 0, right: 0, height: scrim.bottomHeight },
@@ -189,4 +193,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
   },
-});
+}));

@@ -1,9 +1,17 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import { Icon, type IconName } from '../../components/Icon';
 import { RevealLabel } from '../../components/RevealLabel';
 import { ru } from '../../i18n/ru';
-import { colors, iconSizes, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
+import {
+  MIN_TOUCH_TARGET,
+  iconSizes,
+  makeStyles,
+  radii,
+  spacing,
+  typography,
+  useColors,
+} from '../../theme';
 
 export const PROFILE_TAB_KEYS = ['videos', 'investments', 'reposts'] as const;
 export type ProfileTabKey = (typeof PROFILE_TAB_KEYS)[number];
@@ -21,6 +29,8 @@ type ProfileTabsProps = Readonly<{
 
 /** Small icons like on an Instagram profile; the open one shows its name beside the icon. */
 export function ProfileTabs({ selected, onSelect }: ProfileTabsProps) {
+  const styles = useStyles();
+  const colors = useColors();
   return (
     <View accessibilityRole="tablist" style={styles.tabs}>
       {PROFILE_TAB_KEYS.map((key) => {
@@ -50,7 +60,7 @@ export function ProfileTabs({ selected, onSelect }: ProfileTabsProps) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((colors) => ({
   tabs: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -71,4 +81,4 @@ const styles = StyleSheet.create({
   },
   tabOpen: { borderBottomColor: colors.text, borderRadius: radii.control },
   label: { ...typography.titleSmall, color: colors.text },
-});
+}));
