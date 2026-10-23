@@ -7,18 +7,20 @@ import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
 import { colors, iconSizes, radii, spacing, typography } from '../../theme';
 
-type AuraPlateProps = Readonly<{ amount: number }>;
+type AuraPlateProps = Readonly<{ amount: number; onPress?: () => void }>;
 
-/** «12 214 Аура ›» above the author name: the Aura amount of the video; drawn, switched off for now. */
-export function AuraPlate({ amount }: AuraPlateProps) {
+/** «12 214 Аура ›» above the author name; opens the page of the video when `onPress` is given. */
+export function AuraPlate({ amount, onPress }: AuraPlateProps) {
+  const disabled = onPress === undefined;
   const text = `${formatPoints(amount)} ${pluralRu(amount, ru.wallet.sparks)}`;
   return (
     <Pressable
       testID="aura-plate"
       accessibilityRole="button"
       accessibilityLabel={text}
-      accessibilityState={{ disabled: true }}
-      disabled
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
       style={styles.plate}
     >
       <AuraText style={styles.text}>{text}</AuraText>

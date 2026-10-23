@@ -58,6 +58,8 @@ type VideoCardProps = Readonly<{
   /** False while another tab is open: the video must not keep playing behind it. */
   focused: boolean;
   onToggleLike: (videoId: string) => void;
+  /** Opens the page of the video (its price and the user's position). */
+  onOpenMarket?: (videoId: string) => void;
 }>;
 
 /** One full-screen video. Only the video on screen plays and takes taps. */
@@ -69,7 +71,7 @@ export function VideoCard({ isActive, ...rest }: VideoCardProps) {
 type ActiveCardProps = Omit<VideoCardProps, 'isActive'>;
 
 /** Leaving the screen unmounts this, so a paused video always starts playing when it returns. */
-function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
+function ActiveCard({ item, height, focused, onToggleLike, onOpenMarket }: ActiveCardProps) {
   const { video, liked, authorName } = item;
   const [paused, setPaused] = useState(false);
   const bottomInset = useTabBarInset();
@@ -114,13 +116,18 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
       <View
         testID="video-info"
         style={[styles.info, { paddingBottom: bottomInset + spacing.md }]}
-        pointerEvents="none"
+        pointerEvents="box-none"
       >
-        <AuraPlate amount={video.likeCount} />
-        {authorName ? <Text style={styles.author}>{authorName}</Text> : null}
-        <Text style={styles.title} numberOfLines={2}>
-          {video.title}
-        </Text>
+        <AuraPlate
+          amount={video.likeCount}
+          onPress={onOpenMarket ? () => onOpenMarket(video.id) : undefined}
+        />
+        <View pointerEvents="none" style={styles.caption}>
+          {authorName ? <Text style={styles.author}>{authorName}</Text> : null}
+          <Text style={styles.title} numberOfLines={2}>
+            {video.title}
+          </Text>
+        </View>
       </View>
 
       <View style={[styles.rail, { bottom: bottomInset + spacing.md }]}>
@@ -161,6 +168,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
     gap: spacing.xxs,
   },
+  caption: { gap: spacing.xxs },
   author: { ...typography.titleSmall, color: colors.text },
   title: { ...typography.bodySmall, lineHeight: 18, color: colors.text },
   rail: {

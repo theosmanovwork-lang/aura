@@ -24,6 +24,16 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
+          name="video/[id]"
+          options={{
+            headerShown: true,
+            title: ru.market.title,
+            headerStyle: { backgroundColor: colors.surface },
+            headerTintColor: colors.text,
+            headerTitleStyle: { fontFamily: fontFamilies.semibold },
+          }}
+        />
+        <Stack.Screen
           name="settings"
           options={{
             headerShown: true,

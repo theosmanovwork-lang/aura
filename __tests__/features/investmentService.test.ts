@@ -252,6 +252,14 @@ describe.each([
     expect(market.related.every((video) => video.id !== VIDEO)).toBe(true);
   });
 
+  test('a user who has never opened the Aura screen already has the starting amount on the video page', async () => {
+    const repos = await open();
+
+    const market = await loadVideoMarket(repos, USER, VIDEO, NOW);
+
+    expect(market.balance).toBe(WELCOME_BONUS_POINTS);
+  });
+
   test('the market page refuses an unknown video', async () => {
     const repos = await start();
 

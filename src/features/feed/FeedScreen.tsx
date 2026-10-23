@@ -16,9 +16,11 @@ const VIEWABILITY = { itemVisiblePercentThreshold: 60 } as const;
 type FeedScreenProps = Readonly<{
   /** False while another tab is open: pauses the video and stops counting views. */
   focused?: boolean;
+  /** Opens the page of a video (its price, "put in" and "take out"). */
+  onOpenVideo?: (videoId: string) => void;
 }>;
 
-export function FeedScreen({ focused = true }: FeedScreenProps) {
+export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
   const { state, actionFailed, like, markViewed, reload } = useFeed(CURRENT_USER_ID);
   const [height, setHeight] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -68,6 +70,7 @@ export function FeedScreen({ focused = true }: FeedScreenProps) {
               isActive={index === activeIndex}
               focused={focused}
               onToggleLike={like}
+              onOpenMarket={onOpenVideo}
             />
           )}
           getItemLayout={(_data, index) => ({ length: height, offset: height * index, index })}

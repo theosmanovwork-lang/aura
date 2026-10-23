@@ -12,6 +12,7 @@ import { createLedgerEntry } from '../../domain/ledger';
 import type { Video } from '../../domain/video';
 import { videoPrice, type VideoSnapshot } from '../../domain/videoPrice';
 import { runInOrder } from '../runInOrder';
+import { ensureWelcomeBonus } from '../wallet/walletService';
 
 /** A new price point is recorded when the market page is opened, at most this often. */
 export const SNAPSHOT_EVERY_MS = 60 * 60 * 1000;
@@ -154,6 +155,8 @@ export function takeFromVideo(repos: Repositories, input: TakeInput): Promise<Ta
 
 export type VideoMarket = Readonly<{
   video: Video;
+  /** Nickname of the author; empty when the author is not in storage. */
+  authorName: string;
   price: number;
   history: readonly VideoSnapshot[];
   position: Investment | null;
@@ -188,17 +191,21 @@ export async function loadVideoMarket(
   const video = await repos.videos.getById(videoId);
   if (!video) throw new NotFoundError('videos', videoId);
   const price = videoPrice(video);
+  // A new user opens this page before the Aura screen: the starting amount must already be there.
+  await ensureWelcomeBonus(repos, userId, now);
   const [history, position, balance, published] = await Promise.all([
     recordPriceIfDue(repos, videoId, price, now),
     repos.investments.getByUserAndVideo(userId, videoId),
     repos.wallet.getBalance(userId),
     repos.videos.listPublished(),
   ]);
+  const author = await repos.users.getById(video.authorId).catch(() => null);
   const related = published
     .filter((other) => other.trendId === video.trendId && other.id !== video.id)
     .slice(0, RELATED_LIMIT);
   return {
     video,
+    authorName: author?.nickname ?? '',
     price,
     history,
     position,
