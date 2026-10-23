@@ -68,6 +68,8 @@ export const ru = {
       welcome_bonus: 'Стартовый бонус',
       prediction_stake: 'Участие в прогнозе',
       prediction_payout: 'Итог прогноза',
+      investment_open: 'Вложение в видео',
+      investment_close: 'Возврат из видео',
     },
     disclaimer:
       'Аура — виртуальные баллы. Она ничего не стоит: её нельзя купить, вывести или обменять.',

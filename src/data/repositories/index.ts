@@ -1,9 +1,11 @@
+import type { Investment } from '../../domain/investment';
 import type { LedgerEntry } from '../../domain/ledger';
 import type { Like } from '../../domain/like';
 import type { Prediction, PredictionStatus } from '../../domain/prediction';
 import type { Trend } from '../../domain/trend';
 import type { TrendSnapshot } from '../../domain/trendSnapshot';
 import type { User } from '../../domain/user';
+import type { VideoSnapshot } from '../../domain/videoPrice';
 import type { ModerationStatus, Video } from '../../domain/video';
 
 export { DuplicateKeyError, InsufficientPointsError, NotFoundError } from './errors';
@@ -61,6 +63,25 @@ export interface PredictionRepository {
   updateStatus(id: string, status: PredictionStatus): Promise<Prediction>;
 }
 
+export type InvestmentUpdate = Readonly<Pick<Investment, 'invested' | 'units' | 'updatedAt'>>;
+
+export interface InvestmentRepository {
+  /** One position per user and video: a second one throws DuplicateKeyError. */
+  add(investment: Investment): Promise<Investment>;
+  getById(id: string): Promise<Investment | null>;
+  getByUserAndVideo(userId: string, videoId: string): Promise<Investment | null>;
+  /** The user's positions in the order they were opened. */
+  listByUser(userId: string): Promise<Investment[]>;
+  update(id: string, patch: InvestmentUpdate): Promise<Investment>;
+}
+
+export interface VideoSnapshotRepository {
+  /** One snapshot per video and moment: a second one at the same time throws DuplicateKeyError. */
+  add(snapshot: VideoSnapshot): Promise<VideoSnapshot>;
+  /** All snapshots of the video, oldest first. */
+  listByVideo(videoId: string): Promise<VideoSnapshot[]>;
+}
+
 export interface LikeRepository {
   /** One like per user and video: a second one throws DuplicateKeyError. */
   add(like: Like): Promise<Like>;
@@ -86,4 +107,6 @@ export type Repositories = Readonly<{
   predictions: PredictionRepository;
   likes: LikeRepository;
   snapshots: TrendSnapshotRepository;
+  investments: InvestmentRepository;
+  videoSnapshots: VideoSnapshotRepository;
 }>;

@@ -89,6 +89,55 @@ export const MIGRATIONS: readonly string[] = [
     SELECT RAISE(ABORT, 'ledger is append-only');
   END;
   `,
+  `
+  CREATE TABLE ledger_v5 (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT NOT NULL UNIQUE,
+    user_id TEXT NOT NULL,
+    amount INTEGER NOT NULL CHECK (amount <> 0),
+    asset TEXT NOT NULL CHECK (asset = 'POINTS'),
+    kind TEXT NOT NULL CHECK (kind IN ('welcome_bonus', 'prediction_stake', 'prediction_payout', 'investment_open', 'investment_close')),
+    ref_id TEXT,
+    created_at INTEGER NOT NULL
+  );
+  INSERT INTO ledger_v5 (seq, id, user_id, amount, asset, kind, ref_id, created_at)
+    SELECT seq, id, user_id, amount, asset, kind, ref_id, created_at FROM ledger ORDER BY seq;
+  DROP TABLE ledger;
+  ALTER TABLE ledger_v5 RENAME TO ledger;
+  CREATE INDEX ledger_user ON ledger (user_id);
+  CREATE TRIGGER ledger_no_overdraft BEFORE INSERT ON ledger
+  WHEN NEW.amount < 0
+    AND COALESCE((SELECT SUM(amount) FROM ledger WHERE user_id = NEW.user_id), 0) + NEW.amount < 0
+  BEGIN
+    SELECT RAISE(ABORT, 'ledger:insufficient_points');
+  END;
+  CREATE TRIGGER ledger_no_update BEFORE UPDATE ON ledger
+  BEGIN
+    SELECT RAISE(ABORT, 'ledger is append-only');
+  END;
+  CREATE TRIGGER ledger_no_delete BEFORE DELETE ON ledger
+  BEGIN
+    SELECT RAISE(ABORT, 'ledger is append-only');
+  END;
+  CREATE TABLE investments (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT NOT NULL UNIQUE,
+    user_id TEXT NOT NULL,
+    video_id TEXT NOT NULL,
+    invested INTEGER NOT NULL CHECK (invested >= 0),
+    units REAL NOT NULL CHECK (units >= 0),
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    UNIQUE (user_id, video_id)
+  );
+  CREATE TABLE video_snapshots (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    video_id TEXT NOT NULL,
+    at INTEGER NOT NULL,
+    price REAL NOT NULL CHECK (price > 0),
+    UNIQUE (video_id, at)
+  );
+  `,
 ];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.length;

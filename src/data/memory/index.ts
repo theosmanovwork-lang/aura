@@ -1,3 +1,4 @@
+import type { Investment } from '../../domain/investment';
 import { assertValidLedgerEntry, type LedgerEntry } from '../../domain/ledger';
 import type { Like } from '../../domain/like';
 import type { Prediction } from '../../domain/prediction';
@@ -5,8 +6,10 @@ import type { Trend } from '../../domain/trend';
 import type { TrendSnapshot } from '../../domain/trendSnapshot';
 import type { User } from '../../domain/user';
 import type { Video } from '../../domain/video';
+import type { VideoSnapshot } from '../../domain/videoPrice';
 import { DuplicateKeyError, InsufficientPointsError } from '../repositories/errors';
 import type {
+  InvestmentRepository,
   LikeRepository,
   PredictionRepository,
   Repositories,
@@ -14,6 +17,7 @@ import type {
   TrendSnapshotRepository,
   UserRepository,
   VideoRepository,
+  VideoSnapshotRepository,
   WalletRepository,
 } from '../repositories';
 import { createCollection } from './collection';
@@ -26,6 +30,8 @@ export type SeedData = Readonly<{
   predictions?: readonly Prediction[];
   likes?: readonly Like[];
   snapshots?: readonly TrendSnapshot[];
+  investments?: readonly Investment[];
+  videoSnapshots?: readonly VideoSnapshot[];
 }>;
 
 const definedOnly = <T extends object>(patch: T): Partial<T> =>
@@ -153,6 +159,50 @@ export function createMemoryTrendSnapshotRepository(
   };
 }
 
+export function createMemoryInvestmentRepository(
+  initial: readonly Investment[] = [],
+): InvestmentRepository {
+  const positions = createCollection<Investment>('investments', initial);
+  const same = (userId: string, videoId: string) => (position: Investment) =>
+    position.userId === userId && position.videoId === videoId;
+  const find = (userId: string, videoId: string) =>
+    positions.all().find(same(userId, videoId)) ?? null;
+  return {
+    add: async (investment) => {
+      if (find(investment.userId, investment.videoId)) {
+        throw new DuplicateKeyError('investments', `${investment.userId}/${investment.videoId}`);
+      }
+      return positions.add(investment);
+    },
+    getById: async (id) => positions.find(id),
+    getByUserAndVideo: async (userId, videoId) => find(userId, videoId),
+    listByUser: async (userId) => positions.all().filter((p) => p.userId === userId),
+    update: async (id, patch) => positions.replace(id, (p) => ({ ...p, ...patch })),
+  };
+}
+
+export function createMemoryVideoSnapshotRepository(
+  initial: readonly VideoSnapshot[] = [],
+): VideoSnapshotRepository {
+  const snapshots: VideoSnapshot[] = [];
+  const add = (snapshot: VideoSnapshot): VideoSnapshot => {
+    if (snapshots.some((s) => s.videoId === snapshot.videoId && s.at === snapshot.at)) {
+      throw new DuplicateKeyError('video_snapshots', `${snapshot.videoId}@${snapshot.at}`);
+    }
+    snapshots.push({ ...snapshot });
+    return { ...snapshot };
+  };
+  initial.forEach(add);
+  return {
+    add: async (snapshot) => add(snapshot),
+    listByVideo: async (videoId) =>
+      snapshots
+        .filter((s) => s.videoId === videoId)
+        .sort((a, b) => a.at - b.at)
+        .map((s) => ({ ...s })),
+  };
+}
+
 export function createMemoryRepositories(seed: SeedData = {}): Repositories {
   return {
     users: createMemoryUserRepository(seed.users),
@@ -162,5 +212,7 @@ export function createMemoryRepositories(seed: SeedData = {}): Repositories {
     predictions: createMemoryPredictionRepository(seed.predictions),
     likes: createMemoryLikeRepository(seed.likes),
     snapshots: createMemoryTrendSnapshotRepository(seed.snapshots),
+    investments: createMemoryInvestmentRepository(seed.investments),
+    videoSnapshots: createMemoryVideoSnapshotRepository(seed.videoSnapshots),
   };
 }

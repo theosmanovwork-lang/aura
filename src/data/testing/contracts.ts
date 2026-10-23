@@ -1,16 +1,20 @@
 import type { LedgerEntry } from '../../domain/ledger';
 import type {
+  InvestmentRepository,
   LikeRepository,
   PredictionRepository,
   TrendRepository,
   TrendSnapshotRepository,
   UserRepository,
   VideoRepository,
+  VideoSnapshotRepository,
   WalletRepository,
 } from '../repositories';
 import { DuplicateKeyError, InsufficientPointsError, NotFoundError } from '../repositories';
 import {
   makeEntry,
+  makeInvestment,
+  makeVideoSnapshot,
   makePrediction,
   makeSnapshot,
   makeTrend,
@@ -460,6 +464,96 @@ export function runTrendSnapshotRepositoryContract(
       (first as { score: number }).score = 999;
 
       expect((await repo.listByTrend('t1'))[0]?.score).toBe(100);
+    });
+  });
+}
+
+export function runInvestmentRepositoryContract(
+  createRepo: () => Promise<InvestmentRepository> | InvestmentRepository,
+) {
+  describe('InvestmentRepository contract', () => {
+    test('stores a position and finds it by id and by user and video', async () => {
+      const repo = await createRepo();
+      await repo.add(makeInvestment());
+
+      expect(await repo.getById('i1')).toEqual(makeInvestment());
+      expect(await repo.getByUserAndVideo('u1', 'v1')).toEqual(makeInvestment());
+    });
+
+    test('returns null for an unknown id or an unknown user and video pair', async () => {
+      const repo = await createRepo();
+
+      expect(await repo.getById('nope')).toBeNull();
+      expect(await repo.getByUserAndVideo('u1', 'nope')).toBeNull();
+    });
+
+    test('rejects a duplicate id and a second position of the same user in the same video', async () => {
+      const repo = await createRepo();
+      await repo.add(makeInvestment());
+
+      await expect(repo.add(makeInvestment())).rejects.toThrow(DuplicateKeyError);
+      await expect(repo.add(makeInvestment({ id: 'i2' }))).rejects.toThrow(DuplicateKeyError);
+    });
+
+    test('lists the positions of one user in the order they were opened', async () => {
+      const repo = await createRepo();
+      await repo.add(makeInvestment({ id: 'i2', videoId: 'v2' }));
+      await repo.add(makeInvestment({ id: 'i1', videoId: 'v1' }));
+      await repo.add(makeInvestment({ id: 'i3', userId: 'u2', videoId: 'v1' }));
+
+      expect((await repo.listByUser('u1')).map((i) => i.id)).toEqual(['i2', 'i1']);
+      expect(await repo.listByUser('nobody')).toEqual([]);
+    });
+
+    test('updates the amounts and keeps the rest', async () => {
+      const repo = await createRepo();
+      await repo.add(makeInvestment());
+
+      const updated = await repo.update('i1', { invested: 60, units: 0.015, updatedAt: 2000 });
+
+      expect(updated).toEqual(makeInvestment({ invested: 60, units: 0.015, updatedAt: 2000 }));
+      expect(await repo.getById('i1')).toEqual(updated);
+    });
+
+    test('refuses to update an unknown position', async () => {
+      const repo = await createRepo();
+
+      await expect(repo.update('nope', { invested: 1, units: 1, updatedAt: 1 })).rejects.toThrow(
+        NotFoundError,
+      );
+    });
+
+    test('hands out copies', async () => {
+      const repo = await createRepo();
+      await repo.add(makeInvestment());
+
+      const first = await repo.getById('i1');
+      (first as { invested: number }).invested = 1;
+
+      expect((await repo.getById('i1'))?.invested).toBe(100);
+    });
+  });
+}
+
+export function runVideoSnapshotRepositoryContract(
+  createRepo: () => Promise<VideoSnapshotRepository> | VideoSnapshotRepository,
+) {
+  describe('VideoSnapshotRepository contract', () => {
+    test('lists the snapshots of one video, oldest first', async () => {
+      const repo = await createRepo();
+      await repo.add(makeVideoSnapshot({ at: 3000, price: 3 }));
+      await repo.add(makeVideoSnapshot({ at: 1000, price: 1 }));
+      await repo.add(makeVideoSnapshot({ videoId: 'v2', at: 2000, price: 2 }));
+
+      expect((await repo.listByVideo('v1')).map((s) => s.price)).toEqual([1, 3]);
+      expect(await repo.listByVideo('nobody')).toEqual([]);
+    });
+
+    test('rejects a second snapshot of the same video at the same moment', async () => {
+      const repo = await createRepo();
+      await repo.add(makeVideoSnapshot());
+
+      await expect(repo.add(makeVideoSnapshot({ price: 5 }))).rejects.toThrow(DuplicateKeyError);
     });
   });
 }

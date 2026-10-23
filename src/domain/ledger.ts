@@ -1,6 +1,11 @@
 export type LedgerAsset = 'POINTS';
 
-export type LedgerKind = 'welcome_bonus' | 'prediction_stake' | 'prediction_payout';
+export type LedgerKind =
+  | 'welcome_bonus'
+  | 'prediction_stake'
+  | 'prediction_payout'
+  | 'investment_open'
+  | 'investment_close';
 
 export type LedgerEntry = Readonly<{
   id: string;

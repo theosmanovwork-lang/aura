@@ -1,4 +1,6 @@
 import { createLedgerEntry, type LedgerEntry } from '../../domain/ledger';
+import type { Investment } from '../../domain/investment';
+import type { VideoSnapshot } from '../../domain/videoPrice';
 import { createPrediction, type Prediction } from '../../domain/prediction';
 import type { Trend } from '../../domain/trend';
 import type { TrendSnapshot } from '../../domain/trendSnapshot';
@@ -62,5 +64,23 @@ export const makeSnapshot = (overrides: Partial<TrendSnapshot> = {}): TrendSnaps
   trendId: 't1',
   at: 1000,
   score: 100,
+  ...overrides,
+});
+
+export const makeInvestment = (overrides: Partial<Investment> = {}): Investment => ({
+  id: 'i1',
+  userId: 'u1',
+  videoId: 'v1',
+  invested: 100,
+  units: 0.025,
+  createdAt: 1000,
+  updatedAt: 1000,
+  ...overrides,
+});
+
+export const makeVideoSnapshot = (overrides: Partial<VideoSnapshot> = {}): VideoSnapshot => ({
+  videoId: 'v1',
+  at: 1000,
+  price: 4000,
   ...overrides,
 });

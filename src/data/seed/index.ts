@@ -1,5 +1,6 @@
 import type { Trend } from '../../domain/trend';
 import type { TrendSnapshot } from '../../domain/trendSnapshot';
+import { videoPrice, type VideoSnapshot } from '../../domain/videoPrice';
 import { calcTrendScore } from '../../domain/trendScore';
 import type { User } from '../../domain/user';
 import type { AgeRating, ModerationStatus, Video } from '../../domain/video';
@@ -77,7 +78,13 @@ const HISTORY_CURVES: Readonly<Record<string, readonly number[]>> = {
   'trend-roboty': [0.4, 0.55, 0.5, 0.65, 0.6, 0.75, 0.7, 0.85, 0.8, 0.9, 0.84, 0.93, 0.95, 1],
 };
 
-type SeedContent = SeedData & Required<Pick<SeedData, 'users' | 'trends' | 'videos' | 'snapshots'>>;
+/** How a video's price grew over its last 14 days, as shares of the price now. */
+const VIDEO_CURVE: readonly number[] = [
+  0.5, 0.56, 0.52, 0.6, 0.66, 0.62, 0.7, 0.76, 0.72, 0.8, 0.86, 0.9, 0.95, 1,
+];
+
+type SeedContent = SeedData &
+  Required<Pick<SeedData, 'users' | 'trends' | 'videos' | 'snapshots' | 'videoSnapshots'>>;
 
 /** Demo content whose 14-day growth history ends at `now` (the moment of the first start). */
 export function createSeed(now: number): SeedContent {
@@ -90,7 +97,16 @@ export function createSeed(now: number): SeedContent {
       score: Math.round(current * share),
     }));
   });
-  return { users, trends, videos, snapshots };
+  const videoSnapshots: readonly VideoSnapshot[] = videos.flatMap((video) => {
+    const current = videoPrice(video);
+    const curve = VIDEO_CURVE;
+    return curve.map((share, index) => ({
+      videoId: video.id,
+      at: now - (curve.length - 1 - index) * DAY,
+      price: Math.max(1, Math.round(current * share * 100) / 100),
+    }));
+  });
+  return { users, trends, videos, snapshots, videoSnapshots };
 }
 
 /** A fixed moment, so tests and previews always see the same data. */

@@ -24,5 +24,7 @@ export async function ensureSeeded(
     for (const entry of seed.ledger ?? []) await repos.wallet.append(entry);
     for (const prediction of seed.predictions ?? []) await repos.predictions.add(prediction);
     for (const like of seed.likes ?? []) await repos.likes.add(like);
+    for (const position of seed.investments ?? []) await repos.investments.add(position);
+    for (const snapshot of seed.videoSnapshots ?? []) await repos.videoSnapshots.add(snapshot);
   });
 }
