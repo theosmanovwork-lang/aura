@@ -24,12 +24,19 @@ type CommunityScreenProps = Readonly<{
   /** Change it to load the data again (for example every time the tab comes into view). */
   refreshKey?: number;
   onOpenLot?: (lotId: string) => void;
+  onOpenUser?: (name: string) => void;
+  onOpenClan?: (clanId: string) => void;
 }>;
 
 const matches = (text: string, query: string) =>
   text.toLowerCase().includes(query.trim().toLowerCase());
 
-export function CommunityScreen({ refreshKey = 0, onOpenLot }: CommunityScreenProps) {
+export function CommunityScreen({
+  refreshKey = 0,
+  onOpenLot,
+  onOpenUser,
+  onOpenClan,
+}: CommunityScreenProps) {
   const styles = useStyles();
   const colors = useColors();
   const content = useTabScreenContent(styles.content);
@@ -82,8 +89,8 @@ export function CommunityScreen({ refreshKey = 0, onOpenLot }: CommunityScreenPr
         <ReferralCard copied={referral.copied} onCopy={() => void referral.copy()} />
 
         <View style={styles.columns}>
-          <PlayersCard authors={authors} />
-          <ClansCard />
+          <PlayersCard authors={authors} onOpenUser={onOpenUser} />
+          <ClansCard onOpenClan={onOpenClan} />
         </View>
 
         <TradeTabs mode={mode} onChange={setMode} lotCount={lots.length} />

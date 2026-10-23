@@ -11,6 +11,8 @@ export default function CommunityTab() {
     <CommunityScreen
       refreshKey={refreshKey}
       onOpenLot={(id) => router.push({ pathname: '/lot/[id]', params: { id } })}
+      onOpenUser={(handle) => router.push({ pathname: '/user/[handle]', params: { handle } })}
+      onOpenClan={(id) => router.push({ pathname: '/clan/[id]', params: { id } })}
     />
   );
 }

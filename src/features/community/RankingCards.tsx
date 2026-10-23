@@ -11,6 +11,7 @@ const PLAYER_TONES: readonly AvatarTone[] = ['ink', 'green', 'red'];
 const TOP = 3;
 
 type RowProps = Readonly<{
+  onPress?: () => void;
   place: number;
   avatar: React.ReactNode;
   name: string;
@@ -18,13 +19,14 @@ type RowProps = Readonly<{
   testID: string;
 }>;
 
-function Row({ place, avatar, name, caption, testID }: RowProps) {
+function Row({ onPress, place, avatar, name, caption, testID }: RowProps) {
   const styles = useStyles();
   return (
-    <View
+    <Pressable
       testID={testID}
-      accessible
+      accessibilityRole="button"
       accessibilityLabel={`${place}. ${name}, ${caption}`}
+      onPress={onPress}
       style={styles.row}
     >
       <View style={[styles.medal, { backgroundColor: medals[place - 1] }]}>
@@ -37,14 +39,17 @@ function Row({ place, avatar, name, caption, testID }: RowProps) {
         </Text>
         <Text style={styles.caption}>{caption}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
-type PlayersCardProps = Readonly<{ authors: readonly AuthorRatingRow[] }>;
+type PlayersCardProps = Readonly<{
+  authors: readonly AuthorRatingRow[];
+  onOpenUser?: (name: string) => void;
+}>;
 
 /** «Рейтинг»: the best authors by the price of their videos, from the real data. */
-export function PlayersCard({ authors }: PlayersCardProps) {
+export function PlayersCard({ authors, onOpenUser }: PlayersCardProps) {
   const styles = useStyles();
   return (
     <View testID="players-card" style={styles.card}>
@@ -55,6 +60,7 @@ export function PlayersCard({ authors }: PlayersCardProps) {
         <Row
           key={author.authorId}
           testID={`player-${author.authorId}`}
+          onPress={() => onOpenUser?.(author.name)}
           place={index + 1}
           avatar={
             <Avatar
@@ -72,7 +78,9 @@ export function PlayersCard({ authors }: PlayersCardProps) {
 }
 
 /** «Топ кланов»: made-up clans until clans exist. */
-export function ClansCard() {
+type ClansCardProps = Readonly<{ onOpenClan?: (clanId: string) => void }>;
+
+export function ClansCard({ onOpenClan }: ClansCardProps) {
   const styles = useStyles();
   return (
     <View testID="clans-card" style={styles.card}>
@@ -91,6 +99,7 @@ export function ClansCard() {
         <Row
           key={clan.id}
           testID={`clan-${clan.id}`}
+          onPress={() => onOpenClan?.(clan.id)}
           place={index + 1}
           avatar={
             <Avatar

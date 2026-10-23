@@ -11,7 +11,9 @@ import { ClanCard, GlobalChatCard } from './ChatCards';
 import { DialogList } from './DialogList';
 
 /** Chats of the design: the global chat, the clan invitation and the conversations (made up for now). */
-export function ChatsScreen() {
+type ChatsScreenProps = Readonly<{ onOpenDialog?: (dialogId: string) => void }>;
+
+export function ChatsScreen({ onOpenDialog }: ChatsScreenProps) {
   const styles = useStyles();
   const colors = useColors();
   const content = useTabScreenContent(styles.content);
@@ -50,7 +52,13 @@ export function ChatsScreen() {
             </View>
           ) : null}
         </View>
-        <DialogList dialogs={dialogs} onOpen={(id) => setRead((set) => new Set(set).add(id))} />
+        <DialogList
+          dialogs={dialogs}
+          onOpen={(id) => {
+            setRead((set) => new Set(set).add(id));
+            onOpenDialog?.(id);
+          }}
+        />
       </ScrollView>
       <Pressable
         disabled
