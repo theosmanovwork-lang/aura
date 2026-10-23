@@ -5,6 +5,7 @@ import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { formatPoints, formatSignedPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
+import { AuraText } from '../../components/AuraText';
 import { ru } from '../../i18n/ru';
 import { colors, radii, spacing, typography } from '../../theme';
 import { useLatest } from '../useLatest';
@@ -31,9 +32,9 @@ function Row({ view }: Readonly<{ view: PredictionView }>) {
     >
       <View style={styles.text}>
         <Text style={styles.name}>{trendName}</Text>
-        <Text style={styles.caption}>
+        <AuraText style={styles.caption}>
           {`${sparks(prediction.stake)} · ${ru.predictions.status[prediction.status]}`}
-        </Text>
+        </AuraText>
       </View>
       {prediction.status === 'won' && payout > 0 ? (
         <Text style={styles.payout}>{formatSignedPoints(payout)}</Text>

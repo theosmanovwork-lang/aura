@@ -46,7 +46,7 @@ describe('PredictionPanel', () => {
     for (const stake of [10, 50, 100, 250]) {
       expect(await screen.findByTestId(`stake-option-${stake}`)).toBeTruthy();
     }
-    expect(screen.getByRole('button', { name: `${ru.predictions.place} 10 аур` })).toBeTruthy();
+    expect(screen.getByRole('button', { name: `${ru.predictions.place} 10 Аура` })).toBeTruthy();
   });
 
   test('choosing another amount changes the button and marks the choice', async () => {
@@ -54,7 +54,7 @@ describe('PredictionPanel', () => {
 
     await fireEvent.press(await screen.findByTestId('stake-option-100'));
 
-    expect(screen.getByRole('button', { name: `${ru.predictions.place} 100 аур` })).toBeTruthy();
+    expect(screen.getByRole('button', { name: `${ru.predictions.place} 100 Аура` })).toBeTruthy();
     expect(screen.getByTestId('stake-option-100').props.accessibilityState).toMatchObject({
       selected: true,
     });
@@ -86,7 +86,7 @@ describe('PredictionPanel', () => {
     await renderPanel(repos);
 
     expect(await screen.findByText(ru.predictions.accepted)).toBeTruthy();
-    expect(screen.getByText(`${formatPoints(100)} аур`)).toBeTruthy();
+    expect(screen.getByText(`${formatPoints(100)} Аура`)).toBeTruthy();
     expect(screen.getByText(`${ru.predictions.resultIn} 9 минут`)).toBeTruthy();
     expect(screen.queryByTestId('place-prediction')).toBeNull();
   });
@@ -187,7 +187,7 @@ describe('PredictionPanel', () => {
     await renderPanel();
 
     const option = await screen.findByTestId('stake-option-50');
-    expect(option.props.accessibilityLabel).toBe('50 аур');
+    expect(option.props.accessibilityLabel).toBe('50 Аура');
     expect(screen.getByText(ru.predictions.amountLabel)).toBeTruthy();
   });
 });

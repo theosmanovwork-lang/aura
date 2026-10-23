@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import {
   JetBrainsMono_400Regular,
@@ -25,6 +26,12 @@ export const fontAssets = {
   [fontFamilies.mono]: JetBrainsMono_400Regular,
   [fontFamilies.monoStrong]: JetBrainsMono_600SemiBold,
 };
+
+/** The currency word «Аура» in a serif italic, set apart from the sans text around it. */
+export const auraWordStyle = {
+  fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia, serif' }),
+  fontStyle: 'italic',
+} as const;
 
 type TypeStyle = {
   fontFamily: string;

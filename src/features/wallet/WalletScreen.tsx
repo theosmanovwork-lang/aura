@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
+import { AuraText } from '../../components/AuraText';
 import { Icon } from '../../components/Icon';
 import { useTabBarInset } from '../../components/useTabBarInset';
 import { Message } from '../../components/Message';
@@ -75,9 +76,9 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       ListHeaderComponent={
         <View style={styles.header}>
-          <Text style={styles.title} accessibilityRole="header">
+          <AuraText style={styles.title} accessibilityRole="header">
             {ru.wallet.title}
-          </Text>
+          </AuraText>
           <View style={styles.card}>
             <View style={styles.cardHead}>
               <View style={styles.sparkBadge}>

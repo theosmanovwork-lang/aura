@@ -51,7 +51,7 @@ describe('MyPredictions', () => {
     expect(screen.getByText(ru.predictions.myTitle).props.accessibilityRole).toBe('header');
     expect(row).toHaveTextContent('Нейрокот', { exact: false });
     expect(row).toHaveTextContent(ru.predictions.status.open, { exact: false });
-    expect(row.props.accessibilityLabel).toBe(`Нейрокот, 50 аур, ${ru.predictions.status.open}`);
+    expect(row.props.accessibilityLabel).toBe(`Нейрокот, 50 Аура, ${ru.predictions.status.open}`);
   });
 
   test('after the time is up the result is shown, with the payout when it came true', async () => {
@@ -65,7 +65,7 @@ describe('MyPredictions', () => {
     expect(row).toHaveTextContent(ru.predictions.status.won, { exact: false });
     expect(screen.getByText(formatSignedPoints(100))).toBeTruthy();
     expect(row.props.accessibilityLabel).toBe(
-      `Нейрокот, 50 аур, ${ru.predictions.status.won}, плюс 100 аур`,
+      `Нейрокот, 50 Аура, ${ru.predictions.status.won}, плюс 100 Аура`,
     );
   });
 

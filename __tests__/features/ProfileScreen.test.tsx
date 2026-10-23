@@ -94,7 +94,7 @@ describe('ProfileScreen', () => {
     await renderProfile();
     await screen.findByText('@гость');
 
-    expect(screen.getByLabelText(/1\s?000 аур/)).toBeTruthy();
+    expect(screen.getByLabelText(/1\s?000 Аура/)).toBeTruthy();
   });
 
   test('the page uses the dark background', async () => {

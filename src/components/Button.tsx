@@ -1,5 +1,6 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
+import { AuraText } from './AuraText';
 import { colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../theme';
 
 /** A pressed button shrinks a little (Prufbase: scale 0.98). */
@@ -41,7 +42,7 @@ export function Button({
         disabled && styles.disabled,
       ]}
     >
-      <Text
+      <AuraText
         style={[
           styles.text,
           !isChip && styles.primaryText,
@@ -49,7 +50,7 @@ export function Button({
         ]}
       >
         {label}
-      </Text>
+      </AuraText>
     </Pressable>
   );
 }

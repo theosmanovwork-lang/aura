@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AuraText } from '../../components/AuraText';
 import { Button } from '../../components/Button';
 import { InsufficientPointsError } from '../../data/repositories';
 import { useRepositories } from '../../data/RepositoriesProvider';
@@ -96,7 +97,7 @@ export function PredictionPanel({ trendId, now = Date.now, refreshKey = 0 }: Pre
         <Text style={styles.title} accessibilityRole="header">
           {ru.predictions.accepted}
         </Text>
-        <Text style={styles.body}>{sparks(open.stake)}</Text>
+        <AuraText style={styles.body}>{sparks(open.stake)}</AuraText>
         <Text style={styles.hint}>
           {`${ru.predictions.resultIn} ${timeLeftLabel(open, clock.current())}`}
         </Text>
@@ -111,9 +112,11 @@ export function PredictionPanel({ trendId, now = Date.now, refreshKey = 0 }: Pre
       <Text style={styles.title} accessibilityRole="header">
         {ru.predictions.title}
       </Text>
-      <Text style={styles.hint}>{ru.predictions.rules.replace('{duration}', duration)}</Text>
+      <AuraText style={styles.hint}>
+        {ru.predictions.rules.replace('{duration}', duration)}
+      </AuraText>
 
-      <Text style={styles.label}>{ru.predictions.amountLabel}</Text>
+      <AuraText style={styles.label}>{ru.predictions.amountLabel}</AuraText>
       <View style={styles.options}>
         {STAKE_PRESETS.map((preset) => (
           <Button
@@ -134,7 +137,7 @@ export function PredictionPanel({ trendId, now = Date.now, refreshKey = 0 }: Pre
         disabled={tooLittle}
         onPress={() => void place()}
       />
-      {tooLittle ? <Text style={styles.warning}>{ru.predictions.notEnough}</Text> : null}
+      {tooLittle ? <AuraText style={styles.warning}>{ru.predictions.notEnough}</AuraText> : null}
       {failure ? (
         <Text style={styles.warning} accessibilityRole="alert" accessibilityLiveRegion="polite">
           {ru.predictions[failure]}

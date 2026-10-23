@@ -40,7 +40,7 @@ describe('predictions on the screens', () => {
     );
 
     expect(await screen.findByText(ru.predictions.myTitle)).toBeTruthy();
-    expect(await screen.findByText(`50 аур · ${ru.predictions.status.open}`)).toBeTruthy();
+    expect(await screen.findByText(`50 Аура · ${ru.predictions.status.open}`)).toBeTruthy();
     expect(screen.getByText(ru.wallet.kinds.prediction_stake)).toBeTruthy();
   });
 });

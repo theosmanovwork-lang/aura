@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { AuraText } from '../../components/AuraText';
 import { Icon } from '../../components/Icon';
 import { useTabBarInset } from '../../components/useTabBarInset';
 import { Message } from '../../components/Message';
@@ -82,7 +83,7 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
           <Text testID="profile-balance" style={styles.statValue}>
             {formatPoints(balance)}
           </Text>
-          <Text style={styles.statLabel}>{pluralRu(balance, ru.wallet.sparks)}</Text>
+          <AuraText style={styles.statLabel}>{pluralRu(balance, ru.wallet.sparks)}</AuraText>
         </View>
       </View>
 
