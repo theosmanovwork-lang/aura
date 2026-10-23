@@ -6,14 +6,7 @@ import { useTabBarInset } from '../../components/useTabBarInset';
 import { Message } from '../../components/Message';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { ru } from '../../i18n/ru';
-import {
-  iconSizes,
-  lightColors as colors,
-  MIN_TOUCH_TARGET,
-  radii,
-  spacing,
-  typography,
-} from '../../theme';
+import { iconSizes, colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { TrendRow } from './TrendRow';
@@ -33,13 +26,11 @@ export function TrendsScreen({ onOpenTrend, now = Date.now, refreshKey = 0 }: Tr
   const { state, reload } = useLoad(load, refreshKey);
   const bottomInset = useTabBarInset();
 
-  if (state.status === 'loading') return <Message light text={ru.trends.loading} />;
+  if (state.status === 'loading') return <Message text={ru.trends.loading} />;
   if (state.status === 'error') {
-    return (
-      <Message light text={ru.trends.error} action={{ label: ru.trends.retry, run: reload }} />
-    );
+    return <Message text={ru.trends.error} action={{ label: ru.trends.retry, run: reload }} />;
   }
-  if (state.data.length === 0) return <Message light text={ru.trends.empty} />;
+  if (state.data.length === 0) return <Message text={ru.trends.empty} />;
 
   return (
     <FlatList

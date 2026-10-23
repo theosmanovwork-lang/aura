@@ -35,7 +35,7 @@ describe('floating tab bar colors', () => {
   });
 
   test('the pill stands out from the page behind it', () => {
-    expect(contrast(rgb(colors.border), rgb(colors.background))).toBeGreaterThan(1);
+    expect(blend(colors.border, colors.background)).not.toEqual(rgb(colors.background));
   });
 });
 

@@ -1,4 +1,4 @@
-import { lightColors as colors } from '../../theme';
+import { colors } from '../../theme';
 
 /** Green for growth, red for a fall, grey for no change or unknown. */
 export function growthColor(percent: number | null): string {

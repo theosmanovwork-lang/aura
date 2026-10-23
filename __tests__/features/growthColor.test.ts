@@ -1,5 +1,5 @@
 import { growthColor } from '../../src/features/trends/growthColor';
-import { lightColors as colors } from '../../src/theme';
+import { colors } from '../../src/theme';
 
 describe('growthColor', () => {
   test.each([

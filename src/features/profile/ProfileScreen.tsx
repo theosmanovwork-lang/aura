@@ -9,14 +9,7 @@ import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile 
 import { formatPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import {
-  iconSizes,
-  lightColors as c,
-  MIN_TOUCH_TARGET,
-  radii,
-  spacing,
-  typography,
-} from '../../theme';
+import { iconSizes, colors as c, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { loadProfile } from './profileService';
@@ -53,11 +46,10 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
   const bottomInset = useTabBarInset();
   const [tab, setTab] = useState<TabKey>('predictions');
 
-  if (state.status === 'loading') return <Message light text={ru.screens.profile.loading} />;
+  if (state.status === 'loading') return <Message text={ru.screens.profile.loading} />;
   if (state.status === 'error') {
     return (
       <Message
-        light
         text={ru.screens.profile.error}
         action={{ label: ru.screens.profile.retry, run: reload }}
       />

@@ -7,7 +7,7 @@ import { NotFoundError } from '../../data/repositories';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { countLabel, formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { lightColors as colors, iconSizes, radii, spacing, typography } from '../../theme';
+import { colors, iconSizes, radii, spacing, typography } from '../../theme';
 import { PredictionPanel } from '../predictions/PredictionPanel';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
@@ -28,12 +28,10 @@ export function TrendDetailScreen({ trendId, now = Date.now }: TrendDetailScreen
   );
   const { state, reload } = useLoad(load);
 
-  if (state.status === 'loading') return <Message light text={ru.trends.loading} />;
+  if (state.status === 'loading') return <Message text={ru.trends.loading} />;
   if (state.status === 'error') {
-    if (state.error instanceof NotFoundError) return <Message light text={ru.trends.notFound} />;
-    return (
-      <Message light text={ru.trends.error} action={{ label: ru.trends.retry, run: reload }} />
-    );
+    if (state.error instanceof NotFoundError) return <Message text={ru.trends.notFound} />;
+    return <Message text={ru.trends.error} action={{ label: ru.trends.retry, run: reload }} />;
   }
 
   const { summary, videos } = state.data;

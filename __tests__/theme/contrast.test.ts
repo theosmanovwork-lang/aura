@@ -11,6 +11,14 @@ const contrast = (a: string, b: string): number => {
   return (light! + 0.05) / (dark! + 0.05);
 };
 
+/** An 8-digit-alpha colour laid over a #RRGGBB base, as #RRGGBB. */
+const blendOver = (overlay: string, base: string): string => {
+  const [r, g, b, a] = overlay.match(/[\d.]+/g)!.map(Number);
+  const mix = (top: number, i: number) =>
+    Math.round(top * a! + parseInt(base.slice(i, i + 2), 16) * (1 - a!));
+  return `#${[mix(r!, 1), mix(g!, 3), mix(b!, 5)].map((v) => v.toString(16).padStart(2, '0')).join('')}`;
+};
+
 const TEXT_MIN = 4.5; // WCAG AA for normal text
 const GRAPHIC_MIN = 3; // WCAG AA for icons and large graphics
 
@@ -24,8 +32,8 @@ describe('colors: readable text (AA 4.5:1)', () => {
     ['textMuted', colors.textMuted, colors.surfaceRaised],
     ['primaryText', colors.primaryText, colors.background],
     ['primaryText', colors.primaryText, colors.surface],
-    ['text on primary fills', colors.text, colors.primary],
-    ['text on pressed primary', colors.text, colors.primaryPressed],
+    ['onPrimary on primary fills', colors.onPrimary, colors.primary],
+    ['onPrimary on pressed primary', colors.onPrimary, colors.primaryPressed],
     ['onAccent on accent fills', colors.onAccent, colors.accent],
     ['accent text', colors.accent, colors.background],
     ['accent text', colors.accent, colors.surface],
@@ -42,19 +50,27 @@ describe('colors: visible icons and chart parts (3:1)', () => {
     ['iconInactive on surface', colors.iconInactive, colors.surface],
     ['accent on surface', colors.accent, colors.surface],
     ['like on background', colors.like, colors.background],
-    ['border on background', colors.border, colors.background, 1.1],
+    ['border over background', blendOver(colors.border, colors.background), colors.background, 1.1],
   ])('%s', (_name, foreground, background, minimum = GRAPHIC_MIN) => {
     expect(contrast(foreground, background)).toBeGreaterThanOrEqual(minimum);
   });
 });
 
 describe('colors: roles', () => {
-  test('indigo is the main color and gold the accent', () => {
-    expect(colors.primary).toBe('#4F46E5');
-    expect(colors.accent).toBe('#FBBF24');
+  test('the one accent is a neutral almost-white, and the main button uses it', () => {
+    expect(colors.accent).toBe('#E5E5E6');
+    expect(colors.primary).toBe(colors.accent);
+    expect(colors.background).toBe('#08090A');
   });
 
-  test('sparks (the currency) use the accent gold', () => {
+  test('growth and a fall are told apart by brightness, not by hue', () => {
+    for (const value of [colors.positive, colors.negative]) {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(value.slice(i, i + 2), 16));
+      expect(Math.max(r!, g!, b!) - Math.min(r!, g!, b!)).toBeLessThan(40);
+    }
+  });
+
+  test('sparks (the currency) use the accent', () => {
     expect(colors.spark).toBe(colors.accent);
   });
 
@@ -65,8 +81,8 @@ describe('colors: roles', () => {
   });
 
   test('the scrim fades from clear to dark with the same base color', () => {
-    expect(colors.scrimClear).toMatch(/^rgba\(14, 11, 26, 0\)$/);
-    expect(colors.scrimBottom).toMatch(/^rgba\(14, 11, 26, 0\.\d+\)$/);
+    expect(colors.scrimClear).toMatch(/^rgba\(8, 9, 10, 0\)$/);
+    expect(colors.scrimBottom).toMatch(/^rgba\(8, 9, 10, 0\.\d+\)$/);
   });
 });
 

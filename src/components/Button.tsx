@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 
-import { lightColors as colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../theme';
+import { colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../theme';
 
 type ButtonProps = Readonly<{
   label: string;

@@ -122,7 +122,7 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
               accessibilityLabel={ru.feed.aiBadge}
               style={[styles.chip, styles.chipAi]}
             >
-              <Text style={styles.chipText}>{ru.feed.aiBadge}</Text>
+              <Text style={[styles.chipText, styles.chipAiText]}>{ru.feed.aiBadge}</Text>
             </View>
           ) : null}
           <View
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
   chips: { flexDirection: 'row', gap: spacing.sm },
   chip: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, borderRadius: radii.sm },
   chipAi: { backgroundColor: colors.primary },
+  chipAiText: { color: colors.onPrimary },
   chipAge: { borderWidth: 1, borderColor: colors.textMuted },
   chipText: { ...typography.caption, color: colors.text },
   title: { ...typography.bodyStrong, color: colors.text },

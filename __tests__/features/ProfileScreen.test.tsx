@@ -7,7 +7,7 @@ import { formatPoints } from '../../src/i18n/format';
 import { ru } from '../../src/i18n/ru';
 import { ProfileScreen } from '../../src/features/profile/ProfileScreen';
 import { WELCOME_BONUS_POINTS } from '../../src/features/wallet/walletService';
-import { lightColors } from '../../src/theme';
+import { colors } from '../../src/theme';
 
 const NOW = new Date(2026, 9, 22, 21, 5).getTime();
 
@@ -65,10 +65,10 @@ describe('ProfileScreen', () => {
     expect(screen.getByText(ru.screens.profile.subtitle)).toBeTruthy();
   });
 
-  test('the page uses the light background', async () => {
+  test('the page uses the dark background', async () => {
     const { toJSON } = await renderProfile();
     await screen.findByText('@гость');
 
-    expect(JSON.stringify(toJSON())).toContain(lightColors.background);
+    expect(JSON.stringify(toJSON())).toContain(colors.background);
   });
 });

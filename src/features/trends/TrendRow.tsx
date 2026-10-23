@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { lightColors as colors, radii, spacing, typography } from '../../theme';
+import { colors, radii, spacing, typography } from '../../theme';
 import { BarChart } from './BarChart';
 import { describeGrowth } from './format';
 import { GrowthPill } from './GrowthPill';

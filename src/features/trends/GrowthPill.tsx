@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { lightColors as colors, radii, spacing, typography } from '../../theme';
+import { colors, radii, spacing, typography } from '../../theme';
 import { describeGrowth, formatGrowth } from './format';
 import { growthColor } from './growthColor';
 

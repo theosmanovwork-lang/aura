@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, lightColors, radii, typography } from '../../theme';
+import { colors, radii, typography } from '../../theme';
 
 const BADGE_SIZE = 28;
 /** The number stays inside the circle even when the system text size is very large. */
@@ -16,11 +16,11 @@ export function RankBadge({ rank, trendId }: RankBadgeProps) {
       testID={`trend-rank-${trendId}`}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={[styles.badge, { backgroundColor: first ? colors.accent : lightColors.surfaceMuted }]}
+      style={[styles.badge, { backgroundColor: first ? colors.accent : colors.surfaceMuted }]}
     >
       <Text
         maxFontSizeMultiplier={MAX_FONT_SCALE}
-        style={[styles.rank, { color: first ? colors.onAccent : lightColors.textMuted }]}
+        style={[styles.rank, { color: first ? colors.onAccent : colors.textMuted }]}
       >
         {rank}
       </Text>

@@ -10,14 +10,7 @@ import type { LedgerEntry } from '../../domain/ledger';
 import { formatDateTime, formatPoints, formatSignedPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import {
-  iconSizes,
-  lightColors as colors,
-  MIN_TOUCH_TARGET,
-  radii,
-  spacing,
-  typography,
-} from '../../theme';
+import { iconSizes, colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
 import { MyPredictions } from '../predictions/MyPredictions';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
@@ -66,11 +59,9 @@ export function WalletScreen({ now = Date.now, refreshKey = 0 }: WalletScreenPro
   const { state, reload } = useLoad(load, refreshKey);
   const bottomInset = useTabBarInset();
 
-  if (state.status === 'loading') return <Message light text={ru.wallet.loading} />;
+  if (state.status === 'loading') return <Message text={ru.wallet.loading} />;
   if (state.status === 'error') {
-    return (
-      <Message light text={ru.wallet.error} action={{ label: ru.wallet.retry, run: reload }} />
-    );
+    return <Message text={ru.wallet.error} action={{ label: ru.wallet.retry, run: reload }} />;
   }
 
   const { balance, entries } = state.data;

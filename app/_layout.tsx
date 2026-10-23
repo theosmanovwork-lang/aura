@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 
 import { RepositoriesProvider } from '../src/data/RepositoriesProvider';
 import { ru } from '../src/i18n/ru';
-import { lightColors as colors } from '../src/theme';
+import { colors } from '../src/theme';
 
 export { AppErrorScreen as ErrorBoundary } from '../src/components/AppErrorScreen';
 
