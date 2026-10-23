@@ -110,6 +110,7 @@ describe('migrate', () => {
 
     expect(user_version).toBe(LATEST_SCHEMA_VERSION);
     expect(tables.map((t) => t.name)).toEqual([
+      'comments',
       'investments',
       'ledger',
       'likes',

@@ -1,4 +1,5 @@
 import { createLedgerEntry, type LedgerEntry } from '../../domain/ledger';
+import type { Comment } from '../../domain/comment';
 import type { Investment } from '../../domain/investment';
 import type { VideoSnapshot } from '../../domain/videoPrice';
 import { createPrediction, type Prediction } from '../../domain/prediction';
@@ -82,5 +83,14 @@ export const makeVideoSnapshot = (overrides: Partial<VideoSnapshot> = {}): Video
   videoId: 'v1',
   at: 1000,
   price: 4000,
+  ...overrides,
+});
+
+export const makeComment = (overrides: Partial<Comment> = {}): Comment => ({
+  id: 'c1',
+  videoId: 'v1',
+  authorId: 'u1',
+  text: 'Классное видео',
+  createdAt: 1000,
   ...overrides,
 });

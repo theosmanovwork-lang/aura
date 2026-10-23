@@ -1,3 +1,4 @@
+import type { Comment } from '../../domain/comment';
 import { assertValidPositionAmounts, type Investment } from '../../domain/investment';
 import { assertValidLedgerEntry, type LedgerEntry } from '../../domain/ledger';
 import type { Like } from '../../domain/like';
@@ -9,6 +10,7 @@ import type { Video } from '../../domain/video';
 import type { VideoSnapshot } from '../../domain/videoPrice';
 import { DuplicateKeyError, InsufficientPointsError } from '../repositories/errors';
 import type {
+  CommentRepository,
   InvestmentRepository,
   LikeRepository,
   PredictionRepository,
@@ -32,6 +34,7 @@ export type SeedData = Readonly<{
   snapshots?: readonly TrendSnapshot[];
   investments?: readonly Investment[];
   videoSnapshots?: readonly VideoSnapshot[];
+  comments?: readonly Comment[];
 }>;
 
 const definedOnly = <T extends object>(patch: T): Partial<T> =>
@@ -207,6 +210,28 @@ export function createMemoryVideoSnapshotRepository(
   };
 }
 
+export function createMemoryCommentRepository(initial: readonly Comment[] = []): CommentRepository {
+  const comments = createCollection<Comment>('comments', initial);
+  const ofVideo = (videoId: string) => comments.all().filter((c) => c.videoId === videoId);
+  return {
+    add: async (comment) => comments.add(comment),
+    listByVideo: async (videoId) =>
+      ofVideo(videoId)
+        .map((comment, order) => ({ comment, order }))
+        .sort((a, b) => b.comment.createdAt - a.comment.createdAt || b.order - a.order)
+        .map(({ comment }) => comment),
+    countByVideo: async (videoIds) =>
+      Object.fromEntries(videoIds.map((id) => [id, ofVideo(id).length])),
+    getLatestByAuthor: async (authorId, videoId) =>
+      ofVideo(videoId)
+        .filter((c) => c.authorId === authorId)
+        .reduce<Comment | null>(
+          (best, c) => (!best || c.createdAt >= best.createdAt ? c : best),
+          null,
+        ),
+  };
+}
+
 export function createMemoryRepositories(seed: SeedData = {}): Repositories {
   return {
     users: createMemoryUserRepository(seed.users),
@@ -218,5 +243,6 @@ export function createMemoryRepositories(seed: SeedData = {}): Repositories {
     snapshots: createMemoryTrendSnapshotRepository(seed.snapshots),
     investments: createMemoryInvestmentRepository(seed.investments),
     videoSnapshots: createMemoryVideoSnapshotRepository(seed.videoSnapshots),
+    comments: createMemoryCommentRepository(seed.comments),
   };
 }

@@ -5,6 +5,7 @@ import { Message } from '../../components/Message';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { ru } from '../../i18n/ru';
 import { colors, spacing, typography } from '../../theme';
+import { CommentsSheet } from '../comments/CommentsSheet';
 import { FeedTopTabs } from './FeedTopTabs';
 import { SoonAction } from './SoonAction';
 import { pickActiveIndex, type ViewableItem } from './feedLogic';
@@ -21,7 +22,9 @@ type FeedScreenProps = Readonly<{
 }>;
 
 export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
-  const { state, actionFailed, like, markViewed, reload } = useFeed(CURRENT_USER_ID);
+  const { state, actionFailed, like, markViewed, setCommentCount, reload } =
+    useFeed(CURRENT_USER_ID);
+  const [commentsFor, setCommentsFor] = useState<string | null>(null);
   const [height, setHeight] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -71,6 +74,7 @@ export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
               focused={focused}
               onToggleLike={like}
               onOpenMarket={onOpenVideo}
+              onOpenComments={setCommentsFor}
             />
           )}
           getItemLayout={(_data, index) => ({ length: height, offset: height * index, index })}
@@ -88,6 +92,12 @@ export function FeedScreen({ focused = true, onOpenVideo }: FeedScreenProps) {
         <FeedTopTabs />
         <SoonAction testID="soon-search" icon="search" label={ru.feed.soon.search} />
       </View>
+      <CommentsSheet
+        videoId={commentsFor}
+        userId={CURRENT_USER_ID}
+        onClose={() => setCommentsFor(null)}
+        onCountChange={setCommentCount}
+      />
       {actionFailed ? (
         <Text style={styles.toast} accessibilityRole="alert" accessibilityLiveRegion="polite">
           {ru.feed.actionError}

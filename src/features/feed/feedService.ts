@@ -3,7 +3,12 @@ import { NotFoundError } from '../../data/repositories';
 import type { Video } from '../../domain/video';
 import { runInOrder } from '../runInOrder';
 
-export type FeedItem = Readonly<{ video: Video; liked: boolean; authorName: string }>;
+export type FeedItem = Readonly<{
+  video: Video;
+  liked: boolean;
+  authorName: string;
+  commentCount: number;
+}>;
 
 /** Nicknames of the video authors, one lookup per author. An author that is missing has no entry. */
 async function loadAuthorNames(
@@ -23,11 +28,16 @@ export async function loadFeed(repos: Repositories, userId: string): Promise<Fee
     repos.likes.listVideoIds(userId),
   ]);
   const liked = new Set(likedIds);
-  const names = await loadAuthorNames(repos, videos);
+  const [names, counts] = await Promise.all([
+    loadAuthorNames(repos, videos),
+    // A counter is decoration too: if it cannot be read, the feed still opens.
+    repos.comments.countByVideo(videos.map((video) => video.id)).catch(() => ({})),
+  ]);
   return videos.map((video) => ({
     video,
     liked: liked.has(video.id),
     authorName: names.get(video.authorId) ?? '',
+    commentCount: (counts as Record<string, number>)[video.id] ?? 0,
   }));
 }
 

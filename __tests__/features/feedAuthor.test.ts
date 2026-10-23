@@ -36,3 +36,24 @@ describe('feed items carry the author name', () => {
     expect(feed.every((item) => item.authorName === '')).toBe(true);
   });
 });
+
+describe('feed items carry the comment count', () => {
+  test('counts the comments of each video, 0 when there are none', async () => {
+    const repos = createMemoryRepositories(seed);
+
+    const feed = await loadFeed(repos, USER);
+
+    expect(feed.find((i) => i.video.id === 'video-1')?.commentCount).toBe(3);
+    expect(feed.find((i) => i.video.id === 'video-2')?.commentCount).toBe(0);
+  });
+
+  test('a failing counter does not blank the feed', async () => {
+    const repos = createMemoryRepositories(seed);
+    jest.spyOn(repos.comments, 'countByVideo').mockRejectedValue(new Error('disk'));
+
+    const feed = await loadFeed(repos, USER);
+
+    expect(feed.length).toBeGreaterThan(0);
+    expect(feed.every((item) => item.commentCount === 0)).toBe(true);
+  });
+});

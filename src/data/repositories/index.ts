@@ -1,3 +1,4 @@
+import type { Comment } from '../../domain/comment';
 import type { Investment } from '../../domain/investment';
 import type { LedgerEntry } from '../../domain/ledger';
 import type { Like } from '../../domain/like';
@@ -82,6 +83,16 @@ export interface VideoSnapshotRepository {
   listByVideo(videoId: string): Promise<VideoSnapshot[]>;
 }
 
+export interface CommentRepository {
+  add(comment: Comment): Promise<Comment>;
+  /** Comments of one video, newest first; equal times put the later added one first. */
+  listByVideo(videoId: string): Promise<Comment[]>;
+  /** How many comments each of the videos has; videos without any get 0. */
+  countByVideo(videoIds: readonly string[]): Promise<Record<string, number>>;
+  /** The newest comment the person left under the video, if any. */
+  getLatestByAuthor(authorId: string, videoId: string): Promise<Comment | null>;
+}
+
 export interface LikeRepository {
   /** One like per user and video: a second one throws DuplicateKeyError. */
   add(like: Like): Promise<Like>;
@@ -109,4 +120,5 @@ export type Repositories = Readonly<{
   snapshots: TrendSnapshotRepository;
   investments: InvestmentRepository;
   videoSnapshots: VideoSnapshotRepository;
+  comments: CommentRepository;
 }>;

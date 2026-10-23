@@ -138,6 +138,18 @@ export const MIGRATIONS: readonly string[] = [
     UNIQUE (video_id, at)
   );
   `,
+  `
+  CREATE TABLE comments (
+    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT NOT NULL UNIQUE,
+    video_id TEXT NOT NULL,
+    author_id TEXT NOT NULL,
+    text TEXT NOT NULL CHECK (length(trim(text)) > 0 AND length(text) <= 300),
+    created_at INTEGER NOT NULL
+  );
+  CREATE INDEX comments_video ON comments (video_id, created_at);
+  CREATE INDEX comments_author_video ON comments (author_id, video_id);
+  `,
 ];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.length;

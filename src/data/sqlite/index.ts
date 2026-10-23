@@ -1,5 +1,6 @@
 import type { Repositories } from '../repositories';
 import type { SqlDatabase } from './database';
+import { createSqliteCommentRepository } from './comments';
 import { createSqliteInvestmentRepository } from './investments';
 import { createSqliteLikeRepository } from './likes';
 import { createSqlitePredictionRepository } from './predictions';
@@ -23,5 +24,6 @@ export function createSqliteRepositories(db: SqlDatabase): Repositories {
     snapshots: createSqliteTrendSnapshotRepository(db),
     investments: createSqliteInvestmentRepository(db),
     videoSnapshots: createSqliteVideoSnapshotRepository(db),
+    comments: createSqliteCommentRepository(db),
   };
 }

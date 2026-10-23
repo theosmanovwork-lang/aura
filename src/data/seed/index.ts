@@ -1,3 +1,4 @@
+import type { Comment } from '../../domain/comment';
 import type { Trend } from '../../domain/trend';
 import type { TrendSnapshot } from '../../domain/trendSnapshot';
 import { videoPrice, type VideoSnapshot } from '../../domain/videoPrice';
@@ -15,6 +16,8 @@ const users: readonly User[] = [
   { id: CURRENT_USER_ID, nickname: 'гость', createdAt: BASE_TIME },
   { id: 'user-lis', nickname: 'нейро_лис', createdAt: BASE_TIME },
   { id: 'user-eter', nickname: 'тихий_эфир', createdAt: BASE_TIME },
+  { id: 'user-mila', nickname: 'мила_в_кадре', createdAt: BASE_TIME },
+  { id: 'user-ray', nickname: 'рэй_монтаж', createdAt: BASE_TIME },
 ];
 
 const trends: readonly Trend[] = [
@@ -83,8 +86,31 @@ const VIDEO_CURVE: readonly number[] = [
   0.5, 0.56, 0.52, 0.6, 0.66, 0.62, 0.7, 0.76, 0.72, 0.8, 0.86, 0.9, 0.95, 1,
 ];
 
+type CommentDraft = readonly [n: number, videoN: number, authorId: string, text: string];
+
+/** Fictional demo comments: «n» is only used to build the id and the time (hours after the video). */
+const commentDrafts: readonly CommentDraft[] = [
+  [1, 1, 'user-mila', 'Кот в скафандре — это сильно'],
+  [2, 1, 'user-ray', 'Музыка подходит идеально'],
+  [3, 1, 'user-eter', 'Хочу продолжение с Марсом'],
+  [4, 3, 'user-lis', 'Трамваи над рекой выглядят как мечта'],
+  [5, 3, 'user-mila', 'Сколько времени ушло на монтаж?'],
+  [6, 6, 'user-ray', 'Дождь за окном и этот ролик — идеальный вечер'],
+  [7, 7, 'user-mila', 'Вальс получился лучше, чем у людей'],
+];
+
+const comments: readonly Comment[] = commentDrafts.map(([n, videoN, authorId, text]) => ({
+  id: `comment-${n}`,
+  videoId: `video-${videoN}`,
+  authorId,
+  text,
+  createdAt: BASE_TIME + videoN * DAY + n * 60 * 60 * 1000,
+}));
+
 type SeedContent = SeedData &
-  Required<Pick<SeedData, 'users' | 'trends' | 'videos' | 'snapshots' | 'videoSnapshots'>>;
+  Required<
+    Pick<SeedData, 'users' | 'trends' | 'videos' | 'snapshots' | 'videoSnapshots' | 'comments'>
+  >;
 
 /** Demo content whose 14-day growth history ends at `now` (the moment of the first start). */
 export function createSeed(now: number): SeedContent {
@@ -106,7 +132,7 @@ export function createSeed(now: number): SeedContent {
       price: Math.max(1, Math.round(current * share * 100) / 100),
     }));
   });
-  return { users, trends, videos, snapshots, videoSnapshots };
+  return { users, trends, videos, snapshots, videoSnapshots, comments };
 }
 
 /** A fixed moment, so tests and previews always see the same data. */

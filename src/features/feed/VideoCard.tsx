@@ -19,6 +19,7 @@ import {
 import { ActionRail } from './ActionRail';
 import { AuraPlate } from './AuraPlate';
 import { AuthorAvatar } from './AuthorAvatar';
+import { CommentButton } from '../comments/CommentButton';
 import { SoonRail } from './SoonAction';
 import type { FeedItem } from './feedService';
 import { resolveVideoSource, type PlayableSource } from './videoSources';
@@ -60,6 +61,8 @@ type VideoCardProps = Readonly<{
   onToggleLike: (videoId: string) => void;
   /** Opens the page of the video (its price and the user's position). */
   onOpenMarket?: (videoId: string) => void;
+  /** Opens the comments sheet of the video. */
+  onOpenComments?: (videoId: string) => void;
 }>;
 
 /** One full-screen video. Only the video on screen plays and takes taps. */
@@ -71,8 +74,15 @@ export function VideoCard({ isActive, ...rest }: VideoCardProps) {
 type ActiveCardProps = Omit<VideoCardProps, 'isActive'>;
 
 /** Leaving the screen unmounts this, so a paused video always starts playing when it returns. */
-function ActiveCard({ item, height, focused, onToggleLike, onOpenMarket }: ActiveCardProps) {
-  const { video, liked, authorName } = item;
+function ActiveCard({
+  item,
+  height,
+  focused,
+  onToggleLike,
+  onOpenMarket,
+  onOpenComments,
+}: ActiveCardProps) {
+  const { video, liked, authorName, commentCount } = item;
   const [paused, setPaused] = useState(false);
   const bottomInset = useTabBarInset();
   const source = useMemo(() => resolveVideoSource(video.videoUri), [video.videoUri]);
@@ -137,6 +147,7 @@ function ActiveCard({ item, height, focused, onToggleLike, onOpenMarket }: Activ
           likeCount={video.likeCount}
           onToggleLike={() => onToggleLike(video.id)}
         />
+        <CommentButton count={commentCount} onPress={() => onOpenComments?.(video.id)} />
         <SoonRail />
       </View>
     </View>

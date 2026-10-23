@@ -34,10 +34,10 @@ describe('feed controls that are drawn but not working yet', () => {
     }
   });
 
-  test('comments, repost and share sit under the like and views and are switched off', async () => {
+  test('repost and share sit under the like and comments and are switched off', async () => {
     await renderFeed();
 
-    for (const label of [ru.feed.soon.comments, ru.feed.soon.repost, ru.feed.soon.share]) {
+    for (const label of [ru.feed.soon.repost, ru.feed.soon.share]) {
       const button = screen.getByRole('button', { name: label });
       expect(button.props.accessibilityState.disabled).toBe(true);
       expect(screen.getByTestId('soon-rail')).toContainElement(button);
@@ -51,5 +51,17 @@ describe('feed controls that are drawn but not working yet', () => {
     await fireEvent.press(screen.getByTestId('like-button'));
 
     expect(screen.getByTestId('like-button').props.accessibilityValue.text).not.toBe(before);
+  });
+});
+
+describe('comments in the feed', () => {
+  test('the button shows how many comments the video has and opens the sheet', async () => {
+    await renderFeed();
+    const button = screen.getByTestId('comments-button');
+    expect(button.props.accessibilityValue.text).toMatch(/^\d+$/);
+
+    await fireEvent.press(button);
+
+    expect(await screen.findByTestId('comments-sheet')).toBeTruthy();
   });
 });

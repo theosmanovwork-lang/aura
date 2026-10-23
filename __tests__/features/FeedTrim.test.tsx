@@ -50,15 +50,15 @@ describe('feed without chips, sound line and view counter', () => {
     expect((await repos.videos.getById(NEWEST.id))!.viewCount).toBe(NEWEST.viewCount + 1);
   });
 
-  test('under the Aura mark: comments, then repost, then share, all switched off', async () => {
+  test('under the Aura mark and the comments: repost, then share, switched off', async () => {
     await renderFeed();
 
     const rail = screen.getByTestId('soon-rail');
     const order = (rail.props.children as { props: { testID: string } }[]).map(
       (child) => child.props.testID,
     );
-    expect(order).toEqual(['soon-comments', 'soon-repost', 'soon-share']);
-    for (const label of [ru.feed.soon.comments, ru.feed.soon.repost, ru.feed.soon.share]) {
+    expect(order).toEqual(['soon-repost', 'soon-share']);
+    for (const label of [ru.feed.soon.repost, ru.feed.soon.share]) {
       expect(screen.getByRole('button', { name: label }).props.accessibilityState.disabled).toBe(
         true,
       );

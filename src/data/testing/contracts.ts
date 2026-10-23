@@ -1,5 +1,6 @@
 import type { LedgerEntry } from '../../domain/ledger';
 import type {
+  CommentRepository,
   InvestmentRepository,
   LikeRepository,
   PredictionRepository,
@@ -12,6 +13,7 @@ import type {
 } from '../repositories';
 import { DuplicateKeyError, InsufficientPointsError, NotFoundError } from '../repositories';
 import {
+  makeComment,
   makeEntry,
   makeInvestment,
   makeVideoSnapshot,
@@ -564,6 +566,57 @@ export function runVideoSnapshotRepositoryContract(
       await repo.add(makeVideoSnapshot());
 
       await expect(repo.add(makeVideoSnapshot({ price: 5 }))).rejects.toThrow(DuplicateKeyError);
+    });
+  });
+}
+
+export function runCommentRepositoryContract(
+  createRepo: () => Promise<CommentRepository> | CommentRepository,
+) {
+  describe('CommentRepository contract', () => {
+    test('lists the comments of one video, newest first', async () => {
+      const repo = await createRepo();
+      await repo.add(makeComment({ id: 'a', createdAt: 1000 }));
+      await repo.add(makeComment({ id: 'b', createdAt: 3000 }));
+      await repo.add(makeComment({ id: 'c', videoId: 'v2', createdAt: 2000 }));
+
+      expect((await repo.listByVideo('v1')).map((c) => c.id)).toEqual(['b', 'a']);
+      expect(await repo.listByVideo('nobody')).toEqual([]);
+    });
+
+    test('keeps insertion order for equal times, the later one first', async () => {
+      const repo = await createRepo();
+      await repo.add(makeComment({ id: 'a' }));
+      await repo.add(makeComment({ id: 'b' }));
+
+      expect((await repo.listByVideo('v1')).map((c) => c.id)).toEqual(['b', 'a']);
+    });
+
+    test('counts the comments of each video', async () => {
+      const repo = await createRepo();
+      await repo.add(makeComment({ id: 'a' }));
+      await repo.add(makeComment({ id: 'b' }));
+      await repo.add(makeComment({ id: 'c', videoId: 'v2' }));
+
+      expect(await repo.countByVideo(['v1', 'v2', 'v3'])).toEqual({ v1: 2, v2: 1, v3: 0 });
+      expect(await repo.countByVideo([])).toEqual({});
+    });
+
+    test('finds the latest comment of a person under a video', async () => {
+      const repo = await createRepo();
+      await repo.add(makeComment({ id: 'a', createdAt: 1000 }));
+      await repo.add(makeComment({ id: 'b', createdAt: 2000 }));
+      await repo.add(makeComment({ id: 'c', authorId: 'u2', createdAt: 3000 }));
+
+      expect((await repo.getLatestByAuthor('u1', 'v1'))?.id).toBe('b');
+      expect(await repo.getLatestByAuthor('u1', 'v2')).toBeNull();
+    });
+
+    test('rejects a second comment with the same id', async () => {
+      const repo = await createRepo();
+      await repo.add(makeComment());
+
+      await expect(repo.add(makeComment({ text: 'Другое' }))).rejects.toThrow(DuplicateKeyError);
     });
   });
 }

@@ -79,10 +79,16 @@ export function useFeed(userId: string) {
     [repos, changeItem],
   );
 
+  const setCommentCount = useCallback(
+    (videoId: string, commentCount: number) =>
+      changeItem(videoId, (item) => ({ ...item, commentCount })),
+    [changeItem],
+  );
+
   const reload = useCallback(() => {
     setState({ status: 'loading' });
     setAttempt((n) => n + 1);
   }, []);
 
-  return { state, actionFailed, like, markViewed, reload };
+  return { state, actionFailed, like, markViewed, setCommentCount, reload };
 }
