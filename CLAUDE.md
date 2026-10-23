@@ -4,7 +4,7 @@
 Полный план и чекбоксы этапов: `docs/PLAN.md`. Юридические вопросы: `docs/LEGAL-CHECKLIST.md`.
 
 ## Стек
-React Native + Expo + TypeScript, Expo Router, expo-video, expo-image-picker, expo-sqlite,
+React Native + Expo + TypeScript, Expo Router, expo-video, react-native-svg, expo-image-picker, expo-sqlite,
 Jest + React Native Testing Library, ESLint + Prettier. Приложение лежит в корне репозитория.
 
 ## Команды
@@ -22,7 +22,7 @@ Jest + React Native Testing Library, ESLint + Prettier. Приложение л�
 
 ## Соглашения по коду
 - Все тексты интерфейса на русском и только из `src/i18n/ru.ts`.
-- Цвета только из темы: `useColors()` и `makeStyles((colors) => ({...}))` из `src/theme`; приложение светлое или тёмное по настройке телефона, лента всегда тёмная. Шрифт системный.
+- Цвета только из темы: `useColors()` и `makeStyles((colors) => ({...}))` из `src/theme`; приложение светлое или тёмное по настройке телефона, лента всегда тёмная. Шрифты Onest и Unbounded.
 - Данные неизменяемые: возвращать новые объекты, не мутировать.
 - Доступ к данным только через интерфейсы репозиториев (`src/data/repositories`); правила в `src/domain`, без UI.
 - Файлы до 800 строк, функции до 50 строк, ранние возвраты вместо глубокой вложенности.

@@ -149,6 +149,7 @@ function ProfileBody({
         <Pressable
           accessibilityRole="button"
           accessibilityState={{ disabled: true }}
+          disabled
           style={[styles.button, styles.buttonLine]}
         >
           <Text style={styles.buttonLineText}>{t.edit}</Text>
@@ -156,6 +157,7 @@ function ProfileBody({
         <Pressable
           accessibilityRole="button"
           accessibilityState={{ disabled: true }}
+          disabled
           style={[styles.button, styles.buttonDark]}
         >
           <Text style={styles.buttonDarkText}>{t.tasks}</Text>
@@ -218,6 +220,8 @@ function Empty({ tab, onOpenFeed }: EmptyProps) {
         <Pressable
           testID="profile-empty-action"
           accessibilityRole="button"
+          accessibilityState={{ disabled: shoot }}
+          disabled={shoot}
           onPress={shoot ? undefined : onOpenFeed}
           style={styles.cta}
         >

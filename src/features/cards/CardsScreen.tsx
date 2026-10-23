@@ -34,6 +34,8 @@ export function CardsScreen({ refreshKey = 0 }: CardsScreenProps) {
           {ru.cards.title}
         </Text>
         <Pressable
+          disabled
+          accessibilityState={{ disabled: true }}
           testID="open-chests"
           accessibilityRole="button"
           accessibilityLabel={ru.cards.openChests.replace('{count}', chests)}

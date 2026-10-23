@@ -22,7 +22,13 @@ export function CollectionGrid() {
             {demoCollectionCounts.have} / {demoCollectionCounts.total}
           </Text>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel={t.filter} style={styles.filter}>
+        <Pressable
+          disabled
+          accessibilityState={{ disabled: true }}
+          accessibilityRole="button"
+          accessibilityLabel={t.filter}
+          style={styles.filter}
+        >
           <Text style={styles.filterText}>{t.filter}</Text>
           <Glyph name="chevronDown" size={14} color={colors.text} strokeWidth={2.4} />
         </Pressable>
@@ -96,7 +102,7 @@ const useStyles = makeStyles((colors) => ({
   },
   filterText: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: colors.text },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  cell: { width: '30.5%', flexGrow: 1, gap: 6 },
+  cell: { width: '30.5%', gap: 6 },
   lockedCell: { opacity: 0.6 },
   lockedSlab: {
     padding: 4,

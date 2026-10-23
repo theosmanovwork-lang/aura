@@ -40,7 +40,13 @@ export function TradeTabs({ mode, onChange, lotCount }: TradeTabsProps) {
       </View>
       <View style={styles.meta}>
         <Text style={styles.metaText}>{t.meta[mode].replace('{n}', String(lotCount))}</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel={t.sort[mode]} style={styles.sort}>
+        <Pressable
+          disabled
+          accessibilityState={{ disabled: true }}
+          accessibilityRole="button"
+          accessibilityLabel={t.sort[mode]}
+          style={styles.sort}
+        >
           <Text style={styles.sortText}>{t.sort[mode]}</Text>
           <Glyph name="chevronDown" size={14} color={colors.text} strokeWidth={2.4} />
         </Pressable>

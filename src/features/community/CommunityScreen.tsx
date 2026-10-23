@@ -5,7 +5,7 @@ import { Glyph } from '../../components/Glyph';
 import { Message } from '../../components/Message';
 import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { useRepositories } from '../../data/RepositoriesProvider';
-import { demoLots } from '../../data/seed/demoCommunity';
+import { demoLots, demoReferralCode } from '../../data/seed/demoCommunity';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 import { loadRatings } from '../hub/hubService';
@@ -18,6 +18,7 @@ import { ClansCard, PlayersCard } from './RankingCards';
 import { ReferralCard } from './ReferralCard';
 import { TradeTabs, type TradeMode } from './TradeTabs';
 import { TradeBar } from './TradeBar';
+import { useCopyCode } from './useCopyCode';
 
 type CommunityScreenProps = Readonly<{
   /** Change it to load the data again (for example every time the tab comes into view). */
@@ -38,7 +39,7 @@ export function CommunityScreen({ refreshKey = 0 }: CommunityScreenProps) {
   const [query, setQuery] = useState('');
   const [mode, setMode] = useState<TradeMode>('auctions');
   const [noticeOn, setNoticeOn] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const referral = useCopyCode(demoReferralCode);
 
   const lots = useMemo(
     () => demoLots.filter((lot) => !query.trim() || matches(`${lot.name} ${lot.seller}`, query)),
@@ -77,7 +78,7 @@ export function CommunityScreen({ refreshKey = 0 }: CommunityScreenProps) {
         </View>
 
         <NoticeCard on={noticeOn} onToggle={() => setNoticeOn((on) => !on)} />
-        <ReferralCard copied={copied} onCopy={() => setCopied(true)} />
+        <ReferralCard copied={referral.copied} onCopy={() => void referral.copy()} />
 
         <View style={styles.columns}>
           <PlayersCard authors={authors} />
@@ -126,5 +127,5 @@ const useStyles = makeStyles((colors) => ({
   input: { flex: 1, fontFamily: fontFamilies.semibold, fontSize: 15, color: colors.text },
   columns: { flexDirection: 'row', gap: 12, marginTop: 12 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  cell: { width: '47.5%', flexGrow: 1 },
+  cell: { width: '47.5%' },
 }));

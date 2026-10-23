@@ -78,7 +78,12 @@ export function ClansCard() {
     <View testID="clans-card" style={styles.card}>
       <View style={styles.head}>
         <Text style={styles.headTitle}>{ru.community.clans}</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel={ru.community.all}>
+        <Pressable
+          disabled
+          accessibilityState={{ disabled: true }}
+          accessibilityRole="button"
+          accessibilityLabel={ru.community.all}
+        >
           <Text style={styles.all}>{ru.community.all}</Text>
         </Pressable>
       </View>

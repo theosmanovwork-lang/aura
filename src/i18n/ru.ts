@@ -11,7 +11,7 @@ export const ru = {
     profile: 'Профиль',
   },
   a11y: {
-    /** Spoken name of a tab: «Раздел Лента, 1 из 4». */
+    /** Spoken name of a tab: «Раздел Видео, 1 из 5». */
     tab: 'Раздел {title}, {position} из {total}',
   },
   app: {
@@ -171,18 +171,8 @@ export const ru = {
   ],
   wallet: {
     title: 'Аура',
-    loading: 'Загружаем баланс Аура…',
-    error: 'Не удалось загрузить баланс Аура',
-    retry: 'Повторить',
     /** The currency «Аура» does not decline: the same word after any number (like «кофе»). */
     sparks: ['Аура', 'Аура', 'Аура'],
-    kinds: {
-      welcome_bonus: 'Стартовый бонус',
-      prediction_stake: 'Участие в прогнозе',
-      prediction_payout: 'Итог прогноза',
-      investment_open: 'Вложение в видео',
-      investment_close: 'Возврат из видео',
-    },
     disclaimer:
       'Аура — виртуальные баллы. Она ничего не стоит: её нельзя купить, вывести или обменять.',
   },
@@ -205,7 +195,6 @@ export const ru = {
     holding: 'В видео',
     closed: 'Забрано',
     result: 'итог',
-    loading: 'Загружаем…',
     error: 'Не удалось загрузить вложения',
   },
   market: {

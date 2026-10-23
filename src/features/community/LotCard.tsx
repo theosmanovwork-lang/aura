@@ -15,6 +15,8 @@ export function LotCard({ lot, mode }: LotCardProps) {
   const auction = mode === 'auctions';
   return (
     <Pressable
+      disabled
+      accessibilityState={{ disabled: true }}
       testID={`lot-${lot.id}`}
       accessibilityRole="button"
       accessibilityLabel={ru.community.openLot

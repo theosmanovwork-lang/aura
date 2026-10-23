@@ -12,6 +12,8 @@ export function TradeBar() {
   const bottom = useTabBarInset();
   return (
     <Pressable
+      disabled
+      accessibilityState={{ disabled: true }}
       testID="trade-button"
       accessibilityRole="button"
       accessibilityLabel={ru.community.trade}

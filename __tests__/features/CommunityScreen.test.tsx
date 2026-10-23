@@ -1,5 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
+import * as Clipboard from 'expo-clipboard';
+
 import { RepositoriesProvider } from '../../src/data/RepositoriesProvider';
 import { createMemoryRepositories } from '../../src/data/memory';
 import { seed } from '../../src/data/seed';
@@ -8,6 +10,8 @@ import { CommunityScreen } from '../../src/features/community/CommunityScreen';
 import { WELCOME_BONUS_POINTS } from '../../src/features/wallet/walletService';
 import { formatPoints } from '../../src/i18n/format';
 import { ru } from '../../src/i18n/ru';
+
+jest.mock('expo-clipboard', () => ({ setStringAsync: jest.fn(async () => true) }));
 
 const renderCommunity = async (repos = createMemoryRepositories(seed)) => {
   await render(
@@ -19,6 +23,17 @@ const renderCommunity = async (repos = createMemoryRepositories(seed)) => {
 };
 
 describe('CommunityScreen', () => {
+  test('if the phone refuses the clipboard the code is not reported as copied', async () => {
+    (Clipboard.setStringAsync as jest.Mock).mockRejectedValueOnce(new Error('denied'));
+    await renderCommunity();
+    await screen.findByTestId('players-card');
+
+    await fireEvent.press(screen.getByTestId('referral-copy'));
+
+    expect(screen.queryByText(ru.community.referral.copied)).toBeNull();
+    expect(screen.getByText('MIRA-77')).toBeTruthy();
+  });
+
   test('has the title and the balance chip with the real balance', async () => {
     await renderCommunity();
 
@@ -86,7 +101,8 @@ describe('CommunityScreen', () => {
     await fireEvent.press(screen.getByTestId('referral-copy'));
 
     expect(screen.getByText(ru.community.notice.done)).toBeTruthy();
-    expect(screen.getByText(ru.community.referral.copied)).toBeTruthy();
+    expect(await screen.findByText(ru.community.referral.copied)).toBeTruthy();
+    expect(Clipboard.setStringAsync).toHaveBeenCalledWith('MIRA-77');
   });
 
   test('each lot has a spoken name with its rarity', async () => {

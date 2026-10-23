@@ -15,6 +15,8 @@ export function GlobalChatCard() {
   const t = ru.chats;
   return (
     <Pressable
+      disabled
+      accessibilityState={{ disabled: true }}
       testID="global-chat"
       accessibilityRole="button"
       accessibilityLabel={t.global}
@@ -66,6 +68,8 @@ export function ClanCard() {
       </View>
       <View style={styles.actions}>
         <Pressable
+          disabled
+          accessibilityState={{ disabled: true }}
           testID="clan-create"
           accessibilityRole="button"
           style={[styles.action, styles.actionDark]}
@@ -74,6 +78,8 @@ export function ClanCard() {
           <Text style={[styles.actionText, styles.actionTextLight]}>{t.create}</Text>
         </Pressable>
         <Pressable
+          disabled
+          accessibilityState={{ disabled: true }}
           testID="clan-find"
           accessibilityRole="button"
           style={[styles.action, styles.actionLight]}

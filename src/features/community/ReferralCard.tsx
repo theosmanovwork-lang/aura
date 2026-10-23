@@ -29,10 +29,17 @@ export function ReferralCard({ copied, onCopy }: ReferralCardProps) {
           onPress={onCopy}
           style={styles.code}
         >
-          <Text style={styles.codeText}>{copied ? t.copied : demoReferralCode}</Text>
+          <Text accessibilityLiveRegion="polite" style={styles.codeText}>
+            {copied ? t.copied : demoReferralCode}
+          </Text>
           <Glyph name="copy" size={18} color="#FFFFFF" />
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel={t.invite}>
+        <Pressable
+          disabled
+          accessibilityState={{ disabled: true }}
+          accessibilityRole="button"
+          accessibilityLabel={t.invite}
+        >
           <SilverView style={styles.invite}>
             <Text style={styles.inviteText}>{t.invite}</Text>
           </SilverView>

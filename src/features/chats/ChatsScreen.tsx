@@ -29,6 +29,8 @@ export function ChatsScreen() {
             {ru.chats.title}
           </Text>
           <Pressable
+            disabled
+            accessibilityState={{ disabled: true }}
             accessibilityRole="button"
             accessibilityLabel={ru.chats.search}
             style={styles.round}
@@ -51,6 +53,8 @@ export function ChatsScreen() {
         <DialogList dialogs={dialogs} onOpen={(id) => setRead((set) => new Set(set).add(id))} />
       </ScrollView>
       <Pressable
+        disabled
+        accessibilityState={{ disabled: true }}
         testID="chat-compose"
         accessibilityRole="button"
         accessibilityLabel={ru.chats.compose}
