@@ -16,7 +16,7 @@ const pillBackground = (percent: number | null): string => {
   return percent > 0 ? colors.positiveSoft : colors.negativeSoft;
 };
 
-/** Growth over the last day in a tinted pill: green for growth, red for a fall, grey otherwise. */
+/** Growth over the last day in a pill: light with ▲ for growth, muted with ▼ for a fall. */
 export function GrowthPill({ percent, trendId, large = false }: GrowthPillProps) {
   return (
     <View

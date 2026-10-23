@@ -63,6 +63,12 @@ describe('colors: roles', () => {
     expect(colors.background).toBe('#08090A');
   });
 
+  test('growth is brighter than a fall', () => {
+    expect(contrast(colors.positive, colors.surface)).toBeGreaterThan(
+      contrast(colors.negative, colors.surface),
+    );
+  });
+
   test('growth and a fall are told apart by brightness, not by hue', () => {
     for (const value of [colors.positive, colors.negative]) {
       const [r, g, b] = [1, 3, 5].map((i) => parseInt(value.slice(i, i + 2), 16));

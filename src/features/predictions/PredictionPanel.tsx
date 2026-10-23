@@ -157,6 +157,6 @@ const styles = StyleSheet.create({
   label: { ...typography.caption, color: colors.textMuted },
   body: { ...typography.bodyStrong, color: colors.text },
   hint: { ...typography.caption, color: colors.textMuted },
-  warning: { ...typography.caption, color: colors.negative },
+  warning: { ...typography.caption, color: colors.destructive },
   options: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
 });

@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing, typography } from '../theme';
+import { colors, radii, spacing, typography } from '../theme';
 
 type MessageProps = Readonly<{
   text: string;
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   button: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
-    borderRadius: spacing.sm,
+    borderRadius: radii.control,
     backgroundColor: colors.primary,
   },
   buttonText: { ...typography.body, color: colors.onPrimary },

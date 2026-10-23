@@ -22,7 +22,7 @@ export const colors = {
   textSecondary: '#D0D6E0',
   textMuted: '#9CA1AB',
   iconInactive: '#9CA1AB',
-  /** Accent captions («01», eyebrow). */
+  /** Accent captions (eyebrow, small headings); not used by a screen yet. */
   accentText: '#D0D6E0',
 
   // The one accent: almost white on dark. `primary` is the fill of the main button.
