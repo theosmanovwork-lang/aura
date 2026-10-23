@@ -1,5 +1,5 @@
 import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
-import { AccessibilityInfo, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import TabsLayout from '../app/(tabs)/_layout';
 import FeedScreen from '../app/(tabs)/index';
@@ -9,7 +9,7 @@ import TrendDetailRoute from '../app/trend/[id]';
 import WalletScreen from '../app/(tabs)/wallet';
 import RootLayout from '../app/_layout';
 import { ru } from '../src/i18n/ru';
-import { MIN_TOUCH_TARGET, radii, TAB_BAR_HEIGHT } from '../src/theme';
+import { colors, MIN_TOUCH_TARGET, radii, TAB_BAR_HEIGHT } from '../src/theme';
 import { resetPlayers } from '../test-utils/expoVideoMock';
 
 jest.mock('expo-video', () => jest.requireActual('../test-utils/expoVideoMock'));
@@ -34,6 +34,8 @@ const routes = {
 const styleOf = (testID: string) =>
   StyleSheet.flatten(screen.getByTestId(testID, { hidden: true }).props.style);
 
+const labelColor = (name: string) => styleOf(`tab-label-${name}`).color;
+
 beforeEach(resetPlayers);
 
 describe('floating tab bar', () => {
@@ -46,21 +48,42 @@ describe('floating tab bar', () => {
     expect(StyleSheet.flatten(pill.props.style).height).toBe(TAB_BAR_HEIGHT);
   });
 
-  test('only the open tab shows its name', async () => {
+  test('every tab shows its name under the icon, open or not', async () => {
     await renderRouter(routes);
+    await screen.findByTestId('tab-pill', { hidden: true });
 
-    expect(await screen.findByTestId('tab-label-index', { hidden: true })).toBeTruthy();
-    expect(screen.queryByTestId('tab-label-wallet', { hidden: true })).toBeNull();
+    for (const name of ['index', 'trends', 'wallet', 'profile']) {
+      expect(screen.getByTestId(`tab-label-${name}`, { hidden: true })).toBeTruthy();
+    }
   });
 
-  test('pressing a tab opens it and moves the name there', async () => {
+  test('only the colour tells the open tab: gold-free accent for the open, quiet for the rest', async () => {
+    await renderRouter(routes);
+    await screen.findByTestId('tab-pill', { hidden: true });
+
+    expect(labelColor('index')).toBe(colors.accent);
+    expect(labelColor('wallet')).toBe(colors.iconInactive);
+  });
+
+  test('there is no highlight behind the open tab', async () => {
+    await renderRouter(routes);
+    await screen.findByTestId('tab-pill', { hidden: true });
+
+    for (const name of ['index', 'wallet']) {
+      expect(styleOf(`tab-item-${name}`).backgroundColor).toBeUndefined();
+    }
+  });
+
+  test('pressing a tab opens it and moves the colour there, the names stay', async () => {
     await renderRouter(routes);
     const wallet = await screen.findByRole('button', { name: `Раздел ${ru.tabs.wallet}, 3 из 4` });
 
     await fireEvent.press(wallet);
 
-    expect(await screen.findByTestId('tab-label-wallet', { hidden: true })).toBeTruthy();
-    expect(screen.queryByTestId('tab-label-index', { hidden: true })).toBeNull();
+    await screen.findByTestId('tab-icon-sparkles', { hidden: true });
+    expect(labelColor('wallet')).toBe(colors.accent);
+    expect(labelColor('index')).toBe(colors.iconInactive);
+    expect(screen.getByTestId('tab-label-index', { hidden: true })).toBeTruthy();
   });
 
   test('the open tab reports itself as selected to screen readers', async () => {
@@ -84,33 +107,14 @@ describe('floating tab bar', () => {
   });
 });
 
-describe('floating tab bar motion and presses', () => {
-  const reduceMotion = (impl: () => Promise<boolean>) =>
-    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockImplementation(impl);
-
-  afterEach(() => jest.restoreAllMocks());
-
-  test('the name still shows when the phone asks for less motion', async () => {
-    reduceMotion(() => Promise.resolve(true));
-    await renderRouter(routes);
-
-    expect(await screen.findByTestId('tab-label-index', { hidden: true })).toBeTruthy();
-  });
-
-  test('the name still shows when the motion setting cannot be read', async () => {
-    reduceMotion(() => Promise.reject(new Error('unavailable')));
-    await renderRouter(routes);
-
-    expect(await screen.findByTestId('tab-label-index', { hidden: true })).toBeTruthy();
-  });
-
+describe('floating tab bar presses', () => {
   test('pressing the open tab keeps everything as it is', async () => {
     await renderRouter(routes);
     const feed = await screen.findByRole('button', { name: `Раздел ${ru.tabs.feed}, 1 из 4` });
 
     await fireEvent.press(feed);
 
-    expect(screen.getByTestId('tab-label-index', { hidden: true })).toBeTruthy();
-    expect(screen.queryByTestId('tab-label-wallet', { hidden: true })).toBeNull();
+    expect(labelColor('index')).toBe(colors.accent);
+    expect(labelColor('wallet')).toBe(colors.iconInactive);
   });
 });

@@ -1,13 +1,12 @@
 // Not re-exported from the package root, so the build path is the only way to get this type.
 import type { BottomTabBarProps } from 'expo-router/build/layouts/Tabs';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { GlassSurface } from './GlassSurface';
-import { RevealLabel } from './RevealLabel';
 import { ru } from '../i18n/ru';
 import { colors, MIN_TOUCH_TARGET, radii, spacing, TAB_BAR_HEIGHT, typography } from '../theme';
 
-const LABEL_MAX_WIDTH = 72;
+const MAX_FONT_SCALE = 1.2;
 
 const spokenName = (title: string, position: number, total: number): string =>
   ru.a11y.tab
@@ -51,12 +50,17 @@ export function FloatingTabBar({
               accessibilityLabel={spokenName(title, index + 1, count)}
               accessibilityState={{ selected: focused }}
               onPress={onPress}
-              style={[styles.item, focused && styles.itemOpen]}
+              style={styles.item}
             >
               {options.tabBarIcon?.({ focused, color, size: 24 })}
-              {focused ? (
-                <RevealLabel testID={`tab-label-${route.name}`} text={title} style={styles.label} />
-              ) : null}
+              <Text
+                testID={`tab-label-${route.name}`}
+                numberOfLines={1}
+                maxFontSizeMultiplier={MAX_FONT_SCALE}
+                style={[styles.label, { color }]}
+              >
+                {title}
+              </Text>
             </Pressable>
           );
         })}
@@ -85,15 +89,12 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   item: {
+    flex: 1,
     minWidth: MIN_TOUCH_TARGET,
     minHeight: MIN_TOUCH_TARGET,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: radii.pill,
+    gap: spacing.xxs,
   },
-  itemOpen: { backgroundColor: colors.accentSoft },
-  label: { ...typography.tabLabel, maxWidth: LABEL_MAX_WIDTH, color: colors.accent },
+  label: { ...typography.tabLabel },
 });
