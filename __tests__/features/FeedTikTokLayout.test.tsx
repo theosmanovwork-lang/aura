@@ -1,12 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { AccessibilityInfo, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { RepositoriesProvider } from '../../src/data/RepositoriesProvider';
 import { createMemoryRepositories } from '../../src/data/memory';
 import { seed } from '../../src/data/seed';
 import { FeedScreen } from '../../src/features/feed/FeedScreen';
 import { ru } from '../../src/i18n/ru';
-import { colors } from '../../src/theme';
+import { colors, spacing } from '../../src/theme';
 import { resetPlayers } from '../../test-utils/expoVideoMock';
 
 jest.mock('expo-video', () => jest.requireActual('../../test-utils/expoVideoMock'));
@@ -43,18 +43,16 @@ describe('feed in the TikTok layout', () => {
   test('bottom left shows @author and the description', async () => {
     await renderFeed();
 
-    expect(screen.getByText(`@${AUTHOR.nickname}`)).toBeTruthy();
+    expect(screen.getByText(AUTHOR.nickname)).toBeTruthy();
     expect(screen.getByText(NEWEST.title)).toBeTruthy();
   });
 
-  test('on the right: the author avatar with a plus (switched off) and the disc as decoration', async () => {
+  test('on the right: the author avatar with a plus, switched off, and no music disc', async () => {
     await renderFeed();
 
     const follow = screen.getByRole('button', { name: ru.feed.soon.follow });
     expect(follow.props.accessibilityState.disabled).toBe(true);
-    const disc = screen.getByTestId('music-disc', { hidden: true });
-    expect(disc.props.accessibilityElementsHidden).toBe(true);
-    expect(disc.props.importantForAccessibility).toBe('no-hide-descendants');
+    expect(screen.queryByTestId('music-disc', { hidden: true })).toBeNull();
   });
 
   test('the like is the Aura mark: brighter and selected once pressed, counter changes', async () => {
@@ -78,15 +76,16 @@ describe('feed in the TikTok layout', () => {
 
     await fireEvent.press(screen.getByTestId('like-button'));
 
-    expect(screen.getByText(`@${AUTHOR.nickname}`)).toBeTruthy();
+    expect(screen.getByText(AUTHOR.nickname)).toBeTruthy();
   });
 
-  test('the disc does not spin when the phone asks for less motion', async () => {
-    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+  test('the author name has no @ sign and sits close above the description', async () => {
     await renderFeed();
 
-    const disc = screen.getByTestId('music-disc', { hidden: true });
-    await screen.findByTestId('music-disc', { hidden: true });
-    expect(StyleSheet.flatten(disc.props.style).transform).toBeUndefined();
+    expect(screen.queryByText(`@${AUTHOR.nickname}`)).toBeNull();
+    const info = StyleSheet.flatten(screen.getByTestId('video-info').props.style);
+    expect(info.gap).toBeLessThanOrEqual(spacing.xs);
+    const name = StyleSheet.flatten(screen.getByText(AUTHOR.nickname).props.style);
+    expect(name.fontSize).toBeLessThanOrEqual(14);
   });
 });

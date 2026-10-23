@@ -18,7 +18,6 @@ import {
 } from '../../theme';
 import { ActionRail } from './ActionRail';
 import { AuthorAvatar } from './AuthorAvatar';
-import { MusicDisc } from './MusicDisc';
 import { SoonRail } from './SoonAction';
 import type { FeedItem } from './feedService';
 import { resolveVideoSource, type PlayableSource } from './videoSources';
@@ -116,7 +115,7 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
         style={[styles.info, { paddingBottom: bottomInset + spacing.sm }]}
         pointerEvents="none"
       >
-        {authorName ? <Text style={styles.author}>{`@${authorName}`}</Text> : null}
+        {authorName ? <Text style={styles.author}>{authorName}</Text> : null}
         <Text style={styles.title} numberOfLines={2}>
           {video.title}
         </Text>
@@ -130,7 +129,6 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
           onToggleLike={() => onToggleLike(video.id)}
         />
         <SoonRail />
-        <MusicDisc />
       </View>
     </View>
   );
@@ -159,10 +157,10 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.gutter,
     paddingRight: INFO_RIGHT_SPACE,
     paddingBottom: spacing.lg,
-    gap: spacing.sm,
+    gap: spacing.xxs,
   },
-  author: { ...typography.bodyStrong, color: colors.text },
-  title: { ...typography.bodySmall, color: colors.text },
+  author: { ...typography.titleSmall, color: colors.text },
+  title: { ...typography.bodySmall, lineHeight: 18, color: colors.text },
   rail: {
     position: 'absolute',
     right: spacing.gutter,
