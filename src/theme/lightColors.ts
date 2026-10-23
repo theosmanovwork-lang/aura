@@ -1,5 +1,5 @@
 /**
- * Light palette for the screens around the feed (Волны, Искры, Профиль).
+ * Light palette for the screens around the feed (Волны, Аура, Профиль).
  * The feed and the tab bar stay dark. Text pairs are checked in __tests__/theme/lightContrast.test.ts.
  */
 export const lightColors = {

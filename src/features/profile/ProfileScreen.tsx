@@ -82,7 +82,7 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
           <Text testID="profile-balance" style={styles.statValue}>
             {formatPoints(balance)}
           </Text>
-          <Text style={styles.statLabel}>{texts.sparksLabel}</Text>
+          <Text style={styles.statLabel}>{pluralRu(balance, ru.wallet.sparks)}</Text>
         </View>
       </View>
 
