@@ -21,19 +21,20 @@ describe('CardsScreen', () => {
     await renderCards();
 
     expect(
-      await screen.findByText(`${formatPoints(WELCOME_BONUS_POINTS)} ${ru.wallet.sparks[0]}`, {
+      await screen.findByText(`${formatPoints(WELCOME_BONUS_POINTS)} ${ru.cards.coinsWord}`, {
         exact: false,
       }),
     ).toBeTruthy();
-    expect(screen.getByText(ru.wallet.disclaimer)).toBeTruthy();
+    expect(screen.getByText(ru.cards.today)).toBeTruthy();
     expect(screen.getByText(ru.cards.balance)).toBeTruthy();
   });
 
-  test('has no top-up button: Aura cannot be bought', async () => {
+  test('the top-up button is drawn and switched off (no payment code)', async () => {
     await renderCards();
     await screen.findByTestId('balance-card');
 
-    expect(screen.queryByText(/пополн/i)).toBeNull();
+    expect(screen.getByText(ru.cards.topUp)).toBeTruthy();
+    expect(screen.getByTestId('top-up').props.accessibilityState.disabled).toBe(true);
   });
 
   test('the chests button says how many chests wait', async () => {

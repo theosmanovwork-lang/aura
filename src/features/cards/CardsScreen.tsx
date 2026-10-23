@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { AuraCoin, AuraGlyph } from '../../components/AuraIcon';
-import { AuraText } from '../../components/AuraText';
 import { Glyph } from '../../components/Glyph';
 import { SilverView } from '../../components/SilverView';
 import { useTabScreenContent } from '../../components/useTabScreenContent';
@@ -58,11 +57,24 @@ export function CardsScreen({ refreshKey = 0 }: CardsScreenProps) {
         <Text style={styles.balanceLabel}>{ru.cards.balance}</Text>
         <View style={styles.balanceRow}>
           <AuraCoin size={34} tone="light" />
-          <AuraText testID="balance-value" style={styles.balance}>
-            {balance === null ? '—' : `${formatPoints(balance)} ${ru.wallet.sparks[0]}`}
-          </AuraText>
+          <Text testID="balance-value" style={styles.balance}>
+            {balance === null ? '—' : `${formatPoints(balance)} `}
+            <Text style={styles.balanceWord}>{ru.cards.coinsWord}</Text>
+          </Text>
         </View>
-        <Text style={styles.disclaimer}>{ru.wallet.disclaimer}</Text>
+        <Text style={styles.today}>{ru.cards.today}</Text>
+        <Pressable
+          disabled
+          accessibilityRole="button"
+          accessibilityState={{ disabled: true }}
+          testID="top-up"
+          style={styles.topUpWrap}
+        >
+          <SilverView style={styles.topUp}>
+            <Glyph name="plus" size={16} color="#1A1A1A" strokeWidth={2.6} />
+            <Text style={styles.topUpText}>{ru.cards.topUp}</Text>
+          </SilverView>
+        </Pressable>
       </View>
 
       <QuestsCard claimed={claimed} onClaim={() => setClaimed(true)} />
@@ -140,17 +152,22 @@ const useStyles = makeStyles((colors) => ({
   balanceRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   balance: {
     fontFamily: fontFamilies.displayHeavy,
-    fontSize: 30,
+    fontSize: 34,
     letterSpacing: -1,
     color: colors.onHeroCard,
   },
-  disclaimer: {
-    marginTop: 6,
-    fontFamily: fontFamilies.semibold,
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.heroMuted,
+  balanceWord: { color: '#D7DAE0' },
+  today: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.heroMuted },
+  topUpWrap: { marginTop: 8, alignSelf: 'flex-start' },
+  topUp: {
+    height: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 20,
+    borderRadius: 22,
   },
+  topUpText: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: '#1A1A1A' },
   hint: {
     flexDirection: 'row',
     alignItems: 'center',
