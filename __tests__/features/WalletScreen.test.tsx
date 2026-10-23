@@ -88,10 +88,10 @@ describe('WalletScreen', () => {
     const stake = await screen.findByTestId('wallet-entry-p1');
 
     expect(bonus.props.accessibilityLabel).toBe(
-      'Стартовый бонус, 22 октября, 21:05, плюс 1\u00A0000 искр',
+      'Стартовый бонус, 22 октября, 21:05, плюс 1\u00A0000 аур',
     );
     expect(stake.props.accessibilityLabel).toBe(
-      'Участие в прогнозе, 22 октября, 21:05, минус 250 искр',
+      'Участие в прогнозе, 22 октября, 21:05, минус 250 аур',
     );
   });
 
@@ -113,7 +113,7 @@ describe('WalletScreen', () => {
 
     const balance = await screen.findByTestId('wallet-balance');
 
-    expect(balance.props.accessibilityLabel).toBe('1 000 искр');
+    expect(balance.props.accessibilityLabel).toBe('1 000 аур');
   });
 
   test('shows an error with a retry button and recovers', async () => {

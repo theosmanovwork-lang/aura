@@ -77,7 +77,7 @@ describe('bottom tab bar icons', () => {
     expect(tabs.map((t) => t.props.accessibilityLabel)).toEqual([
       'Раздел Лента, 1 из 4',
       'Раздел Волны, 2 из 4',
-      'Раздел Искры, 3 из 4',
+      'Раздел Аура, 3 из 4',
       'Раздел Профиль, 4 из 4',
     ]);
   });

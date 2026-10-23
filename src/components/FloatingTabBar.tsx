@@ -1,58 +1,19 @@
 // Not re-exported from the package root, so the build path is the only way to get this type.
 import type { BottomTabBarProps } from 'expo-router/build/layouts/Tabs';
-import { useEffect, useState } from 'react';
-import { AccessibilityInfo, Animated, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { GlassSurface } from './GlassSurface';
+import { RevealLabel } from './RevealLabel';
 import { ru } from '../i18n/ru';
 import { colors, MIN_TOUCH_TARGET, radii, spacing, TAB_BAR_HEIGHT, typography } from '../theme';
 
-const LABEL_FADE_MS = 180;
 const LABEL_MAX_WIDTH = 72;
-const MAX_FONT_SCALE = 1.2;
 
 const spokenName = (title: string, position: number, total: number): string =>
   ru.a11y.tab
     .replace('{title}', title)
     .replace('{position}', String(position))
     .replace('{total}', String(total));
-
-type TabLabelProps = Readonly<{ name: string; text: string }>;
-
-/** The name of the open tab; it fades in unless the phone asks for less motion. */
-function TabLabel({ name, text }: TabLabelProps) {
-  const [opacity] = useState(() => new Animated.Value(0));
-
-  useEffect(() => {
-    let cancelled = false;
-    const start = (reduceMotion: boolean) => {
-      if (cancelled) return;
-      if (reduceMotion) opacity.setValue(1);
-      else
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: LABEL_FADE_MS,
-          useNativeDriver: true,
-        }).start();
-    };
-    AccessibilityInfo.isReduceMotionEnabled().then(start, () => start(false));
-    return () => {
-      cancelled = true;
-      opacity.stopAnimation();
-    };
-  }, [opacity]);
-
-  return (
-    <Animated.Text
-      testID={`tab-label-${name}`}
-      numberOfLines={1}
-      maxFontSizeMultiplier={MAX_FONT_SCALE}
-      style={[styles.label, { opacity }]}
-    >
-      {text}
-    </Animated.Text>
-  );
-}
 
 /** A rounded pill under the screen: the open tab shows icon and name, the others only the icon. */
 export function FloatingTabBar({
@@ -93,7 +54,9 @@ export function FloatingTabBar({
               style={[styles.item, focused && styles.itemOpen]}
             >
               {options.tabBarIcon?.({ focused, color, size: 24 })}
-              {focused ? <TabLabel name={route.name} text={title} /> : null}
+              {focused ? (
+                <RevealLabel testID={`tab-label-${route.name}`} text={title} style={styles.label} />
+              ) : null}
             </Pressable>
           );
         })}

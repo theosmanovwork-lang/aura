@@ -13,10 +13,9 @@ import { iconSizes, colors as c, MIN_TOUCH_TARGET, radii, spacing, typography } 
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { loadProfile } from './profileService';
+import { ProfileTabs, type ProfileTabKey } from './ProfileTabs';
 
 const AVATAR_SIZE = 72;
-const TAB_KEYS = ['videos', 'predictions', 'likes'] as const;
-type TabKey = (typeof TAB_KEYS)[number];
 
 type ProfileScreenProps = Readonly<{ now?: () => number; refreshKey?: number }>;
 
@@ -44,7 +43,7 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
   );
   const { state, reload } = useLoad(load, refreshKey);
   const bottomInset = useTabBarInset();
-  const [tab, setTab] = useState<TabKey>('predictions');
+  const [tab, setTab] = useState<ProfileTabKey>('predictions');
 
   if (state.status === 'loading') return <Message text={ru.screens.profile.loading} />;
   if (state.status === 'error') {
@@ -97,25 +96,7 @@ export function ProfileScreen({ now = Date.now, refreshKey = 0 }: ProfileScreenP
         <Text style={styles.editText}>{texts.edit}</Text>
       </Pressable>
 
-      <View accessibilityRole="tablist" style={styles.tabs}>
-        {TAB_KEYS.map((key) => {
-          const selected = key === tab;
-          return (
-            <Pressable
-              key={key}
-              accessibilityRole="button"
-              accessibilityLabel={texts.tabs[key]}
-              accessibilityState={{ selected }}
-              onPress={() => setTab(key)}
-              style={[styles.tab, selected && styles.tabSelected]}
-            >
-              <Text style={[styles.tabText, selected && styles.tabTextSelected]}>
-                {texts.tabs[key]}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+      <ProfileTabs selected={tab} onSelect={setTab} />
 
       <View style={styles.empty}>
         <Text style={styles.emptyTitle}>{texts.tabs[tab]}</Text>
@@ -158,23 +139,6 @@ const styles = StyleSheet.create({
     backgroundColor: c.surfaceMuted,
   },
   editText: { ...typography.bodyStrong, color: c.textMuted },
-  tabs: {
-    flexDirection: 'row',
-    marginTop: spacing.lg,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: c.border,
-  },
-  tab: {
-    flex: 1,
-    minHeight: MIN_TOUCH_TARGET,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
-  },
-  tabSelected: { borderBottomColor: c.text },
-  tabText: { ...typography.bodyStrong, color: c.textMuted },
-  tabTextSelected: { color: c.text },
   empty: { alignItems: 'center', gap: spacing.xs, paddingTop: spacing.xl },
   emptyTitle: { ...typography.heading, color: c.text },
   emptyText: { ...typography.body, color: c.textMuted, textAlign: 'center' },

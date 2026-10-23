@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { RepositoriesProvider } from '../../src/data/RepositoriesProvider';
 import { createMemoryRepositories } from '../../src/data/memory';
@@ -47,22 +48,53 @@ describe('ProfileScreen', () => {
     }
   });
 
-  test('tabs switch the empty state and report the selected one', async () => {
+  test('the tabs are icons: only the open one shows its name next to the icon', async () => {
     await renderProfile();
     await screen.findByText('@гость');
-    const likes = screen.getByRole('button', { name: ru.screens.profile.tabs.likes });
-    expect(
-      screen.getByRole('button', { name: ru.screens.profile.tabs.predictions }).props
-        .accessibilityState.selected,
-    ).toBe(true);
 
-    await fireEvent.press(likes);
+    expect(screen.getByTestId('profile-tab-label-predictions')).toBeTruthy();
+    expect(screen.queryByTestId('profile-tab-label-videos')).toBeNull();
+    expect(screen.queryByTestId('profile-tab-label-reposts')).toBeNull();
+  });
 
-    expect(
-      screen.getByRole('button', { name: ru.screens.profile.tabs.likes }).props.accessibilityState
-        .selected,
-    ).toBe(true);
+  test('pressing an icon opens that tab and moves the name there', async () => {
+    await renderProfile();
+    await screen.findByText('@гость');
+
+    await fireEvent.press(screen.getByRole('button', { name: ru.screens.profile.tabs.reposts }));
+
+    expect(await screen.findByTestId('profile-tab-label-reposts')).toBeTruthy();
+    expect(screen.queryByTestId('profile-tab-label-predictions')).toBeNull();
+    const reposts = screen.getByRole('button', { name: ru.screens.profile.tabs.reposts });
+    expect(reposts.props.accessibilityState.selected).toBe(true);
     expect(screen.getByText(ru.screens.profile.subtitle)).toBeTruthy();
+  });
+
+  test('there is a repost tab and no likes tab: aura replaces likes', async () => {
+    await renderProfile();
+    await screen.findByText('@гость');
+
+    expect(screen.getByRole('button', { name: ru.screens.profile.tabs.reposts })).toBeTruthy();
+    expect(screen.queryByText(/лайк/i)).toBeNull();
+  });
+
+  test('every tab icon has a comfortable touch area', async () => {
+    await renderProfile();
+    await screen.findByText('@гость');
+
+    for (const key of ['videos', 'predictions', 'reposts'] as const) {
+      const tab = screen.getByRole('button', { name: ru.screens.profile.tabs[key] });
+      const style = StyleSheet.flatten(tab.props.style);
+      expect(style.minHeight).toBeGreaterThanOrEqual(44);
+      expect(style.minWidth).toBeGreaterThanOrEqual(44);
+    }
+  });
+
+  test('the balance is read aloud in the currency aura', async () => {
+    await renderProfile();
+    await screen.findByText('@гость');
+
+    expect(screen.getByLabelText(/1\s?000 аур/)).toBeTruthy();
   });
 
   test('the page uses the dark background', async () => {
