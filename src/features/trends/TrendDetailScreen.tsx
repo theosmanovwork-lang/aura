@@ -7,7 +7,7 @@ import { NotFoundError } from '../../data/repositories';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { countLabel, formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { iconSizes, makeStyles, radii, spacing, typography, useColors } from '../../theme';
+import { iconSizes, makeStyles, spacing, typography, useColors } from '../../theme';
 import { PredictionPanel } from '../predictions/PredictionPanel';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
@@ -91,11 +91,9 @@ const useStyles = makeStyles((colors) => ({
   content: { padding: spacing.gutter, gap: spacing.md },
   hero: {
     gap: spacing.md,
-    padding: spacing.lg,
-    borderRadius: radii.panel,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingVertical: spacing.lg,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
   name: { ...typography.title, color: colors.text },
   figures: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
@@ -103,11 +101,9 @@ const useStyles = makeStyles((colors) => ({
   score: { ...typography.figureDisplay, color: colors.text },
   card: {
     gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radii.panel,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
   section: { ...typography.heading, color: colors.text },
   videosHeader: { gap: spacing.xxs, marginTop: spacing.sm },

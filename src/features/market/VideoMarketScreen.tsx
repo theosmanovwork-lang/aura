@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Button } from '../../components/Button';
@@ -12,7 +12,7 @@ import { MAX_INVESTMENT_PER_VIDEO, MIN_INVESTMENT } from '../../domain/investmen
 import { videoPrice } from '../../domain/videoPrice';
 import { formatDateTime } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
-import { makeStyles, radii, spacing, typography } from '../../theme';
+import { makeStyles, spacing, typography } from '../../theme';
 import { SoonAction } from '../feed/SoonAction';
 import { loadVideoMarket, type VideoMarket } from '../investments/investmentService';
 import { useLatest } from '../useLatest';
@@ -223,11 +223,9 @@ const useStyles = makeStyles((colors) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radii.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
   relatedTitle: { ...typography.body, color: colors.text, flex: 1 },
   relatedPrice: { ...typography.figure, color: colors.textMuted },

@@ -8,7 +8,7 @@ import { formatCount } from '../../src/i18n/plural';
 import { ru } from '../../src/i18n/ru';
 import { TrendDetailScreen } from '../../src/features/trends/TrendDetailScreen';
 import { loadTrendDetail } from '../../src/features/trends/trendService';
-import { darkColors as colors, radii, typography } from '../../src/theme';
+import { darkColors as colors, typography } from '../../src/theme';
 
 const NOW = Date.UTC(2027, 0, 1);
 const styleOf = (element: { props: { style?: unknown } }) =>
@@ -34,21 +34,21 @@ describe('trend detail design', () => {
     expect(styleOf(score).fontSize).toBe(typography.figureDisplay.fontSize);
   });
 
-  test('the top part is a rounded card with the name, the index and the growth pill', async () => {
+  test('the top part is a flat block with the name, the index and the growth pill', async () => {
     const summary = await renderDetail();
 
     const hero = screen.getByTestId('trend-hero');
-    expect(styleOf(hero).backgroundColor).toBe(colors.surface);
-    expect(styleOf(hero).borderRadius).toBe(radii.panel);
+    expect(styleOf(hero).backgroundColor).toBeUndefined();
+    expect(styleOf(hero).borderBottomColor).toBe(colors.border);
     expect(within(hero).getByText(summary.trend.name)).toBeTruthy();
     expect(within(hero).getByTestId(`growth-pill-${summary.trend.id}`)).toBeTruthy();
   });
 
-  test('the chart sits in its own card and uses the grey bars and a light newest bar', async () => {
+  test('the chart sits in a flat block and uses the grey bars and a light newest bar', async () => {
     await renderDetail();
 
     const card = screen.getByTestId('trend-chart-card');
-    expect(styleOf(card).borderRadius).toBe(radii.panel);
+    expect(styleOf(card).borderRadius).toBeUndefined();
     const bars = within(card).getAllByTestId('chart-bar');
     expect(styleOf(bars[0]!).backgroundColor).toBe(colors.chartBar);
     expect(styleOf(bars.at(-1)!).backgroundColor).toBe(colors.primary);

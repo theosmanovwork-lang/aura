@@ -1,8 +1,8 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { makeStyles, radii, spacing, typography } from '../../theme';
+import { makeStyles, spacing, typography } from '../../theme';
 import { BarChart } from './BarChart';
 import { describeGrowth } from './format';
 import { GrowthPill } from './GrowthPill';
@@ -51,11 +51,9 @@ const useStyles = makeStyles((colors) => ({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radii.card,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
   pressed: { opacity: 0.85 },
   main: { flex: 1, gap: spacing.xs },

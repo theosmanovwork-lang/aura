@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Button } from '../../components/Button';
@@ -10,7 +10,7 @@ import type { Prediction } from '../../domain/prediction';
 import { formatPoints } from '../../i18n/format';
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { makeStyles, radii, spacing, typography } from '../../theme';
+import { makeStyles, spacing, typography } from '../../theme';
 import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import {
@@ -151,11 +151,9 @@ export function PredictionPanel({ trendId, now = Date.now, refreshKey = 0 }: Pre
 const useStyles = makeStyles((colors) => ({
   card: {
     gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radii.panel,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
   title: { ...typography.heading, color: colors.text },
   label: { ...typography.caption, color: colors.textMuted },

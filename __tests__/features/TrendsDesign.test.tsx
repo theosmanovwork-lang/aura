@@ -7,7 +7,7 @@ import { seed } from '../../src/data/seed';
 import { ru } from '../../src/i18n/ru';
 import { TrendsScreen } from '../../src/features/trends/TrendsScreen';
 import { loadTrendBoard } from '../../src/features/trends/trendService';
-import { darkColors as colors, radii } from '../../src/theme';
+import { darkColors as colors } from '../../src/theme';
 
 const NOW = Date.UTC(2027, 0, 1);
 const styleOf = (element: { props: { style?: unknown } }) =>
@@ -83,12 +83,13 @@ describe('trends list design', () => {
     }
   });
 
-  test('every wave is a rounded card', async () => {
+  test('every wave is a flat row with a line under it', async () => {
     const board = await renderBoard();
 
     const card = screen.getByTestId(`trend-row-${board[0]!.trend.id}`);
-    expect(styleOf(card).borderRadius).toBe(radii.card);
-    expect(styleOf(card).backgroundColor).toBe(colors.surface);
+    expect(styleOf(card).borderBottomColor).toBe(colors.border);
+    expect(styleOf(card).backgroundColor).toBeUndefined();
+    expect(styleOf(card).borderRadius).toBeUndefined();
   });
 
   test('the little chart is grey with a light newest bar', async () => {

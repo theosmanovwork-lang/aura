@@ -1,10 +1,10 @@
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import type { Investment } from '../../domain/investment';
 import { formatPoints } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
-import { makeStyles, radii, spacing, typography } from '../../theme';
+import { makeStyles, spacing, typography } from '../../theme';
 import { formatPrice } from './marketFormat';
 
 type PositionCardProps = Readonly<{ position: Investment; value: number }>;
@@ -47,11 +47,9 @@ function Line({ label, value }: Readonly<{ label: string; value: string }>) {
 const useStyles = makeStyles((colors) => ({
   card: {
     gap: spacing.sm,
-    padding: spacing.md,
-    borderRadius: radii.panel,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
   title: { ...typography.heading, color: colors.text },
   line: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },

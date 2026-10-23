@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { VideoSnapshot } from '../../domain/videoPrice';
 import { ru } from '../../i18n/ru';
@@ -50,11 +50,9 @@ export function PriceChart({ history, now }: PriceChartProps) {
 const useStyles = makeStyles((colors) => ({
   card: {
     gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radii.panel,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
+    paddingVertical: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
   periods: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm },
   period: {
