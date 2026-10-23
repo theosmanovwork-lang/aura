@@ -96,6 +96,7 @@ describe('sizes and typography', () => {
     expect(iconSizes.md).toBeLessThan(iconSizes.lg);
     expect([radii.sm, radii.md, radii.lg, radii.xl]).toEqual([8, 12, 16, 24]);
     expect(radii.pill).toBeGreaterThan(radii.xl);
+    expect([radii.control, radii.card, radii.panel]).toEqual([8, 10, 14]);
   });
 
   test('spacing keeps the old steps and adds a 2-point step and a screen gutter', () => {
@@ -106,14 +107,36 @@ describe('sizes and typography', () => {
     expect(spacing.gutter).toBe(16);
   });
 
-  test('the type scale has the planned sizes', () => {
-    expect(typography.display.fontSize).toBe(44);
-    expect(typography.title.fontSize).toBe(28);
-    expect(typography.heading.fontSize).toBe(20);
-    expect(typography.body.fontSize).toBe(16);
-    expect(typography.bodyStrong.fontWeight).toBe('700');
-    expect(typography.caption.fontSize).toBe(12);
-    expect(typography.tabLabel.fontSize).toBe(11);
+  test('the type scale is the Prufbase mobile scale (size / line height)', () => {
+    const scale = (style: { fontSize: number; lineHeight: number }) =>
+      `${style.fontSize}/${style.lineHeight}`;
+    expect(scale(typography.display)).toBe('36/39');
+    expect(scale(typography.title)).toBe('30/36');
+    expect(scale(typography.heading)).toBe('18/28');
+    expect(scale(typography.lead)).toBe('16/26');
+    expect(scale(typography.body)).toBe('15/24');
+    expect(scale(typography.bodySmall)).toBe('14/20');
+    expect(scale(typography.titleSmall)).toBe('14/18');
+    expect(scale(typography.caption)).toBe('12/16');
+    expect(scale(typography.tabLabel)).toBe('11/15');
+  });
+
+  test('every number style is mono with tabular digits', () => {
+    for (const style of [
+      typography.figureDisplay,
+      typography.figureXL,
+      typography.figure,
+      typography.figureSmall,
+    ]) {
+      expect(style.fontFamily).toMatch(/^JetBrainsMono/);
+      expect(style.fontVariant).toEqual(['tabular-nums']);
+    }
+  });
+
+  test('no text style sets a fontWeight (the weight is part of the font family)', () => {
+    for (const style of Object.values(typography)) {
+      expect(style).not.toHaveProperty('fontWeight');
+    }
   });
 
   test('text is never smaller than 11 points', () => {

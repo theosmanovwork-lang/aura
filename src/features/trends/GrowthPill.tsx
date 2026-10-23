@@ -40,6 +40,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xxs,
     borderRadius: radii.pill,
   },
-  small: { ...typography.caption, fontWeight: '700' },
-  large: { ...typography.bodyStrong },
+  small: { ...typography.figureSmall },
+  large: { ...typography.figure },
 });

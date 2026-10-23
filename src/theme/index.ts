@@ -10,4 +10,4 @@ export {
   scrim,
   TAB_BAR_HEIGHT,
 } from './sizes';
-export { typography } from './typography';
+export { fontAssets, fontFamilies, typography } from './typography';

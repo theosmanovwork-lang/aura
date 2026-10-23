@@ -2,6 +2,9 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 
 import { colors, MIN_TOUCH_TARGET, radii, spacing, typography } from '../theme';
 
+/** A pressed button shrinks a little (Prufbase: scale 0.98). */
+const PRESS_SCALE = 0.98;
+
 type ButtonProps = Readonly<{
   label: string;
   onPress: () => void;
@@ -57,17 +60,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: spacing.md,
-    borderRadius: radii.md,
+    borderRadius: radii.control,
     borderWidth: 1,
     borderColor: 'transparent',
   },
-  primary: { backgroundColor: colors.primary },
-  primaryPressed: { backgroundColor: colors.primaryPressed },
+  primary: { backgroundColor: colors.primary, borderRadius: radii.pill },
+  primaryPressed: { backgroundColor: colors.primaryPressed, transform: [{ scale: PRESS_SCALE }] },
   chip: { backgroundColor: colors.surfaceMuted },
-  pressed: { opacity: 0.8 },
+  pressed: { opacity: 0.8, transform: [{ scale: PRESS_SCALE }] },
   selected: { borderColor: colors.primary },
   selectedText: { color: colors.primary },
   disabled: { opacity: 0.4 },
-  text: { ...typography.bodyStrong, color: colors.text, textAlign: 'center' },
+  text: { ...typography.titleSmall, color: colors.text, textAlign: 'center' },
   primaryText: { color: colors.onPrimary },
 });

@@ -36,5 +36,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rank: { ...typography.caption, fontWeight: '700' },
+  rank: { ...typography.figureSmall },
 });

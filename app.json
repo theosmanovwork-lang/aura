@@ -15,9 +15,10 @@
           "image": "./assets/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#0E0B1A"
+          "backgroundColor": "#08090A"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "ios": {
       "supportsTablet": false,

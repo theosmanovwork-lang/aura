@@ -148,8 +148,10 @@ const styles = StyleSheet.create({
   card: {
     gap: spacing.md,
     padding: spacing.md,
-    borderRadius: radii.lg,
+    borderRadius: radii.panel,
     backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   title: { ...typography.heading, color: colors.text },
   label: { ...typography.caption, color: colors.textMuted },

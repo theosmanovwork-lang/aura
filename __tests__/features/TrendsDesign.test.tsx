@@ -87,7 +87,7 @@ describe('trends list design', () => {
     const board = await renderBoard();
 
     const card = screen.getByTestId(`trend-row-${board[0]!.trend.id}`);
-    expect(styleOf(card).borderRadius).toBe(radii.lg);
+    expect(styleOf(card).borderRadius).toBe(radii.card);
     expect(styleOf(card).backgroundColor).toBe(colors.surface);
   });
 

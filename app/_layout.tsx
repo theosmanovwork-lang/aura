@@ -1,12 +1,15 @@
+import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 
 import { RepositoriesProvider } from '../src/data/RepositoriesProvider';
 import { ru } from '../src/i18n/ru';
-import { colors } from '../src/theme';
+import { colors, fontAssets, fontFamilies } from '../src/theme';
 
 export { AppErrorScreen as ErrorBoundary } from '../src/components/AppErrorScreen';
 
 export default function RootLayout() {
+  // The app opens at once in the system font and switches when the fonts are ready (or stays if they fail).
+  useFonts(fontAssets);
   return (
     <RepositoriesProvider>
       <Stack screenOptions={{ headerShown: false }}>
@@ -17,6 +20,7 @@ export default function RootLayout() {
             title: ru.trends.detailTitle,
             headerStyle: { backgroundColor: colors.surface },
             headerTintColor: colors.text,
+            headerTitleStyle: { fontFamily: fontFamilies.semibold },
           }}
         />
       </Stack>

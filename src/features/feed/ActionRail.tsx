@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.7 },
   count: {
-    ...typography.caption,
+    ...typography.figureSmall,
     color: colors.text,
     textShadowColor: colors.textShadow,
     textShadowOffset: { width: 0, height: 1 },

@@ -39,7 +39,7 @@ describe('trend detail design', () => {
 
     const hero = screen.getByTestId('trend-hero');
     expect(styleOf(hero).backgroundColor).toBe(colors.surface);
-    expect(styleOf(hero).borderRadius).toBe(radii.xl);
+    expect(styleOf(hero).borderRadius).toBe(radii.panel);
     expect(within(hero).getByText(summary.trend.name)).toBeTruthy();
     expect(within(hero).getByTestId(`growth-pill-${summary.trend.id}`)).toBeTruthy();
   });
@@ -48,7 +48,7 @@ describe('trend detail design', () => {
     await renderDetail();
 
     const card = screen.getByTestId('trend-chart-card');
-    expect(styleOf(card).borderRadius).toBe(radii.lg);
+    expect(styleOf(card).borderRadius).toBe(radii.panel);
     const bars = within(card).getAllByTestId('chart-bar');
     expect(styleOf(bars[0]!).backgroundColor).toBe(colors.chartBar);
     expect(styleOf(bars.at(-1)!).backgroundColor).toBe(colors.accent);

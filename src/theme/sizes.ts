@@ -1,4 +1,8 @@
 export const radii = {
+  /** Prufbase: 8 for controls and chips, 10 for cards, 14 for large panels. */
+  control: 8,
+  card: 10,
+  panel: 14,
   sm: 8,
   md: 12,
   lg: 16,
@@ -30,6 +34,7 @@ export const MIN_TOUCH_TARGET = 44;
 export const TAB_BAR_HEIGHT = 56;
 
 export const durations = {
-  fast: 150,
+  /** Every colour, border and background change: 160 ms. */
+  fast: 160,
   normal: 250,
 } as const;
