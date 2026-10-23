@@ -43,6 +43,26 @@ export default function RootLayout() {
             headerTitleStyle: { fontFamily: fontFamilies.semibold },
           }}
         />
+        <Stack.Screen
+          name="chats"
+          options={{
+            headerShown: true,
+            title: ru.stubs.chats.title,
+            headerStyle: { backgroundColor: colors.surface },
+            headerTintColor: colors.text,
+            headerTitleStyle: { fontFamily: fontFamilies.semibold },
+          }}
+        />
+        <Stack.Screen
+          name="cards"
+          options={{
+            headerShown: true,
+            title: ru.stubs.cards.title,
+            headerStyle: { backgroundColor: colors.surface },
+            headerTintColor: colors.text,
+            headerTitleStyle: { fontFamily: fontFamilies.semibold },
+          }}
+        />
       </Stack>
     </RepositoriesProvider>
   );

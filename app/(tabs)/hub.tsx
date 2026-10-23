@@ -10,6 +10,8 @@ export default function HubTab() {
   return (
     <HubScreen
       refreshKey={refreshKey}
+      onOpenChats={() => router.push('/chats')}
+      onOpenCards={() => router.push('/cards')}
       onOpenVideo={(id) => router.push({ pathname: '/video/[id]', params: { id } })}
     />
   );

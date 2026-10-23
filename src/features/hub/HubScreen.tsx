@@ -2,25 +2,34 @@ import { useCallback, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from '../../components/Button';
+import { Icon } from '../../components/Icon';
 import { Message } from '../../components/Message';
 import { useTabBarInset } from '../../components/useTabBarInset';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { formatCount, countLabel } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, radii, spacing, typography } from '../../theme';
+import { colors, iconSizes, MIN_TOUCH_TARGET, radii, spacing, typography } from '../../theme';
 import { useLoad } from '../useLoad';
 import { RankBadge } from '../trends/RankBadge';
 import { loadRatings } from './hubService';
 
 type HubScreenProps = Readonly<{
   onOpenVideo: (videoId: string) => void;
+  /** The Chats and Cards screens are stubs for now. */
+  onOpenChats?: () => void;
+  onOpenCards?: () => void;
   /** Change it to load the ratings again (for example every time the tab comes into view). */
   refreshKey?: number;
 }>;
 
 type Section = 'videos' | 'authors';
 
-export function HubScreen({ onOpenVideo, refreshKey = 0 }: HubScreenProps) {
+export function HubScreen({
+  onOpenVideo,
+  onOpenChats,
+  onOpenCards,
+  refreshKey = 0,
+}: HubScreenProps) {
   const repos = useRepositories();
   const load = useCallback(() => loadRatings(repos), [repos]);
   const { state, reload } = useLoad(load, refreshKey);
@@ -40,6 +49,20 @@ export function HubScreen({ onOpenVideo, refreshKey = 0 }: HubScreenProps) {
         {ru.hub.title}
       </Text>
       <Text style={styles.subtitle}>{ru.hub.subtitle}</Text>
+      <View style={styles.links}>
+        <LinkTile
+          testID="hub-chats"
+          icon="chatbubbles-outline"
+          label={ru.hub.chats}
+          onPress={onOpenChats}
+        />
+        <LinkTile
+          testID="hub-cards"
+          icon="albums-outline"
+          label={ru.hub.cards}
+          onPress={onOpenCards}
+        />
+      </View>
       <View style={styles.chips}>
         <Button
           testID="hub-chip-videos"
@@ -118,6 +141,28 @@ export function HubScreen({ onOpenVideo, refreshKey = 0 }: HubScreenProps) {
   );
 }
 
+type LinkTileProps = Readonly<{
+  testID: string;
+  icon: 'chatbubbles-outline' | 'albums-outline';
+  label: string;
+  onPress?: () => void;
+}>;
+
+function LinkTile({ testID, icon, label, onPress }: LinkTileProps) {
+  return (
+    <Pressable
+      testID={testID}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      style={({ pressed }) => [styles.tile, pressed && styles.pressed]}
+    >
+      <Icon name={icon} size={iconSizes.md} color={colors.text} />
+      <Text style={styles.tileText}>{label}</Text>
+    </Pressable>
+  );
+}
+
 function Separator() {
   return <View style={styles.separator} />;
 }
@@ -128,6 +173,20 @@ const styles = StyleSheet.create({
   header: { gap: spacing.xs, marginBottom: spacing.md },
   title: { ...typography.title, color: colors.text },
   subtitle: { ...typography.body, color: colors.textMuted },
+  links: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
+  tile: {
+    flex: 1,
+    minHeight: MIN_TOUCH_TARGET,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    borderRadius: radii.card,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  tileText: { ...typography.titleSmall, color: colors.text },
   chips: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
   row: {
     flexDirection: 'row',
