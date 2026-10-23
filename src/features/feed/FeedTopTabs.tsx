@@ -11,7 +11,7 @@ export function FeedTopTabs() {
   return (
     <View accessibilityRole="tablist" style={styles.tabs}>
       <Pressable
-        accessibilityRole="button"
+        accessibilityRole="tab"
         accessibilityLabel={ru.feed.tabs.following}
         accessibilityState={{ disabled: true, selected: false }}
         disabled
@@ -20,7 +20,7 @@ export function FeedTopTabs() {
         <Text style={[styles.label, styles.idle]}>{ru.feed.tabs.following}</Text>
       </Pressable>
       <Pressable
-        accessibilityRole="button"
+        accessibilityRole="tab"
         accessibilityLabel={ru.feed.tabs.forYou}
         accessibilityState={{ disabled: true, selected: true }}
         disabled

@@ -11,8 +11,10 @@ export function useReduceMotion(): boolean | null {
       (value) => !cancelled && setReduced(value),
       () => !cancelled && setReduced(false),
     );
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduced);
     return () => {
       cancelled = true;
+      subscription.remove();
     };
   }, []);
 

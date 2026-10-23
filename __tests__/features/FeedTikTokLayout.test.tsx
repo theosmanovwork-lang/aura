@@ -33,8 +33,8 @@ describe('feed in the TikTok layout', () => {
   test('the top has two tabs, «Для вас» is the open one and both are switched off', async () => {
     await renderFeed();
 
-    const following = screen.getByRole('button', { name: ru.feed.tabs.following });
-    const forYou = screen.getByRole('button', { name: ru.feed.tabs.forYou });
+    const following = screen.getByRole('tab', { name: ru.feed.tabs.following });
+    const forYou = screen.getByRole('tab', { name: ru.feed.tabs.forYou });
     expect(following.props.accessibilityState.disabled).toBe(true);
     expect(forYou.props.accessibilityState.selected).toBe(true);
     expect(screen.getByTestId('feed-top-bar')).toContainElement(forYou);

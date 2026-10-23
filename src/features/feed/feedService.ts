@@ -11,7 +11,8 @@ async function loadAuthorNames(
   videos: readonly Video[],
 ): Promise<Map<string, string>> {
   const ids = [...new Set(videos.map((video) => video.authorId))];
-  const users = await Promise.all(ids.map((id) => repos.users.getById(id)));
+  // A name is decoration: a failed lookup must never blank the feed, the author just has no name.
+  const users = await Promise.all(ids.map((id) => repos.users.getById(id).catch(() => null)));
   return new Map(users.flatMap((user) => (user ? [[user.id, user.nickname] as const] : [])));
 }
 

@@ -25,4 +25,14 @@ describe('feed items carry the author name', () => {
     expect(feed.length).toBeGreaterThan(0);
     expect(feed.every((item) => item.authorName === '')).toBe(true);
   });
+
+  test('a failing author lookup does not blank the feed', async () => {
+    const repos = createMemoryRepositories(seed);
+    jest.spyOn(repos.users, 'getById').mockRejectedValue(new Error('storage error'));
+
+    const feed = await loadFeed(repos, USER);
+
+    expect(feed.length).toBeGreaterThan(0);
+    expect(feed.every((item) => item.authorName === '')).toBe(true);
+  });
 });
