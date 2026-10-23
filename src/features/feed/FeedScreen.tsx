@@ -5,6 +5,7 @@ import { Message } from '../../components/Message';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { ru } from '../../i18n/ru';
 import { colors, spacing, typography } from '../../theme';
+import { FeedTopTabs } from './FeedTopTabs';
 import { SoonAction } from './SoonAction';
 import { pickActiveIndex, type ViewableItem } from './feedLogic';
 import { VideoCard } from './VideoCard';
@@ -81,6 +82,7 @@ export function FeedScreen({ focused = true }: FeedScreenProps) {
       ) : null}
       <View testID="feed-top-bar" style={styles.topBar} pointerEvents="box-none">
         <SoonAction testID="soon-add" icon="add" label={ru.feed.soon.add} />
+        <FeedTopTabs />
         <SoonAction testID="soon-search" icon="search" label={ru.feed.soon.search} />
       </View>
       {actionFailed ? (
@@ -100,6 +102,7 @@ const styles = StyleSheet.create({
     left: spacing.sm,
     right: spacing.sm,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   toast: {

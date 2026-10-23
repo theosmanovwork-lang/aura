@@ -3,7 +3,17 @@ import { NotFoundError } from '../../data/repositories';
 import type { Video } from '../../domain/video';
 import { runInOrder } from '../runInOrder';
 
-export type FeedItem = Readonly<{ video: Video; liked: boolean }>;
+export type FeedItem = Readonly<{ video: Video; liked: boolean; authorName: string }>;
+
+/** Nicknames of the video authors, one lookup per author. An author that is missing has no entry. */
+async function loadAuthorNames(
+  repos: Repositories,
+  videos: readonly Video[],
+): Promise<Map<string, string>> {
+  const ids = [...new Set(videos.map((video) => video.authorId))];
+  const users = await Promise.all(ids.map((id) => repos.users.getById(id)));
+  return new Map(users.flatMap((user) => (user ? [[user.id, user.nickname] as const] : [])));
+}
 
 /** Published videos, newest first, each with "did this user like it". */
 export async function loadFeed(repos: Repositories, userId: string): Promise<FeedItem[]> {
@@ -12,7 +22,12 @@ export async function loadFeed(repos: Repositories, userId: string): Promise<Fee
     repos.likes.listVideoIds(userId),
   ]);
   const liked = new Set(likedIds);
-  return videos.map((video) => ({ video, liked: liked.has(video.id) }));
+  const names = await loadAuthorNames(repos, videos);
+  return videos.map((video) => ({
+    video,
+    liked: liked.has(video.id),
+    authorName: names.get(video.authorId) ?? '',
+  }));
 }
 
 async function toggleLikeNow(

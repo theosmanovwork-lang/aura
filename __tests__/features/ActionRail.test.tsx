@@ -30,13 +30,12 @@ describe('ActionRail', () => {
     expect(onToggleLike).toHaveBeenCalledTimes(1);
   });
 
-  test('uses an outlined heart before liking and a filled pink heart after', async () => {
+  test('the like is the Aura mark: muted before liking, bright after', async () => {
     const { view } = await renderRail();
-    const icon = await screen.findByTestId('like-icon', { hidden: true });
-    expect(icon.props.children).not.toBe(undefined);
-    expect(StyleSheet.flatten(icon.props.style).color).toBe(colors.text);
-    expect(icon.props.accessibilityLabel).toBeUndefined();
-    const before = icon.props.children;
+    const mark = await screen.findByTestId('like-icon', { hidden: true });
+    expect(StyleSheet.flatten(mark.props.style).color).toBe(colors.text);
+    expect(StyleSheet.flatten(mark.props.style).opacity).toBeLessThan(1);
+    expect(mark.props.accessibilityLabel).toBeUndefined();
 
     await view.rerender(
       <ActionRail liked likeCount={261} viewCount={3401} onToggleLike={jest.fn()} />,
@@ -44,7 +43,7 @@ describe('ActionRail', () => {
 
     const liked = screen.getByTestId('like-icon', { hidden: true });
     expect(StyleSheet.flatten(liked.props.style).color).toBe(colors.like);
-    expect(liked.props.children).not.toBe(before);
+    expect(StyleSheet.flatten(liked.props.style).opacity).toBe(1);
     expect(screen.getByLabelText(ru.feed.unlike)).toBeTruthy();
   });
 

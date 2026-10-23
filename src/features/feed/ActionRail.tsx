@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { AuraMark } from '../../components/AuraMark';
 import { Icon } from '../../components/Icon';
 import { countLabel, formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
@@ -25,12 +26,7 @@ export function ActionRail({ liked, likeCount, viewCount, onToggleLike }: Action
         onPress={onToggleLike}
         style={({ pressed }) => [styles.action, pressed && styles.pressed]}
       >
-        <Icon
-          testID="like-icon"
-          name={liked ? 'heart' : 'heart-outline'}
-          size={iconSizes.lg}
-          color={liked ? colors.like : colors.text}
-        />
+        <AuraMark testID="like-icon" active={liked} />
         <Text style={styles.count}>{formatCount(likeCount)}</Text>
       </Pressable>
 

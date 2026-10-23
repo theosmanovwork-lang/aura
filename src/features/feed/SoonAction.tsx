@@ -22,12 +22,11 @@ export function SoonAction({ icon, label, testID }: SoonActionProps) {
   );
 }
 
-/** The reference's comment, repost and share buttons, in a column under the working actions. */
+/** The reference's comment and share buttons, in a column under the working actions. */
 export function SoonRail() {
   return (
     <View testID="soon-rail" style={styles.rail}>
       <SoonAction testID="soon-comments" icon="chatbubble-outline" label={ru.feed.soon.comments} />
-      <SoonAction testID="soon-repost" icon="repeat" label={ru.feed.soon.repost} />
       <SoonAction testID="soon-share" icon="arrow-redo-outline" label={ru.feed.soon.share} />
     </View>
   );

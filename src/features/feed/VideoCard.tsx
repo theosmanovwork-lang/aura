@@ -17,6 +17,8 @@ import {
   typography,
 } from '../../theme';
 import { ActionRail } from './ActionRail';
+import { AuthorAvatar } from './AuthorAvatar';
+import { MusicDisc } from './MusicDisc';
 import { SoonRail } from './SoonAction';
 import type { FeedItem } from './feedService';
 import { resolveVideoSource, type PlayableSource } from './videoSources';
@@ -68,7 +70,7 @@ type ActiveCardProps = Omit<VideoCardProps, 'isActive'>;
 
 /** Leaving the screen unmounts this, so a paused video always starts playing when it returns. */
 function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
-  const { video, liked } = item;
+  const { video, liked, authorName } = item;
   const [paused, setPaused] = useState(false);
   const bottomInset = useTabBarInset();
   const source = useMemo(() => resolveVideoSource(video.videoUri), [video.videoUri]);
@@ -134,12 +136,20 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
             <Text style={styles.chipText}>{video.ageRating}</Text>
           </View>
         </View>
+        {authorName ? <Text style={styles.author}>{`@${authorName}`}</Text> : null}
         <Text style={styles.title} numberOfLines={2}>
           {video.title}
         </Text>
+        <View style={styles.sound}>
+          <Icon name="musical-notes" size={iconSizes.sm} color={colors.text} />
+          <Text style={styles.soundText} numberOfLines={1}>
+            {ru.feed.sound}
+          </Text>
+        </View>
       </View>
 
       <View style={[styles.rail, { bottom: bottomInset + spacing.sm }]}>
+        <AuthorAvatar name={authorName} />
         <ActionRail
           liked={liked}
           likeCount={video.likeCount}
@@ -147,6 +157,7 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
           onToggleLike={() => onToggleLike(video.id)}
         />
         <SoonRail />
+        <MusicDisc />
       </View>
     </View>
   );
@@ -183,7 +194,10 @@ const styles = StyleSheet.create({
   chipAiText: { color: colors.onPrimary },
   chipAge: { borderWidth: 1, borderColor: colors.textMuted },
   chipText: { ...typography.caption, color: colors.text },
-  title: { ...typography.bodyStrong, color: colors.text },
+  author: { ...typography.bodyStrong, color: colors.text },
+  title: { ...typography.bodySmall, color: colors.text },
+  sound: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  soundText: { ...typography.bodySmall, color: colors.text, flexShrink: 1 },
   rail: {
     position: 'absolute',
     right: spacing.gutter,

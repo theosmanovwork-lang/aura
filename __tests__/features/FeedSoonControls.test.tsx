@@ -34,10 +34,10 @@ describe('feed controls that are drawn but not working yet', () => {
     }
   });
 
-  test('comments, repost and share sit under the like and views and are switched off', async () => {
+  test('comments and share sit under the like and views and are switched off', async () => {
     await renderFeed();
 
-    for (const label of [ru.feed.soon.comments, ru.feed.soon.repost, ru.feed.soon.share]) {
+    for (const label of [ru.feed.soon.comments, ru.feed.soon.share]) {
       const button = screen.getByRole('button', { name: label });
       expect(button.props.accessibilityState.disabled).toBe(true);
       expect(screen.getByTestId('soon-rail')).toContainElement(button);

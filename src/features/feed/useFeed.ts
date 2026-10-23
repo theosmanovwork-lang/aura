@@ -53,6 +53,7 @@ export function useFeed(userId: string) {
       try {
         const result = await toggleLike(repos, userId, videoId, Date.now());
         changeItem(videoId, (item) => ({
+          ...item,
           video: { ...item.video, likeCount: result.likeCount },
           liked: result.liked,
         }));
