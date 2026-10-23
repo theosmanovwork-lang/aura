@@ -6,7 +6,7 @@ import { createMemoryRepositories } from '../../src/data/memory';
 import { seed } from '../../src/data/seed';
 import { FeedScreen } from '../../src/features/feed/FeedScreen';
 import { ru } from '../../src/i18n/ru';
-import { colors, scrim } from '../../src/theme';
+import { scrim } from '../../src/theme';
 import { resetPlayers } from '../../test-utils/expoVideoMock';
 
 jest.mock('expo-video', () => jest.requireActual('../../test-utils/expoVideoMock'));
@@ -28,12 +28,11 @@ async function renderFeed() {
 beforeEach(resetPlayers);
 
 describe('feed card design', () => {
-  test('puts the like and the views in the right-hand action rail', async () => {
+  test('puts the Aura mark in the right-hand action rail', async () => {
     await renderFeed();
 
     const rail = screen.getByTestId('action-rail');
     expect(rail).toContainElement(screen.getByTestId('like-button'));
-    expect(rail).toContainElement(screen.getByTestId('views-indicator'));
   });
 
   test('has a dark fade at the top and at the bottom, and both let touches through', async () => {
@@ -51,14 +50,6 @@ describe('feed card design', () => {
     expect(title.props.numberOfLines).toBe(2);
     const info = screen.getByTestId('video-info');
     expect(StyleSheet.flatten(info.props.style).backgroundColor).toBeUndefined();
-  });
-
-  test('the age rating and the AI note are chips; the AI chip uses the indigo fill', async () => {
-    await renderFeed();
-
-    const aiChip = screen.getByTestId('chip-ai');
-    expect(StyleSheet.flatten(aiChip.props.style).backgroundColor).toBe(colors.primary);
-    expect(screen.getByTestId('chip-age')).toHaveTextContent(NEWEST.ageRating);
   });
 
   test('a pause is shown as a play icon in a circle that screen readers skip', async () => {
@@ -103,14 +94,5 @@ describe('feed card design', () => {
 
     const count = screen.getByText(String(NEWEST.likeCount));
     expect(StyleSheet.flatten(count.props.style).textShadowRadius).toBeGreaterThan(0);
-  });
-
-  test('the age chip is read as "возраст 6+" and the views as plain text', async () => {
-    await renderFeed();
-
-    expect(screen.getByTestId('chip-age').props.accessibilityLabel).toBe(
-      `${ru.feed.age} ${NEWEST.ageRating}`,
-    );
-    expect(screen.getByTestId('views-indicator').props.accessibilityRole).toBe('text');
   });
 });

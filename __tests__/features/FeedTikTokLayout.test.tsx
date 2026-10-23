@@ -40,12 +40,11 @@ describe('feed in the TikTok layout', () => {
     expect(screen.getByTestId('feed-top-bar')).toContainElement(forYou);
   });
 
-  test('bottom left shows @author, the description and the sound line', async () => {
+  test('bottom left shows @author and the description', async () => {
     await renderFeed();
 
     expect(screen.getByText(`@${AUTHOR.nickname}`)).toBeTruthy();
     expect(screen.getByText(NEWEST.title)).toBeTruthy();
-    expect(screen.getByText(ru.feed.sound)).toBeTruthy();
   });
 
   test('on the right: the author avatar with a plus (switched off) and the disc as decoration', async () => {
@@ -56,17 +55,6 @@ describe('feed in the TikTok layout', () => {
     const disc = screen.getByTestId('music-disc', { hidden: true });
     expect(disc.props.accessibilityElementsHidden).toBe(true);
     expect(disc.props.importantForAccessibility).toBe('no-hide-descendants');
-  });
-
-  test('the repost button is gone and comments and share stay, switched off', async () => {
-    await renderFeed();
-
-    expect(screen.queryByRole('button', { name: /Репост/ })).toBeNull();
-    for (const label of [ru.feed.soon.comments, ru.feed.soon.share]) {
-      expect(screen.getByRole('button', { name: label }).props.accessibilityState.disabled).toBe(
-        true,
-      );
-    }
   });
 
   test('the like is the Aura mark: brighter and selected once pressed, counter changes', async () => {

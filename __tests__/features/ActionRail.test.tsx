@@ -2,20 +2,14 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { StyleSheet } from 'react-native';
 
 import { ActionRail } from '../../src/features/feed/ActionRail';
-import { countLabel, formatCount } from '../../src/i18n/plural';
+import { formatCount } from '../../src/i18n/plural';
 import { ru } from '../../src/i18n/ru';
 import { colors, MIN_TOUCH_TARGET } from '../../src/theme';
 
 const renderRail = async (props: Partial<Parameters<typeof ActionRail>[0]> = {}) => {
   const onToggleLike = jest.fn();
   const view = await render(
-    <ActionRail
-      liked={false}
-      likeCount={260}
-      viewCount={3401}
-      onToggleLike={onToggleLike}
-      {...props}
-    />,
+    <ActionRail liked={false} likeCount={260} onToggleLike={onToggleLike} {...props} />,
   );
   return { onToggleLike, view };
 };
@@ -37,9 +31,7 @@ describe('ActionRail', () => {
     expect(StyleSheet.flatten(mark.props.style).opacity).toBeLessThan(1);
     expect(mark.props.accessibilityLabel).toBeUndefined();
 
-    await view.rerender(
-      <ActionRail liked likeCount={261} viewCount={3401} onToggleLike={jest.fn()} />,
-    );
+    await view.rerender(<ActionRail liked likeCount={261} onToggleLike={jest.fn()} />);
 
     const liked = screen.getByTestId('like-icon', { hidden: true });
     expect(StyleSheet.flatten(liked.props.style).color).toBe(colors.like);
@@ -63,31 +55,11 @@ describe('ActionRail', () => {
     expect(style.minHeight).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
   });
 
-  test('shows the views as a short number and reads them aloud as a sentence', async () => {
-    await renderRail({ viewCount: 3401 });
-
-    const views = await screen.findByTestId('views-indicator');
-
-    expect(views).toHaveTextContent(formatCount(3401), { exact: false });
-    expect(views.props.accessibilityLabel).toBe(countLabel(3401, ru.feed.views));
-  });
-
-  test('views are information only: they are not a button', async () => {
-    await renderRail();
-
-    expect((await screen.findByTestId('views-indicator')).props.accessibilityRole).not.toBe(
-      'button',
-    );
-  });
-
-  test('lists the like first and the views below it', async () => {
+  test('the rail holds only the Aura mark: no view counter', async () => {
     await renderRail();
     const rail = await screen.findByTestId('action-rail');
 
-    const order = rail.props.children.map(
-      (child: { props: { testID: string } }) => child.props.testID,
-    );
-
-    expect(order).toEqual(['like-button', 'views-indicator']);
+    expect(screen.queryByTestId('views-indicator')).toBeNull();
+    expect(rail).toContainElement(screen.getByTestId('like-button'));
   });
 });

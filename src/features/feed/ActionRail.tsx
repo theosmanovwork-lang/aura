@@ -1,20 +1,18 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AuraMark } from '../../components/AuraMark';
-import { Icon } from '../../components/Icon';
-import { countLabel, formatCount } from '../../i18n/plural';
+import { formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { colors, iconSizes, MIN_TOUCH_TARGET, spacing, typography } from '../../theme';
+import { colors, MIN_TOUCH_TARGET, spacing, typography } from '../../theme';
 
 type ActionRailProps = Readonly<{
   liked: boolean;
   likeCount: number;
-  viewCount: number;
   onToggleLike: () => void;
 }>;
 
-/** The column of actions on the right edge of a video: the like and the number of views. */
-export function ActionRail({ liked, likeCount, viewCount, onToggleLike }: ActionRailProps) {
+/** The column of actions on the right edge of a video: the Aura mark (the like) with its counter. */
+export function ActionRail({ liked, likeCount, onToggleLike }: ActionRailProps) {
   return (
     <View testID="action-rail" style={styles.rail}>
       <Pressable
@@ -29,17 +27,6 @@ export function ActionRail({ liked, likeCount, viewCount, onToggleLike }: Action
         <AuraMark testID="like-icon" active={liked} />
         <Text style={styles.count}>{formatCount(likeCount)}</Text>
       </Pressable>
-
-      <View
-        testID="views-indicator"
-        accessible
-        accessibilityRole="text"
-        accessibilityLabel={countLabel(viewCount, ru.feed.views)}
-        style={styles.action}
-      >
-        <Icon name="eye-outline" size={iconSizes.lg} color={colors.text} />
-        <Text style={styles.count}>{formatCount(viewCount)}</Text>
-      </View>
     </View>
   );
 }

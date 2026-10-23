@@ -116,36 +116,10 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
         style={[styles.info, { paddingBottom: bottomInset + spacing.sm }]}
         pointerEvents="none"
       >
-        <View style={styles.chips}>
-          {video.isAiGenerated ? (
-            <View
-              testID="chip-ai"
-              accessible
-              accessibilityLabel={ru.feed.aiBadge}
-              style={[styles.chip, styles.chipAi]}
-            >
-              <Text style={[styles.chipText, styles.chipAiText]}>{ru.feed.aiBadge}</Text>
-            </View>
-          ) : null}
-          <View
-            testID="chip-age"
-            accessible
-            accessibilityLabel={`${ru.feed.age} ${video.ageRating}`}
-            style={[styles.chip, styles.chipAge]}
-          >
-            <Text style={styles.chipText}>{video.ageRating}</Text>
-          </View>
-        </View>
         {authorName ? <Text style={styles.author}>{`@${authorName}`}</Text> : null}
         <Text style={styles.title} numberOfLines={2}>
           {video.title}
         </Text>
-        <View style={styles.sound}>
-          <Icon name="musical-notes" size={iconSizes.sm} color={colors.text} />
-          <Text style={styles.soundText} numberOfLines={1}>
-            {ru.feed.sound}
-          </Text>
-        </View>
       </View>
 
       <View style={[styles.rail, { bottom: bottomInset + spacing.sm }]}>
@@ -153,7 +127,6 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
         <ActionRail
           liked={liked}
           likeCount={video.likeCount}
-          viewCount={video.viewCount}
           onToggleLike={() => onToggleLike(video.id)}
         />
         <SoonRail />
@@ -188,16 +161,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
     gap: spacing.sm,
   },
-  chips: { flexDirection: 'row', gap: spacing.sm },
-  chip: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xxs, borderRadius: radii.sm },
-  chipAi: { backgroundColor: colors.primary },
-  chipAiText: { color: colors.onPrimary },
-  chipAge: { borderWidth: 1, borderColor: colors.textMuted },
-  chipText: { ...typography.caption, color: colors.text },
   author: { ...typography.bodyStrong, color: colors.text },
   title: { ...typography.bodySmall, color: colors.text },
-  sound: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  soundText: { ...typography.bodySmall, color: colors.text, flexShrink: 1 },
   rail: {
     position: 'absolute',
     right: spacing.gutter,

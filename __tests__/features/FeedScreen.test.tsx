@@ -132,15 +132,6 @@ describe('FeedScreen', () => {
     expect(await screen.findByLabelText(ru.feed.unlike)).toBeTruthy();
   });
 
-  test('marks videos made with AI and shows the age rating', async () => {
-    await renderFeed();
-    await screen.findByText(NEWEST.title);
-
-    expect(NEWEST.isAiGenerated).toBe(true);
-    expect(screen.getByText(ru.feed.aiBadge)).toBeTruthy();
-    expect(screen.getByText(NEWEST.ageRating)).toBeTruthy();
-  });
-
   test('swiping to the next video switches the player and counts its view', async () => {
     const repos = await renderFeed();
     await screen.findByText(NEWEST.title);
