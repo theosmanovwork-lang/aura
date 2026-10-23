@@ -23,12 +23,13 @@ import { useCopyCode } from './useCopyCode';
 type CommunityScreenProps = Readonly<{
   /** Change it to load the data again (for example every time the tab comes into view). */
   refreshKey?: number;
+  onOpenLot?: (lotId: string) => void;
 }>;
 
 const matches = (text: string, query: string) =>
   text.toLowerCase().includes(query.trim().toLowerCase());
 
-export function CommunityScreen({ refreshKey = 0 }: CommunityScreenProps) {
+export function CommunityScreen({ refreshKey = 0, onOpenLot }: CommunityScreenProps) {
   const styles = useStyles();
   const colors = useColors();
   const content = useTabScreenContent(styles.content);
@@ -90,7 +91,7 @@ export function CommunityScreen({ refreshKey = 0 }: CommunityScreenProps) {
         <View style={styles.grid}>
           {lots.map((lot) => (
             <View key={lot.id} style={styles.cell}>
-              <LotCard lot={lot} mode={mode} />
+              <LotCard lot={lot} mode={mode} onOpen={onOpenLot} />
             </View>
           ))}
         </View>

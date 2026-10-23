@@ -18,7 +18,8 @@ function Screens() {
   const scheme = useScheme();
   // The feed (the first tab, at the root path) is video: its clock and battery icons are always light.
   const onFeed = usePathname() === '/';
-  const light = scheme === 'dark' || onFeed;
+  const onChest = usePathname() === '/chest';
+  const light = scheme === 'dark' || onFeed || onChest;
   return (
     <>
       <StatusBar barStyle={light ? 'light-content' : 'dark-content'} />
@@ -28,6 +29,10 @@ function Screens() {
           contentStyle: { backgroundColor: colors.background },
         }}
       >
+        <Stack.Screen
+          name="chest"
+          options={{ presentation: 'fullScreenModal', animation: 'fade' }}
+        />
         {Object.entries(HEADER_TITLES).map(([name, title]) => (
           <Stack.Screen
             key={name}

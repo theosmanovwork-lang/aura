@@ -5,7 +5,10 @@ import ChatsTab from '../app/(tabs)/chats';
 import CommunityTab from '../app/(tabs)/community';
 import FeedTab from '../app/(tabs)/index';
 import ProfileTab from '../app/(tabs)/profile';
+import ChestRoute from '../app/chest';
+import LotRoute from '../app/lot/[id]';
 import SettingsRoute from '../app/settings';
+import TopUpRoute from '../app/topup';
 import VideoRoute from '../app/video/[id]';
 
 /** Every screen of the app, for tests that open the app through the router. */
@@ -18,6 +21,9 @@ export const routes = {
   '(tabs)/cards': CardsTab,
   '(tabs)/profile': ProfileTab,
   settings: SettingsRoute,
+  topup: TopUpRoute,
+  chest: ChestRoute,
+  'lot/[id]': LotRoute,
   'video/[id]': VideoRoute,
 };
 

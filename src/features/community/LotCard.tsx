@@ -6,17 +6,20 @@ import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
 import { CardSlab } from '../cards/CardSlab';
 
-type LotCardProps = Readonly<{ lot: DemoLot; mode: 'auctions' | 'market' }>;
+type LotCardProps = Readonly<{
+  lot: DemoLot;
+  mode: 'auctions' | 'market';
+  onOpen?: (lotId: string) => void;
+}>;
 
 /** One card for sale: the slab, who sells it, how many exist and the bid (auction) or the price (catalog). */
-export function LotCard({ lot, mode }: LotCardProps) {
+export function LotCard({ lot, mode, onOpen }: LotCardProps) {
   const styles = useStyles();
   const rarityLabel = ru.cards.rarity[lot.rarity];
   const auction = mode === 'auctions';
   return (
     <Pressable
-      disabled
-      accessibilityState={{ disabled: true }}
+      onPress={() => onOpen?.(lot.id)}
       testID={`lot-${lot.id}`}
       accessibilityRole="button"
       accessibilityLabel={ru.community.openLot

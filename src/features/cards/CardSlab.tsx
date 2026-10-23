@@ -12,7 +12,7 @@ import { RARITY_STYLES, type RarityStyle } from './rarity';
 const SPARKLE =
   'M12 2.5c.8 5.1 4.4 8.7 9.5 9.5-5.1.8-8.7 4.4-9.5 9.5-.8-5.1-4.4-8.7-9.5-9.5 5.1-.8 8.7-4.4 9.5-9.5z';
 
-type Size = 'large' | 'small';
+type Size = 'xl' | 'large' | 'small';
 
 type CardSlabProps = Readonly<{
   rarity: RarityKey;
@@ -22,6 +22,8 @@ type CardSlabProps = Readonly<{
   rarityLabel: string;
   carLabel: string;
   size?: Size;
+  /** Draw the name over the picture (the lot page writes it under the card instead). */
+  showName?: boolean;
   /** The rarity pill and the timer sit over the picture on the big card. */
   topLeft?: string;
   topRight?: string;
@@ -29,6 +31,17 @@ type CardSlabProps = Readonly<{
 }>;
 
 const SIZES = {
+  xl: {
+    pad: 6,
+    stripH: 28,
+    artH: 300,
+    pip: 7,
+    name: 16,
+    radius: 18,
+    stripRadius: 10,
+    artRadius: 12,
+    sparkle: 18,
+  },
   large: {
     pad: 5,
     stripH: 22,
@@ -81,6 +94,7 @@ export function CardSlab({
   rarityLabel,
   carLabel,
   size = 'large',
+  showName = true,
   topLeft,
   topRight,
   testID,
@@ -152,9 +166,11 @@ export function CardSlab({
             <Text style={[styles.pillText, styles.pillTextLight]}>{topRight}</Text>
           </View>
         ) : null}
-        <Text numberOfLines={1} style={[styles.name, { color: r.ink, fontSize: m.name }]}>
-          {name}
-        </Text>
+        {showName ? (
+          <Text numberOfLines={1} style={[styles.name, { color: r.ink, fontSize: m.name }]}>
+            {name}
+          </Text>
+        ) : null}
       </Art>
     </View>
   );

@@ -17,9 +17,11 @@ import { QuestsCard } from './QuestsCard';
 type CardsScreenProps = Readonly<{
   /** Change it to read the balance again (for example every time the tab comes into view). */
   refreshKey?: number;
+  onTopUp?: () => void;
+  onOpenChests?: () => void;
 }>;
 
-export function CardsScreen({ refreshKey = 0 }: CardsScreenProps) {
+export function CardsScreen({ refreshKey = 0, onTopUp, onOpenChests }: CardsScreenProps) {
   const styles = useStyles();
   const content = useTabScreenContent(styles.content);
   const balance = useBalance(refreshKey);
@@ -33,8 +35,7 @@ export function CardsScreen({ refreshKey = 0 }: CardsScreenProps) {
           {ru.cards.title}
         </Text>
         <Pressable
-          disabled
-          accessibilityState={{ disabled: true }}
+          onPress={onOpenChests}
           testID="open-chests"
           accessibilityRole="button"
           accessibilityLabel={ru.cards.openChests.replace('{count}', chests)}
@@ -64,9 +65,8 @@ export function CardsScreen({ refreshKey = 0 }: CardsScreenProps) {
         </View>
         <Text style={styles.today}>{ru.cards.today}</Text>
         <Pressable
-          disabled
           accessibilityRole="button"
-          accessibilityState={{ disabled: true }}
+          onPress={onTopUp}
           testID="top-up"
           style={styles.topUpWrap}
         >

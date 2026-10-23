@@ -57,7 +57,10 @@ const DRAWINGS = {
     </>
   ),
   check: <Path d="M5 12.5l4.5 4.5L19 7.5" />,
+  chevronLeft: <Path d="M15 6l-6 6 6 6" />,
   chevronRight: <Path d="M9 6l6 6-6 6" />,
+  minus: <Path d="M5 12h14" />,
+  close: <Path d="M6 6l12 12M18 6L6 18" />,
   chevronDown: <Path d="M6 9l6 6 6-6" />,
   copy: (
     <>

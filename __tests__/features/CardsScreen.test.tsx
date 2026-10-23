@@ -9,10 +9,12 @@ import { WELCOME_BONUS_POINTS } from '../../src/features/wallet/walletService';
 import { formatPoints } from '../../src/i18n/format';
 import { ru } from '../../src/i18n/ru';
 
+const onTopUp = jest.fn();
+
 const renderCards = () =>
   render(
     <RepositoriesProvider repositories={createMemoryRepositories(seed)}>
-      <CardsScreen />
+      <CardsScreen onTopUp={onTopUp} />
     </RepositoriesProvider>,
   );
 
@@ -29,12 +31,13 @@ describe('CardsScreen', () => {
     expect(screen.getByText(ru.cards.balance)).toBeTruthy();
   });
 
-  test('the top-up button is drawn and switched off (no payment code)', async () => {
+  test('the top-up button opens the top-up screen', async () => {
     await renderCards();
     await screen.findByTestId('balance-card');
 
     expect(screen.getByText(ru.cards.topUp)).toBeTruthy();
-    expect(screen.getByTestId('top-up').props.accessibilityState.disabled).toBe(true);
+    await fireEvent.press(screen.getByTestId('top-up'));
+    expect(onTopUp).toHaveBeenCalled();
   });
 
   test('the chests button says how many chests wait', async () => {
