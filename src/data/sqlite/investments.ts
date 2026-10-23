@@ -1,4 +1,4 @@
-import type { Investment } from '../../domain/investment';
+import { assertValidPositionAmounts, type Investment } from '../../domain/investment';
 import type { InvestmentRepository } from '../repositories';
 import { NotFoundError } from '../repositories/errors';
 import type { SqlDatabase } from './database';
@@ -32,6 +32,7 @@ export function createSqliteInvestmentRepository(db: SqlDatabase): InvestmentRep
 
   return {
     add: async (i) => {
+      assertValidPositionAmounts(i.invested, i.units);
       await insertRow(
         db,
         'investments',
@@ -58,6 +59,7 @@ export function createSqliteInvestmentRepository(db: SqlDatabase): InvestmentRep
         ])
       ).map(toInvestment),
     update: async (id, patch) => {
+      assertValidPositionAmounts(patch.invested, patch.units);
       await updateExisting(
         db,
         'investments',

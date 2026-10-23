@@ -523,6 +523,16 @@ export function runInvestmentRepositoryContract(
       );
     });
 
+    test('refuses an update with negative shares or a negative or fractional invested total', async () => {
+      const repo = await createRepo();
+      await repo.add(makeInvestment());
+
+      await expect(repo.update('i1', { invested: 10, units: -1, updatedAt: 2 })).rejects.toThrow();
+      await expect(repo.update('i1', { invested: -1, units: 1, updatedAt: 2 })).rejects.toThrow();
+      await expect(repo.update('i1', { invested: 1.5, units: 1, updatedAt: 2 })).rejects.toThrow();
+      expect(await repo.getById('i1')).toEqual(makeInvestment());
+    });
+
     test('hands out copies', async () => {
       const repo = await createRepo();
       await repo.add(makeInvestment());

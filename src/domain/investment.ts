@@ -44,6 +44,16 @@ function assertPrice(price: number): void {
   if (!Number.isFinite(price) || price <= 0) throw new Error('price must be positive');
 }
 
+/** Throws unless the amounts of a position are valid: invested whole, shares a number, none negative. */
+export function assertValidPositionAmounts(invested: number, units: number): void {
+  if (!isWhole(invested) || invested < 0) {
+    throw new Error('investments: invested must be a whole number, not below zero');
+  }
+  if (!Number.isFinite(units) || units < 0) {
+    throw new Error('investments: units must be a number, not below zero');
+  }
+}
+
 export function openPosition(input: OpenInput): Investment {
   assertValidInvestAmount(input.amount, 0);
   assertPrice(input.price);
@@ -105,6 +115,8 @@ export function takeFromPosition(
     };
   }
   const units = position.units - input.amount / input.price;
-  const invested = Math.round((position.invested * units) / position.units);
+  // Round the invested total down, so repeated take-and-add cycles cannot push it above the cap.
+  const share = Math.floor((position.invested * units) / position.units + 1e-9);
+  const invested = Math.min(position.invested, Math.max(0, share));
   return { position: { ...position, units, invested, updatedAt: input.now }, payout: input.amount };
 }

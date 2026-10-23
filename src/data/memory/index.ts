@@ -1,4 +1,4 @@
-import type { Investment } from '../../domain/investment';
+import { assertValidPositionAmounts, type Investment } from '../../domain/investment';
 import { assertValidLedgerEntry, type LedgerEntry } from '../../domain/ledger';
 import type { Like } from '../../domain/like';
 import type { Prediction } from '../../domain/prediction';
@@ -169,6 +169,7 @@ export function createMemoryInvestmentRepository(
     positions.all().find(same(userId, videoId)) ?? null;
   return {
     add: async (investment) => {
+      assertValidPositionAmounts(investment.invested, investment.units);
       if (find(investment.userId, investment.videoId)) {
         throw new DuplicateKeyError('investments', `${investment.userId}/${investment.videoId}`);
       }
@@ -177,7 +178,10 @@ export function createMemoryInvestmentRepository(
     getById: async (id) => positions.find(id),
     getByUserAndVideo: async (userId, videoId) => find(userId, videoId),
     listByUser: async (userId) => positions.all().filter((p) => p.userId === userId),
-    update: async (id, patch) => positions.replace(id, (p) => ({ ...p, ...patch })),
+    update: async (id, patch) => {
+      assertValidPositionAmounts(patch.invested, patch.units);
+      return positions.replace(id, (p) => ({ ...p, ...patch }));
+    },
   };
 }
 

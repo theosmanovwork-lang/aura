@@ -53,4 +53,34 @@ describe('migration to the investments schema', () => {
       expect.arrayContaining(['investments', 'video_snapshots']),
     );
   });
+
+  test('a ledger row added after the upgrade gets a sequence number above all the old ones', async () => {
+    const db = await createTestDatabase();
+    await migrate(db, MIGRATIONS.slice(0, 4));
+    const old = createSqliteRepositories(db).wallet;
+    await old.append(makeEntry({ id: 'a', amount: 100 }));
+    await old.append(makeEntry({ id: 'b', amount: 100 }));
+    await migrate(db);
+
+    await createSqliteRepositories(db).wallet.append(makeEntry({ id: 'c', amount: 100 }));
+
+    const rows = await db.all<{ id: string; seq: number }>(
+      'SELECT id, seq FROM ledger ORDER BY seq',
+    );
+    expect(rows.map((r) => r.id)).toEqual(['a', 'b', 'c']);
+    expect(rows[2]!.seq).toBeGreaterThan(rows[1]!.seq);
+  });
+
+  test('the ledger accepts the five known kinds and refuses an unknown one', async () => {
+    const db = await createTestDatabase();
+    await migrate(db);
+    const wallet = createSqliteRepositories(db).wallet;
+    await wallet.append(makeEntry({ id: 'bonus', amount: 1000 }));
+
+    await expect(
+      db.run(
+        "INSERT INTO ledger (id, user_id, amount, asset, kind, created_at) VALUES ('x', 'u1', 5, 'POINTS', 'free_gift', 1)",
+      ),
+    ).rejects.toThrow();
+  });
 });

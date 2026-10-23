@@ -121,6 +121,24 @@ describe('taking Aura back', () => {
     expect(takableAmount(position, 3000)).toBe(75);
   });
 
+  test('a partial take always leaves at least one Aura, so no dust position can appear', () => {
+    const rich = openPosition({ ...base, amount: 100, price: 4000, now: 10 });
+
+    const { position: rest } = takeFromPosition(rich, { amount: 99, price: 4000, now: 30 });
+
+    expect(takableAmount(rest, 4000)).toBeGreaterThanOrEqual(1);
+  });
+
+  test('the invested total is rounded down and never goes above what it was', () => {
+    const odd = openPosition({ ...base, amount: 101, price: 4000, now: 10 });
+
+    const { position: rest } = takeFromPosition(odd, { amount: 33, price: 4000, now: 30 });
+
+    expect(rest.invested).toBeLessThanOrEqual(101);
+    expect(Number.isInteger(rest.invested)).toBe(true);
+    expect(rest.invested).toBe(Math.floor((101 * (101 - 33)) / 101));
+  });
+
   test.each([0, -1, 1.5, Number.NaN])('rejects the amount %s', (amount) => {
     expect(() => takeFromPosition(position, { amount, price: 4000, now: 30 })).toThrow();
   });
