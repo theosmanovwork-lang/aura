@@ -10,6 +10,7 @@ type TabSpec = Readonly<{ name: string; title: string; icon: IconName; iconOpen:
 const TABS: readonly TabSpec[] = [
   { name: 'index', title: ru.tabs.feed, icon: 'home-outline', iconOpen: 'home' },
   { name: 'trends', title: ru.tabs.trends, icon: 'trending-up-outline', iconOpen: 'trending-up' },
+  { name: 'hub', title: ru.tabs.hub, icon: 'trophy-outline', iconOpen: 'trophy' },
   { name: 'wallet', title: ru.tabs.wallet, icon: 'sparkles-outline', iconOpen: 'sparkles' },
   { name: 'profile', title: ru.tabs.profile, icon: 'person-outline', iconOpen: 'person' },
 ];

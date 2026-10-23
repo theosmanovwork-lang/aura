@@ -3,6 +3,7 @@ import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 import TabsLayout from '../app/(tabs)/_layout';
 import FeedScreen from '../app/(tabs)/index';
 import ProfileScreen from '../app/(tabs)/profile';
+import HubScreen from '../app/(tabs)/hub';
 import TrendsScreen from '../app/(tabs)/trends';
 import WalletScreen from '../app/(tabs)/wallet';
 import RootLayout from '../app/_layout';
@@ -25,6 +26,7 @@ const routes = {
   '(tabs)/_layout': TabsLayout,
   '(tabs)/index': FeedScreen,
   '(tabs)/trends': TrendsScreen,
+  '(tabs)/hub': HubScreen,
   '(tabs)/wallet': WalletScreen,
   '(tabs)/profile': ProfileScreen,
   settings: SettingsRoute,
@@ -37,7 +39,7 @@ describe('settings route', () => {
   test('the menu button on the profile opens the settings screen', async () => {
     await renderRouter(routes);
     await fireEvent.press(
-      await screen.findByRole('button', { name: `Раздел ${ru.tabs.profile}, 4 из 4` }),
+      await screen.findByRole('button', { name: `Раздел ${ru.tabs.profile}, 5 из 5` }),
     );
 
     await fireEvent.press(await screen.findByRole('button', { name: ru.screens.profile.menu }));

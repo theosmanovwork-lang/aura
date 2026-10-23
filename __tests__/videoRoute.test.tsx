@@ -3,6 +3,7 @@ import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
 import TabsLayout from '../app/(tabs)/_layout';
 import FeedTab from '../app/(tabs)/index';
 import ProfileTab from '../app/(tabs)/profile';
+import HubTab from '../app/(tabs)/hub';
 import TrendsTab from '../app/(tabs)/trends';
 import WalletTab from '../app/(tabs)/wallet';
 import RootLayout from '../app/_layout';
@@ -25,6 +26,7 @@ const routes = {
   '(tabs)/_layout': TabsLayout,
   '(tabs)/index': FeedTab,
   '(tabs)/trends': TrendsTab,
+  '(tabs)/hub': HubTab,
   '(tabs)/wallet': WalletTab,
   '(tabs)/profile': ProfileTab,
   settings: SettingsRoute,

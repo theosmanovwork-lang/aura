@@ -7,6 +7,7 @@ import RootLayout from '../app/_layout';
 import TabsLayout from '../app/(tabs)/_layout';
 import FeedScreen from '../app/(tabs)/index';
 import ProfileScreen from '../app/(tabs)/profile';
+import HubScreen from '../app/(tabs)/hub';
 import TrendsScreen from '../app/(tabs)/trends';
 import TrendDetailRoute from '../app/trend/[id]';
 import WalletScreen from '../app/(tabs)/wallet';
@@ -26,6 +27,7 @@ const routes = {
   '(tabs)/_layout': TabsLayout,
   '(tabs)/index': FeedScreen,
   '(tabs)/trends': TrendsScreen,
+  '(tabs)/hub': HubScreen,
   '(tabs)/wallet': WalletScreen,
   '(tabs)/profile': ProfileScreen,
   'trend/[id]': TrendDetailRoute,
@@ -46,11 +48,11 @@ const giveFeedASize = async () =>
 const NEWEST_TITLE = seed.videos.find((v) => v.id === 'video-7')!.title;
 
 describe('bottom tabs', () => {
-  test('shows four tabs with Russian names from ru.ts', async () => {
+  test('shows five tabs with Russian names from ru.ts', async () => {
     await renderRouter(routes);
 
     const names = (await getTabs()).map(labelOf);
-    expect(names).toHaveLength(4);
+    expect(names).toHaveLength(5);
     for (const label of Object.values(ru.tabs)) {
       expect(names.some((name) => name.startsWith(`Раздел ${label},`))).toBe(true);
     }
@@ -69,6 +71,7 @@ describe('bottom tabs', () => {
 
     const steps = [
       [ru.tabs.trends, seed.trends[0]!.name],
+      [ru.tabs.hub, ru.hub.subtitle],
       [ru.tabs.wallet, ru.wallet.disclaimer],
       [ru.tabs.profile, ru.screens.profile.subtitle],
       [ru.tabs.feed, NEWEST_TITLE],

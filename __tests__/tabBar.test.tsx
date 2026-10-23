@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 import TabsLayout from '../app/(tabs)/_layout';
 import FeedScreen from '../app/(tabs)/index';
 import ProfileScreen from '../app/(tabs)/profile';
+import HubScreen from '../app/(tabs)/hub';
 import TrendsScreen from '../app/(tabs)/trends';
 import TrendDetailRoute from '../app/trend/[id]';
 import WalletScreen from '../app/(tabs)/wallet';
@@ -26,6 +27,7 @@ const routes = {
   '(tabs)/_layout': TabsLayout,
   '(tabs)/index': FeedScreen,
   '(tabs)/trends': TrendsScreen,
+  '(tabs)/hub': HubScreen,
   '(tabs)/wallet': WalletScreen,
   '(tabs)/profile': ProfileScreen,
   'trend/[id]': TrendDetailRoute,
@@ -41,7 +43,12 @@ describe('bottom tab bar icons', () => {
     await renderRouter(routes);
 
     expect(await screen.findByTestId('tab-icon-home', { hidden: true })).toBeTruthy();
-    for (const outlined of ['trending-up-outline', 'sparkles-outline', 'person-outline']) {
+    for (const outlined of [
+      'trending-up-outline',
+      'trophy-outline',
+      'sparkles-outline',
+      'person-outline',
+    ]) {
       expect(screen.getByTestId(`tab-icon-${outlined}`, { hidden: true })).toBeTruthy();
     }
   });
@@ -75,10 +82,11 @@ describe('bottom tab bar icons', () => {
     expect(icon.props.accessibilityElementsHidden).toBe(true);
     const tabs = await screen.findAllByRole('button', { name: /^Раздел .+, \d из \d$/ });
     expect(tabs.map((t) => t.props.accessibilityLabel)).toEqual([
-      'Раздел Лента, 1 из 4',
-      'Раздел Волны, 2 из 4',
-      'Раздел Аура, 3 из 4',
-      'Раздел Профиль, 4 из 4',
+      'Раздел Лента, 1 из 5',
+      'Раздел Волны, 2 из 5',
+      'Раздел Рейтинги, 3 из 5',
+      'Раздел Аура, 4 из 5',
+      'Раздел Профиль, 5 из 5',
     ]);
   });
 });

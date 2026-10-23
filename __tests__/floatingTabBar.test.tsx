@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 import TabsLayout from '../app/(tabs)/_layout';
 import FeedScreen from '../app/(tabs)/index';
 import ProfileScreen from '../app/(tabs)/profile';
+import HubScreen from '../app/(tabs)/hub';
 import TrendsScreen from '../app/(tabs)/trends';
 import TrendDetailRoute from '../app/trend/[id]';
 import WalletScreen from '../app/(tabs)/wallet';
@@ -26,6 +27,7 @@ const routes = {
   '(tabs)/_layout': TabsLayout,
   '(tabs)/index': FeedScreen,
   '(tabs)/trends': TrendsScreen,
+  '(tabs)/hub': HubScreen,
   '(tabs)/wallet': WalletScreen,
   '(tabs)/profile': ProfileScreen,
   'trend/[id]': TrendDetailRoute,
@@ -52,7 +54,7 @@ describe('floating tab bar', () => {
     await renderRouter(routes);
     await screen.findByTestId('tab-pill', { hidden: true });
 
-    for (const name of ['index', 'trends', 'wallet', 'profile']) {
+    for (const name of ['index', 'trends', 'hub', 'wallet', 'profile']) {
       expect(screen.getByTestId(`tab-label-${name}`, { hidden: true })).toBeTruthy();
     }
   });
@@ -76,7 +78,7 @@ describe('floating tab bar', () => {
 
   test('pressing a tab opens it and moves the colour there, the names stay', async () => {
     await renderRouter(routes);
-    const wallet = await screen.findByRole('button', { name: `Раздел ${ru.tabs.wallet}, 3 из 4` });
+    const wallet = await screen.findByRole('button', { name: `Раздел ${ru.tabs.wallet}, 4 из 5` });
 
     await fireEvent.press(wallet);
 
@@ -88,8 +90,8 @@ describe('floating tab bar', () => {
 
   test('the open tab reports itself as selected to screen readers', async () => {
     await renderRouter(routes);
-    const feed = await screen.findByRole('button', { name: `Раздел ${ru.tabs.feed}, 1 из 4` });
-    const trends = screen.getByRole('button', { name: `Раздел ${ru.tabs.trends}, 2 из 4` });
+    const feed = await screen.findByRole('button', { name: `Раздел ${ru.tabs.feed}, 1 из 5` });
+    const trends = screen.getByRole('button', { name: `Раздел ${ru.tabs.trends}, 2 из 5` });
 
     expect(feed.props.accessibilityState?.selected).toBe(true);
     expect(trends.props.accessibilityState?.selected).toBe(false);
@@ -99,7 +101,7 @@ describe('floating tab bar', () => {
     await renderRouter(routes);
     await screen.findByTestId('tab-pill', { hidden: true });
 
-    for (const name of ['index', 'trends', 'wallet', 'profile']) {
+    for (const name of ['index', 'trends', 'hub', 'wallet', 'profile']) {
       const style = styleOf(`tab-item-${name}`);
       expect(style.minHeight).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
       expect(style.minWidth).toBeGreaterThanOrEqual(MIN_TOUCH_TARGET);
@@ -110,7 +112,7 @@ describe('floating tab bar', () => {
 describe('floating tab bar presses', () => {
   test('pressing the open tab keeps everything as it is', async () => {
     await renderRouter(routes);
-    const feed = await screen.findByRole('button', { name: `Раздел ${ru.tabs.feed}, 1 из 4` });
+    const feed = await screen.findByRole('button', { name: `Раздел ${ru.tabs.feed}, 1 из 5` });
 
     await fireEvent.press(feed);
 
