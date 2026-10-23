@@ -17,6 +17,7 @@ import {
   typography,
 } from '../../theme';
 import { ActionRail } from './ActionRail';
+import { AuraPlate } from './AuraPlate';
 import { AuthorAvatar } from './AuthorAvatar';
 import { SoonRail } from './SoonAction';
 import type { FeedItem } from './feedService';
@@ -112,16 +113,17 @@ function ActiveCard({ item, height, focused, onToggleLike }: ActiveCardProps) {
 
       <View
         testID="video-info"
-        style={[styles.info, { paddingBottom: bottomInset + spacing.sm }]}
+        style={[styles.info, { paddingBottom: bottomInset + spacing.md }]}
         pointerEvents="none"
       >
+        <AuraPlate amount={video.likeCount} />
         {authorName ? <Text style={styles.author}>{authorName}</Text> : null}
         <Text style={styles.title} numberOfLines={2}>
           {video.title}
         </Text>
       </View>
 
-      <View style={[styles.rail, { bottom: bottomInset + spacing.sm }]}>
+      <View style={[styles.rail, { bottom: bottomInset + spacing.md }]}>
         <AuthorAvatar name={authorName} />
         <ActionRail
           liked={liked}

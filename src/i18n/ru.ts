@@ -26,7 +26,7 @@ export const ru = {
     empty: 'Пока в ленте нет видео',
     like: 'Поставить Аура',
     unlike: 'Убрать Аура',
-    tabs: { following: 'Подписки', forYou: 'Для вас' },
+    tabs: { following: 'Подписки', forYou: 'Рекомендации' },
     pause: 'Пауза',
     resume: 'Продолжить',
     actionError: 'Не получилось. Попробуйте ещё раз',
