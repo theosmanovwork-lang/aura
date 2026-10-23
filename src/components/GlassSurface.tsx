@@ -57,6 +57,8 @@ export function GlassSurface({ style, children, ...rest }: GlassSurfaceProps) {
         colorScheme="dark"
         style={[styles.clip, style]}
       >
+        {/* The same dark tint as the blur, so the contrast over a bright page is the checked one. */}
+        <View pointerEvents="none" style={styles.fill} />
         {children}
       </GlassView>
     );

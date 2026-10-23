@@ -44,6 +44,7 @@ describe('GlassSurface', () => {
 
     expect(await screen.findByTestId('glass-view')).toBeTruthy();
     expect(screen.getByText('внутри')).toBeTruthy();
+    expect(screen.getByTestId('glass-view')).toContainElement(screen.getByText('внутри'));
   });
 
   test('uses a blur when there is no liquid glass', async () => {
