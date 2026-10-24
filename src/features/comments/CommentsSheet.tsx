@@ -9,23 +9,14 @@ import {
   View,
 } from 'react-native';
 
-import { Icon } from '../../components/Icon';
+import { Glyph } from '../../components/Glyph';
 import { Message } from '../../components/Message';
 import { useBottomInset } from '../../components/useBottomInset';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CommentRuleError } from '../../domain/comment';
 import { countLabel } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import {
-  MIN_TOUCH_TARGET,
-  contentColumn,
-  iconSizes,
-  makeStyles,
-  radii,
-  spacing,
-  typography,
-  useColors,
-} from '../../theme';
+import { contentColumn, fontFamilies, makeStyles, spacing, useColors } from '../../theme';
 import { useLoad } from '../useLoad';
 import { CommentInput } from './CommentInput';
 import { CommentRow } from './CommentRow';
@@ -84,6 +75,12 @@ function SheetBody({ videoId, userId, onClose, onCountChange }: SheetBodyProps) 
   const [error, setError] = useState<string | null>(null);
   const load = useCallback(() => loadComments(repos, videoId), [repos, videoId]);
   const { state, reload } = useLoad(load, refreshKey);
+  const loadMe = useCallback(
+    async () => (await repos.users.getById(userId).catch(() => null))?.nickname ?? '',
+    [repos, userId],
+  );
+  const { state: me } = useLoad(loadMe);
+  const initial = me.status === 'ready' ? me.data.slice(0, 1).toUpperCase() : '';
 
   const send = async (text: string): Promise<boolean> => {
     if (sendingNow.current) return false;
@@ -126,9 +123,10 @@ function SheetBody({ videoId, userId, onClose, onCountChange }: SheetBodyProps) 
       <View testID="comments-sheet" style={[styles.sheet, { paddingBottom: bottomInset }]}>
         <View style={styles.handle} />
         <View style={styles.header}>
+          <View style={styles.close} />
           <Text style={styles.title} accessibilityRole="header">
             {state.status === 'ready' && state.data.length > 0
-              ? `${ru.comments.title} · ${countLabel(state.data.length, ru.comments.forms)}`
+              ? countLabel(state.data.length, ru.comments.forms)
               : ru.comments.title}
           </Text>
           <Pressable
@@ -137,15 +135,15 @@ function SheetBody({ videoId, userId, onClose, onCountChange }: SheetBodyProps) 
             accessibilityLabel={ru.comments.close}
             onPress={onClose}
             hitSlop={8}
-            style={styles.close}
+            style={[styles.close, styles.closeBtn]}
           >
-            <Icon name="close" size={iconSizes.md} color={colors.text} />
+            <Glyph name="close" size={16} color={colors.text} strokeWidth={2.4} />
           </Pressable>
         </View>
         <View style={styles.list}>
           <CommentList state={state} reload={reload} now={openedAt} />
         </View>
-        <CommentInput sending={sending} error={error} onSend={send} />
+        <CommentInput sending={sending} error={error} initial={initial} onSend={send} />
       </View>
     </KeyboardAvoidingView>
   );
@@ -181,28 +179,27 @@ const useStyles = makeStyles((colors) => ({
     ...contentColumn,
     height: SHEET_HEIGHT,
     paddingHorizontal: spacing.gutter,
-    paddingTop: spacing.sm,
-    gap: spacing.sm,
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: radii.panel,
-    borderTopRightRadius: radii.panel,
-    borderTopWidth: 1,
-    borderColor: colors.border,
+    paddingTop: 8,
+    gap: 8,
+    backgroundColor: colors.background,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
   },
   handle: {
     alignSelf: 'center',
     width: 36,
-    height: 4,
-    borderRadius: radii.pill,
-    backgroundColor: colors.fieldBorder,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: '#D9D2C3',
   },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  title: { ...typography.titleSmall, color: colors.text },
-  close: {
-    width: MIN_TOUCH_TARGET,
-    height: MIN_TOUCH_TARGET,
+  header: {
+    height: 40,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
+  title: { fontFamily: fontFamilies.bold, fontSize: 16, color: colors.text },
+  close: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+  closeBtn: { borderRadius: 12, backgroundColor: colors.surfaceMuted },
   list: { flex: 1 },
 }));

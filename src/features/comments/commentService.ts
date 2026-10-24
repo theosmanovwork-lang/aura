@@ -3,7 +3,12 @@ import { NotFoundError } from '../../data/repositories';
 import { assertCanPostComment, createComment, type Comment } from '../../domain/comment';
 import { runInOrder } from '../runInOrder';
 
-export type CommentView = Readonly<{ comment: Comment; authorName: string }>;
+export type CommentView = Readonly<{
+  comment: Comment;
+  authorName: string;
+  /** The comment was written by the author of the video. */
+  byVideoAuthor: boolean;
+}>;
 
 /** Nicknames of the authors; a lookup that fails or finds nobody leaves that name empty. */
 async function namesOf(repos: Repositories, comments: readonly Comment[]) {
@@ -14,9 +19,16 @@ async function namesOf(repos: Repositories, comments: readonly Comment[]) {
 
 /** The comments of a video, newest first, each with its author's nickname. */
 export async function loadComments(repos: Repositories, videoId: string): Promise<CommentView[]> {
-  const comments = await repos.comments.listByVideo(videoId);
+  const [comments, video] = await Promise.all([
+    repos.comments.listByVideo(videoId),
+    repos.videos.getById(videoId).catch(() => null),
+  ]);
   const names = await namesOf(repos, comments);
-  return comments.map((comment) => ({ comment, authorName: names.get(comment.authorId) ?? '' }));
+  return comments.map((comment) => ({
+    comment,
+    authorName: names.get(comment.authorId) ?? '',
+    byVideoAuthor: video !== null && video.authorId === comment.authorId,
+  }));
 }
 
 async function postCommentNow(

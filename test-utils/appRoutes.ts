@@ -15,6 +15,7 @@ import OnboardingRoute from '../app/onboarding';
 import SettingsRoute from '../app/settings';
 import TopUpRoute from '../app/topup';
 import UserRoute from '../app/user/[handle]';
+import InvestRoute from '../app/invest/[videoId]';
 import VideoRoute from '../app/video/[id]';
 
 /** Every screen of the app, for tests that open the app through the router. */
@@ -37,6 +38,7 @@ export const routes = {
   'clan/[id]': ClanRoute,
   'user/[handle]': UserRoute,
   'video/[id]': VideoRoute,
+  'invest/[videoId]': InvestRoute,
 };
 
 /** The size a phone reports for the feed; tests have to tell it by hand. */

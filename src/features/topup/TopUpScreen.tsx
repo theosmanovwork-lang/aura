@@ -143,9 +143,9 @@ function PackCard({ pack, on, onPick }: PackCardProps) {
       style={[styles.pack, on ? styles.packOn : styles.packOff]}
     >
       <View style={styles.packTop}>
-        <View style={[styles.coins, pack.coins > 1 && { gap: -10 }]}>
+        <View style={[styles.coins, pack.coins > 1 && { gap: pack.coins > 2 ? -9 : -10 }]}>
           {Array.from({ length: pack.coins }, (_, i) => (
-            <AuraCoin key={i} size={26} tone={on ? 'light' : 'dark'} />
+            <AuraCoin key={i} size={pack.coins > 2 ? 22 : 26} tone={on ? 'light' : 'dark'} />
           ))}
         </View>
         {pack.tag ? (

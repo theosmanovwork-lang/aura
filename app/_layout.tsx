@@ -33,6 +33,10 @@ function Screens() {
           name="chest"
           options={{ presentation: 'fullScreenModal', animation: 'fade' }}
         />
+        <Stack.Screen
+          name="invest/[videoId]"
+          options={{ presentation: 'transparentModal', animation: 'slide_from_bottom' }}
+        />
         <Stack.Screen name="topup" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="lot/[id]" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="onboarding" options={{ animation: 'fade' }} />

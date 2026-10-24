@@ -6,7 +6,7 @@ export default function FeedTab() {
   return (
     <FeedScreen
       focused={useIsFocused()}
-      onOpenVideo={(videoId) => router.push({ pathname: '/video/[id]', params: { id: videoId } })}
+      onOpenVideo={(videoId) => router.push({ pathname: '/invest/[videoId]', params: { videoId } })}
     />
   );
 }

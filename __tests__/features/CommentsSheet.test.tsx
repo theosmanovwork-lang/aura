@@ -9,8 +9,12 @@ import { ru } from '../../src/i18n/ru';
 
 const USER = 'user-me';
 
-async function renderSheet(videoId: string | null = 'video-1') {
+async function renderSheet(
+  videoId: string | null = 'video-1',
+  prepare?: (repos: ReturnType<typeof createMemoryRepositories>) => Promise<void>,
+) {
   const repos = createMemoryRepositories(seed);
+  await prepare?.(repos);
   const onClose = jest.fn();
   const onCountChange = jest.fn();
   await render(
@@ -42,7 +46,7 @@ describe('CommentsSheet', () => {
     const rows = await screen.findAllByTestId('comment-row');
     expect(rows).toHaveLength(3);
     expect(within(rows[0]!).getByText('Хочу продолжение с Марсом')).toBeTruthy();
-    expect(screen.getByText(`${ru.comments.title} · 3 комментария`)).toBeTruthy();
+    expect(screen.getByText('3 комментария')).toBeTruthy();
   });
 
   test('says so when a video has no comments yet', async () => {
@@ -63,15 +67,58 @@ describe('CommentsSheet', () => {
     expect(onCountChange).toHaveBeenCalledWith('video-2', 1);
   });
 
-  test('an empty text shows a hint and saves nothing', async () => {
+  test('an empty text cannot be sent: the button stays off and nothing is saved', async () => {
     const { repos } = await renderSheet('video-2');
     await screen.findByText(ru.comments.empty);
 
     await type('   ');
+    expect(screen.getByTestId('comment-send').props.accessibilityState.disabled).toBe(true);
     await fireEvent.press(screen.getByTestId('comment-send'));
 
-    expect(await screen.findByText(ru.comments.errors.empty)).toBeTruthy();
     expect(await repos.comments.listByVideo('video-2')).toHaveLength(0);
+  });
+
+  test('a quick reaction chip sends that word as a comment', async () => {
+    const { repos } = await renderSheet('video-2');
+    await screen.findByText(ru.comments.empty);
+
+    await fireEvent.press(screen.getByTestId(`reaction-${ru.comments.reactions[0]}`));
+
+    expect(await screen.findByTestId('comment-row')).toHaveTextContent(ru.comments.reactions[0], {
+      exact: false,
+    });
+    expect((await repos.comments.listByVideo('video-2')).map((c) => c.text)).toEqual([
+      ru.comments.reactions[0],
+    ]);
+  });
+
+  test('the author of the video gets the «автор» mark', async () => {
+    await renderSheet('video-1', async (repos) => {
+      const video = (await repos.videos.getById('video-1'))!;
+      await repos.comments.add({
+        id: 'c-author',
+        videoId: 'video-1',
+        authorId: video.authorId,
+        text: 'спасибо всем',
+        createdAt: Date.now(),
+      });
+    });
+
+    const rows = await screen.findAllByTestId('comment-row');
+
+    expect(screen.getAllByText(ru.comments.byAuthor)).toHaveLength(1);
+    expect(within(rows[0]!).getByText(ru.comments.byAuthor)).toBeTruthy();
+  });
+
+  test('the heart under a comment can be switched on and off', async () => {
+    await renderSheet();
+    const hearts = await screen.findAllByTestId('comment-like');
+
+    await fireEvent.press(hearts[0]!);
+    expect(screen.getAllByTestId('comment-like')[0]!.props.accessibilityState.selected).toBe(true);
+
+    await fireEvent.press(screen.getAllByTestId('comment-like')[0]!);
+    expect(screen.getAllByTestId('comment-like')[0]!.props.accessibilityState.selected).toBe(false);
   });
 
   test('a text over the limit is refused and kept in the field', async () => {

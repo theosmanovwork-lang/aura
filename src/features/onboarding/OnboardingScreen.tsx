@@ -440,7 +440,7 @@ const useStyles = makeStyles((colors) => ({
   round: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surface,
@@ -483,6 +483,7 @@ const useStyles = makeStyles((colors) => ({
   at: { fontFamily: fontFamilies.bold, fontSize: 20, color: colors.textMuted },
   fieldInput: {
     flex: 1,
+    minWidth: 0,
     fontFamily: fontFamilies.bold,
     fontSize: 20,
     color: colors.text,
@@ -514,7 +515,6 @@ const useStyles = makeStyles((colors) => ({
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    opacity: 0.7,
   },
   socialDark: { backgroundColor: colors.primary },
   socialLight: { backgroundColor: colors.surface },

@@ -15,7 +15,7 @@ jest.mock('../src/data/openRepositories', () => ({
 beforeEach(resetPlayers);
 
 describe('video page route', () => {
-  test('pressing the pool chip in the feed opens the page of that video', async () => {
+  test('pressing the pool chip in the feed opens the shares sheet of that video', async () => {
     await renderRouter(routes);
     await fireEvent(await screen.findByTestId('feed-container'), 'layout', {
       nativeEvent: { layout: { x: 0, y: 0, width: 390, height: 700 } },
@@ -23,8 +23,8 @@ describe('video page route', () => {
 
     await fireEvent.press(await screen.findByTestId('aura-plate'));
 
-    expect(await screen.findByTestId('market-price')).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Вложить' })).toBeTruthy();
+    expect(await screen.findByTestId('share-price')).toBeTruthy();
+    expect(screen.getByTestId('invest-confirm')).toBeTruthy();
   });
 
   test('a link straight to a video opens its page', async () => {

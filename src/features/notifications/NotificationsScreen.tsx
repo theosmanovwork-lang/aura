@@ -174,7 +174,7 @@ const useStyles = makeStyles((colors) => ({
   round: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surface,
@@ -228,7 +228,7 @@ const useStyles = makeStyles((colors) => ({
     padding: 14,
     backgroundColor: colors.surface,
   },
-  rowUnread: { backgroundColor: colors.surfaceMuted },
+  rowUnread: { backgroundColor: colors.background },
   icon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   texts: { flex: 1, minWidth: 0, gap: 4 },
   text: { fontFamily: fontFamilies.medium, fontSize: 14, lineHeight: 20, color: colors.text },

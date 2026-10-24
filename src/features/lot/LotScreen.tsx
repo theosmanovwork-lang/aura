@@ -231,7 +231,7 @@ const useStyles = makeStyles((colors) => ({
   round: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surface,

@@ -12,6 +12,7 @@ import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
 import { thump } from '../../motion/haptics';
 import { CardSlab } from '../cards/CardSlab';
+import { ChestArt } from './ChestArt';
 import { CardReveal, GlowPulse, ShakingChest } from './ChestMotion';
 import { FLASH_MS } from './timing';
 import { RARITY_STYLES } from '../cards/rarity';
@@ -66,7 +67,7 @@ export function ChestScreen({ onClose }: ChestScreenProps) {
         <Text style={styles.counter}>
           {t.counter.replace('{n}', String(opened)).replace('{total}', String(demoChestCount))}
         </Text>
-        <View style={styles.closeBtn} />
+        <View style={styles.spacer} />
       </View>
 
       {stage === 'closed' ? (
@@ -127,7 +128,7 @@ function Closed({ bottom, onOpen }: Readonly<{ bottom: number; onOpen: () => voi
       >
         <View style={styles.chestBox}>
           <ShakingChest shaking={false}>
-            <Glyph name="chest" size={120} color="#D7DAE0" strokeWidth={1.6} />
+            <ChestArt />
           </ShakingChest>
         </View>
         <Text style={styles.tap}>{t.tap}</Text>
@@ -137,13 +138,21 @@ function Closed({ bottom, onOpen }: Readonly<{ bottom: number; onOpen: () => voi
         <Text style={styles.oddsTitle}>{t.odds}</Text>
         {demoOdds.map(({ rarity, percent }) => (
           <View key={rarity} style={styles.oddsRow}>
-            <View style={[styles.swatch, { backgroundColor: RARITY_STYLES[rarity].art }]} />
+            <View
+              style={[
+                styles.swatch,
+                { backgroundColor: rarity === 'treasure' ? '#E8B04B' : RARITY_STYLES[rarity].art },
+              ]}
+            />
             <Text style={styles.oddsName}>{ru.cards.rarity[rarity]}</Text>
             <View style={styles.oddsTrack}>
               <View
                 style={[
                   styles.oddsFill,
-                  { width: `${Math.max(percent, 3)}%`, backgroundColor: RARITY_STYLES[rarity].art },
+                  {
+                    width: `${Math.max(percent, 3)}%`,
+                    backgroundColor: rarity === 'treasure' ? '#E8B04B' : RARITY_STYLES[rarity].art,
+                  },
                 ]}
               />
             </View>
@@ -173,7 +182,7 @@ function Flash() {
     <View style={styles.flash}>
       <View style={styles.flashChest}>
         <ShakingChest shaking>
-          <Glyph name="chest" size={120} color="#FFE38A" strokeWidth={1.6} />
+          <ChestArt open />
         </ShakingChest>
       </View>
       <Text accessibilityLiveRegion="polite" style={styles.flashTitle}>
@@ -279,11 +288,12 @@ const useStyles = makeStyles(() => ({
   closeBtn: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.12)',
   },
+  spacer: { width: 44, height: 44 },
   counter: { fontFamily: fontFamilies.bold, fontSize: 15, color: '#FFFFFF' },
   chestArea: { position: 'absolute', left: 0, right: 0, top: 150, alignItems: 'center', gap: 6 },
   chestBox: { height: 230, alignItems: 'center', justifyContent: 'center' },

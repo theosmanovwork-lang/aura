@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
+import { Avatar } from '../../components/Avatar';
+import { Glyph } from '../../components/Glyph';
 import { MAX_COMMENT_LENGTH } from '../../domain/comment';
 import { ru } from '../../i18n/ru';
-import { MIN_TOUCH_TARGET, makeStyles, radii, spacing, typography, useColors } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
+import { fontFamilies, makeStyles, useColors } from '../../theme';
 
 /** The counter appears once the text gets close to the limit. */
 const COUNTER_FROM = MAX_COMMENT_LENGTH - 60;
@@ -11,14 +14,17 @@ const COUNTER_FROM = MAX_COMMENT_LENGTH - 60;
 type CommentInputProps = Readonly<{
   sending: boolean;
   error: string | null;
+  /** The first letter of your own nickname, for the round avatar. */
+  initial?: string;
   /** Called with the typed text; resolves true when it was saved, so the field can be cleared. */
   onSend: (text: string) => Promise<boolean>;
 }>;
 
-export function CommentInput({ sending, error, onSend }: CommentInputProps) {
+export function CommentInput({ sending, error, initial = '', onSend }: CommentInputProps) {
   const styles = useStyles();
   const colors = useColors();
   const [text, setText] = useState('');
+  const ready = text.trim().length > 0 && !sending;
 
   const send = async () => {
     const sent = text;
@@ -33,28 +39,60 @@ export function CommentInput({ sending, error, onSend }: CommentInputProps) {
           {error}
         </Text>
       ) : null}
+      <View style={styles.chips}>
+        {ru.comments.reactions.map((reaction) => (
+          <PressableScale
+            key={reaction}
+            testID={`reaction-${reaction}`}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: sending }}
+            disabled={sending}
+            onPress={() => void onSend(reaction)}
+            style={styles.chip}
+          >
+            <Text style={styles.chipText}>{reaction}</Text>
+          </PressableScale>
+        ))}
+      </View>
       <View style={styles.row}>
-        <TextInput
-          testID="comment-input"
-          accessibilityLabel={ru.comments.inputLabel}
-          placeholder={ru.comments.placeholder}
-          placeholderTextColor={colors.textMuted}
-          value={text}
-          onChangeText={setText}
-          multiline
-          style={styles.input}
-        />
-        <Pressable
+        <Avatar initial={initial} tone="brand" size={36} />
+        <View style={styles.field}>
+          <TextInput
+            testID="comment-input"
+            accessibilityLabel={ru.comments.inputLabel}
+            placeholder={ru.comments.placeholder}
+            placeholderTextColor={colors.textMuted}
+            value={text}
+            onChangeText={setText}
+            multiline
+            style={styles.input}
+          />
+          <View
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel={ru.comments.gift}
+            accessibilityState={{ disabled: true }}
+            style={styles.gift}
+          >
+            <Glyph name="gift" size={16} color={colors.text} strokeWidth={2.2} />
+          </View>
+        </View>
+        <PressableScale
           testID="comment-send"
           accessibilityRole="button"
           accessibilityLabel={ru.comments.send}
-          accessibilityState={{ disabled: sending }}
-          disabled={sending}
+          accessibilityState={{ disabled: !ready }}
+          disabled={!ready}
           onPress={send}
-          style={({ pressed }) => [styles.send, (pressed || sending) && styles.sendQuiet]}
+          style={[styles.send, ready ? styles.sendOn : styles.sendOff]}
         >
-          <Text style={styles.sendText}>{sending ? ru.comments.sending : ru.comments.send}</Text>
-        </Pressable>
+          <Glyph
+            name="arrowUp"
+            size={18}
+            color={ready ? colors.onPrimary : colors.textMuted}
+            strokeWidth={2.4}
+          />
+        </PressableScale>
       </View>
       {text.length >= COUNTER_FROM ? (
         <Text style={styles.counter}>
@@ -68,30 +106,53 @@ export function CommentInput({ sending, error, onSend }: CommentInputProps) {
 }
 
 const useStyles = makeStyles((colors) => ({
-  wrap: { gap: spacing.xs },
-  row: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.sm },
-  input: {
-    ...typography.bodySmall,
-    flex: 1,
-    maxHeight: 120,
-    minHeight: MIN_TOUCH_TARGET,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    color: colors.text,
-    backgroundColor: colors.surfaceMuted,
-    borderRadius: radii.control,
-    borderWidth: 1,
-    borderColor: colors.fieldBorder,
-  },
-  send: {
-    minHeight: MIN_TOUCH_TARGET,
-    paddingHorizontal: spacing.md,
+  wrap: { gap: 10 },
+  chips: { flexDirection: 'row', gap: 6 },
+  chip: {
+    height: 32,
+    paddingHorizontal: 12,
+    borderRadius: 16,
     justifyContent: 'center',
-    borderRadius: radii.pill,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.surface,
   },
-  sendQuiet: { opacity: 0.6 },
-  sendText: { ...typography.titleSmall, color: colors.onPrimary },
-  error: { ...typography.caption, color: colors.destructive },
-  counter: { ...typography.caption, color: colors.textMuted, alignSelf: 'flex-end' },
+  chipText: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.text },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  field: {
+    flex: 1,
+    minHeight: 44,
+    paddingLeft: 14,
+    paddingRight: 6,
+    borderRadius: 22,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.surface,
+  },
+  input: {
+    flex: 1,
+    minWidth: 0,
+    maxHeight: 120,
+    paddingVertical: 10,
+    fontFamily: fontFamilies.medium,
+    fontSize: 15,
+    color: colors.text,
+  },
+  gift: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surfaceMuted,
+  },
+  send: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  sendOn: { backgroundColor: colors.primary },
+  sendOff: { backgroundColor: colors.surfaceMuted },
+  error: { fontFamily: fontFamilies.semibold, fontSize: 12, color: colors.destructive },
+  counter: {
+    alignSelf: 'flex-end',
+    fontFamily: fontFamilies.semibold,
+    fontSize: 12,
+    color: colors.textMuted,
+  },
 }));
