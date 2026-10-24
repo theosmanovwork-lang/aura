@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { AuraCoin } from '../../components/AuraIcon';
 import { Glyph } from '../../components/Glyph';
@@ -25,6 +17,7 @@ import {
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 import { ageOn, checkNickname, daysInMonth } from './nickname';
+import { PressableScale } from '../../motion/PressableScale';
 
 type Step = 'welcome' | 'nick' | 'age' | 'interests';
 const ORDER: readonly Step[] = ['welcome', 'nick', 'age', 'interests'];
@@ -100,7 +93,7 @@ function Welcome({
         ))}
       </View>
       <View style={[styles.bottom, { paddingBottom: 24 + bottom }]}>
-        <Pressable
+        <PressableScale
           testID="onboarding-start"
           accessibilityRole="button"
           onPress={onStart}
@@ -109,15 +102,15 @@ function Welcome({
           <SilverView style={styles.cta}>
             <Text style={styles.ctaInk}>{t.start}</Text>
           </SilverView>
-        </Pressable>
-        <Pressable
+        </PressableScale>
+        <PressableScale
           testID="onboarding-have-account"
           accessibilityRole="button"
           onPress={onHaveAccount}
           style={styles.link}
         >
           <Text style={styles.linkText}>{t.haveAccount}</Text>
-        </Pressable>
+        </PressableScale>
       </View>
     </View>
   );
@@ -135,7 +128,7 @@ function Frame({ step, onBack, children }: FrameProps) {
       style={styles.page}
     >
       <View style={[styles.progressRow, { paddingTop: top }]}>
-        <Pressable
+        <PressableScale
           testID="screen-back"
           accessibilityRole="button"
           accessibilityLabel={ru.onboarding.back}
@@ -143,7 +136,7 @@ function Frame({ step, onBack, children }: FrameProps) {
           style={styles.round}
         >
           <Glyph name="chevronLeft" size={20} color={colors.text} strokeWidth={2.4} />
-        </Pressable>
+        </PressableScale>
         <View style={styles.track}>
           <View style={[styles.fill, { width: `${(step / 3) * 100}%` }]} />
         </View>
@@ -212,7 +205,7 @@ function NickStep({ nick, onNick, onNext }: NickProps) {
       </View>
       <View style={[styles.footer, { paddingBottom: 24 + bottom }]}>
         <Text style={styles.terms}>{t.terms}</Text>
-        <Pressable
+        <PressableScale
           testID="nick-next"
           accessibilityRole="button"
           accessibilityState={{ disabled: state !== 'free' }}
@@ -223,7 +216,7 @@ function NickStep({ nick, onNick, onNext }: NickProps) {
           <Text style={[styles.ctaText, state !== 'free' && { color: colors.textMuted }]}>
             {t.next}
           </Text>
-        </Pressable>
+        </PressableScale>
       </View>
     </View>
   );
@@ -280,7 +273,7 @@ function AgeStep({ birth, onBirth, today, onNext }: AgeProps) {
       <View style={styles.wheel}>
         {columns.map((c) => (
           <View key={c.id} style={styles.wheelCol}>
-            <Pressable
+            <PressableScale
               testID={`age-${c.id}-up`}
               accessibilityRole="button"
               accessibilityLabel={`${c.label}: ${t.up}`}
@@ -288,7 +281,7 @@ function AgeStep({ birth, onBirth, today, onNext }: AgeProps) {
               style={styles.wheelBtn}
             >
               <Glyph name="chevronDown" size={18} color={colors.textMuted} strokeWidth={2.4} />
-            </Pressable>
+            </PressableScale>
             <Text
               testID={`age-${c.id}`}
               accessibilityLabel={`${c.label}: ${c.text}`}
@@ -296,7 +289,7 @@ function AgeStep({ birth, onBirth, today, onNext }: AgeProps) {
             >
               {c.text}
             </Text>
-            <Pressable
+            <PressableScale
               testID={`age-${c.id}-down`}
               accessibilityRole="button"
               accessibilityLabel={`${c.label}: ${t.down}`}
@@ -304,7 +297,7 @@ function AgeStep({ birth, onBirth, today, onNext }: AgeProps) {
               style={styles.wheelBtn}
             >
               <Glyph name="chevronDown" size={18} color={colors.textMuted} strokeWidth={2.4} />
-            </Pressable>
+            </PressableScale>
           </View>
         ))}
       </View>
@@ -315,7 +308,7 @@ function AgeStep({ birth, onBirth, today, onNext }: AgeProps) {
         </Text>
       </View>
       <View style={[styles.footer, { paddingBottom: 24 + bottom }]}>
-        <Pressable
+        <PressableScale
           testID="age-next"
           accessibilityRole="button"
           accessibilityState={{ disabled: young }}
@@ -324,7 +317,7 @@ function AgeStep({ birth, onBirth, today, onNext }: AgeProps) {
           style={[styles.cta, young ? styles.ctaOff : styles.ctaOn]}
         >
           <Text style={[styles.ctaText, young && { color: colors.textMuted }]}>{t.next}</Text>
-        </Pressable>
+        </PressableScale>
       </View>
     </View>
   );
@@ -352,7 +345,7 @@ function InterestsStep({ picked, onToggle, onFinish }: InterestsProps) {
         {t.tags.map((tag) => {
           const on = picked.has(tag);
           return (
-            <Pressable
+            <PressableScale
               key={tag}
               testID={`tag-${tag}`}
               accessibilityRole="button"
@@ -364,7 +357,7 @@ function InterestsStep({ picked, onToggle, onFinish }: InterestsProps) {
               {on ? (
                 <Glyph name="check" size={14} color={colors.onPrimary} strokeWidth={3} />
               ) : null}
-            </Pressable>
+            </PressableScale>
           );
         })}
       </ScrollView>
@@ -376,7 +369,7 @@ function InterestsStep({ picked, onToggle, onFinish }: InterestsProps) {
         </View>
       </View>
       <View style={[styles.footer, { paddingBottom: 24 + bottom }]}>
-        <Pressable
+        <PressableScale
           testID="interests-go"
           accessibilityRole="button"
           accessibilityState={{ disabled: missing > 0 }}
@@ -395,7 +388,7 @@ function InterestsStep({ picked, onToggle, onFinish }: InterestsProps) {
               <Text style={styles.ctaInk}>{t.go.replace('{n}', String(picked.size))}</Text>
             </SilverView>
           )}
-        </Pressable>
+        </PressableScale>
       </View>
     </View>
   );

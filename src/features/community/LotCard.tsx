@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AuraCoin } from '../../components/AuraIcon';
 import { Glyph } from '../../components/Glyph';
@@ -6,6 +6,7 @@ import type { DemoLot } from '../../data/seed/demoCommunity';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 import { CardSlab } from '../cards/CardSlab';
+import { PressableScale } from '../../motion/PressableScale';
 
 type LotCardProps = Readonly<{
   lot: DemoLot;
@@ -20,7 +21,7 @@ export function LotCard({ lot, mode, onOpen }: LotCardProps) {
   const rarityLabel = ru.cards.rarity[lot.rarity];
   const auction = mode === 'auctions';
   return (
-    <Pressable
+    <PressableScale
       onPress={() => onOpen?.(lot.id)}
       testID={`lot-${lot.id}`}
       accessibilityRole="button"
@@ -58,7 +59,7 @@ export function LotCard({ lot, mode, onOpen }: LotCardProps) {
           <Text style={styles.valueText}>{auction ? lot.bid : lot.price}</Text>
         </View>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }
 

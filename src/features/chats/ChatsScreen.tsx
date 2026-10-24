@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { Glyph } from '../../components/Glyph';
 import { useTabBarInset } from '../../components/useTabBarInset';
@@ -9,6 +9,7 @@ import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 import { GlobalChatCard, MyClanCard } from './ChatCards';
 import { DialogList } from './DialogList';
+import { PressableScale } from '../../motion/PressableScale';
 
 /** Chats of the design: the global chat, the clan invitation and the conversations (made up for now). */
 type ChatsScreenProps = Readonly<{
@@ -33,7 +34,7 @@ export function ChatsScreen({ onOpenDialog, onOpenClan }: ChatsScreenProps) {
           <Text accessibilityRole="header" style={styles.title}>
             {ru.chats.title}
           </Text>
-          <Pressable
+          <PressableScale
             disabled
             accessibilityState={{ disabled: true }}
             accessibilityRole="button"
@@ -41,7 +42,7 @@ export function ChatsScreen({ onOpenDialog, onOpenClan }: ChatsScreenProps) {
             style={styles.round}
           >
             <Glyph name="search" size={20} color={colors.text} strokeWidth={2.2} />
-          </Pressable>
+          </PressableScale>
         </View>
         <GlobalChatCard />
         <MyClanCard onOpen={onOpenClan} />
@@ -63,7 +64,7 @@ export function ChatsScreen({ onOpenDialog, onOpenClan }: ChatsScreenProps) {
           }}
         />
       </ScrollView>
-      <Pressable
+      <PressableScale
         disabled
         accessibilityState={{ disabled: true }}
         testID="chat-compose"
@@ -72,7 +73,7 @@ export function ChatsScreen({ onOpenDialog, onOpenClan }: ChatsScreenProps) {
         style={[styles.fab, { bottom: bottom + 8 }]}
       >
         <Glyph name="pen" size={26} color={colors.onPrimary} strokeWidth={2.2} />
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }

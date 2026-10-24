@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 import { AuraCoin } from '../../components/AuraIcon';
@@ -10,12 +10,14 @@ import { useTopInset } from '../../components/useTopInset';
 import { demoChestCount, demoChestReward, demoOdds, RUNS } from '../../data/seed/demoShop';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
+import { thump } from '../../motion/haptics';
 import { CardSlab } from '../cards/CardSlab';
+import { CardReveal, GlowPulse, ShakingChest } from './ChestMotion';
+import { FLASH_MS } from './timing';
 import { RARITY_STYLES } from '../cards/rarity';
+import { PressableScale } from '../../motion/PressableScale';
 
-/** The flash lasts this long before the reward shows. */
-export const FLASH_MS = 800;
-
+export { FLASH_MS };
 type Stage = 'closed' | 'flash' | 'reward';
 
 const SCENE = '#141311';
@@ -52,7 +54,7 @@ export function ChestScreen({ onClose }: ChestScreenProps) {
     <View testID={`chest-${stage}`} style={styles.page}>
       <Glow stage={stage} />
       <View style={[styles.top, { top }]}>
-        <Pressable
+        <PressableScale
           testID="chest-close"
           accessibilityRole="button"
           accessibilityLabel={t.close}
@@ -60,14 +62,22 @@ export function ChestScreen({ onClose }: ChestScreenProps) {
           style={styles.closeBtn}
         >
           <Glyph name="close" size={18} color="#FFFFFF" strokeWidth={2.4} />
-        </Pressable>
+        </PressableScale>
         <Text style={styles.counter}>
           {t.counter.replace('{n}', String(opened)).replace('{total}', String(demoChestCount))}
         </Text>
         <View style={styles.closeBtn} />
       </View>
 
-      {stage === 'closed' ? <Closed bottom={bottom} onOpen={() => setStage('flash')} /> : null}
+      {stage === 'closed' ? (
+        <Closed
+          bottom={bottom}
+          onOpen={() => {
+            thump();
+            setStage('flash');
+          }}
+        />
+      ) : null}
       {stage === 'flash' ? <Flash /> : null}
       {stage === 'reward' ? <Reward bottom={bottom} more={left - 1} onKeep={keep} /> : null}
     </View>
@@ -79,24 +89,26 @@ function Glow({ stage }: Readonly<{ stage: Stage }>) {
   const strong = stage !== 'closed';
   return (
     <View pointerEvents="none" style={styles.glow}>
-      <Svg width={420} height={420} viewBox="0 0 100 100">
-        <Defs>
-          <RadialGradient id="glow" cx="50%" cy="50%" r="50%">
-            <Stop
-              offset="0"
-              stopColor={strong ? GOLD_GLOW[0] : '#D7DAE0'}
-              stopOpacity={strong ? 0.9 : 0.22}
-            />
-            <Stop
-              offset="0.35"
-              stopColor={strong ? GOLD_GLOW[1] : '#D7DAE0'}
-              stopOpacity={strong ? 0.5 : 0.1}
-            />
-            <Stop offset="1" stopColor={strong ? GOLD_GLOW[1] : '#D7DAE0'} stopOpacity={0} />
-          </RadialGradient>
-        </Defs>
-        <Rect x="0" y="0" width="100" height="100" fill="url(#glow)" />
-      </Svg>
+      <GlowPulse stage={stage}>
+        <Svg width={420} height={420} viewBox="0 0 100 100">
+          <Defs>
+            <RadialGradient id="glow" cx="50%" cy="50%" r="50%">
+              <Stop
+                offset="0"
+                stopColor={strong ? GOLD_GLOW[0] : '#D7DAE0'}
+                stopOpacity={strong ? 0.9 : 0.22}
+              />
+              <Stop
+                offset="0.35"
+                stopColor={strong ? GOLD_GLOW[1] : '#D7DAE0'}
+                stopOpacity={strong ? 0.5 : 0.1}
+              />
+              <Stop offset="1" stopColor={strong ? GOLD_GLOW[1] : '#D7DAE0'} stopOpacity={0} />
+            </RadialGradient>
+          </Defs>
+          <Rect x="0" y="0" width="100" height="100" fill="url(#glow)" />
+        </Svg>
+      </GlowPulse>
     </View>
   );
 }
@@ -106,7 +118,7 @@ function Closed({ bottom, onOpen }: Readonly<{ bottom: number; onOpen: () => voi
   const t = ru.chest;
   return (
     <>
-      <Pressable
+      <PressableScale
         testID="chest-body"
         accessibilityRole="button"
         accessibilityLabel={t.tap}
@@ -114,11 +126,13 @@ function Closed({ bottom, onOpen }: Readonly<{ bottom: number; onOpen: () => voi
         style={styles.chestArea}
       >
         <View style={styles.chestBox}>
-          <Glyph name="chest" size={120} color="#D7DAE0" strokeWidth={1.6} />
+          <ShakingChest shaking={false}>
+            <Glyph name="chest" size={120} color="#D7DAE0" strokeWidth={1.6} />
+          </ShakingChest>
         </View>
         <Text style={styles.tap}>{t.tap}</Text>
         <Text style={styles.inside}>{t.inside}</Text>
-      </Pressable>
+      </PressableScale>
       <View style={[styles.odds, { bottom: 120 + bottom }]}>
         <Text style={styles.oddsTitle}>{t.odds}</Text>
         {demoOdds.map(({ rarity, percent }) => (
@@ -138,7 +152,7 @@ function Closed({ bottom, onOpen }: Readonly<{ bottom: number; onOpen: () => voi
         ))}
       </View>
       <View style={[styles.actions, { bottom: 48 + bottom }]}>
-        <Pressable
+        <PressableScale
           testID="chest-open"
           accessibilityRole="button"
           onPress={onOpen}
@@ -147,7 +161,7 @@ function Closed({ bottom, onOpen }: Readonly<{ bottom: number; onOpen: () => voi
           <SilverView style={styles.primary}>
             <Text style={styles.primaryText}>{t.open}</Text>
           </SilverView>
-        </Pressable>
+        </PressableScale>
       </View>
     </>
   );
@@ -157,6 +171,11 @@ function Flash() {
   const styles = useStyles();
   return (
     <View style={styles.flash}>
+      <View style={styles.flashChest}>
+        <ShakingChest shaking>
+          <Glyph name="chest" size={120} color="#FFE38A" strokeWidth={1.6} />
+        </ShakingChest>
+      </View>
       <Text accessibilityLiveRegion="polite" style={styles.flashTitle}>
         {ru.chest.flash}
       </Text>
@@ -179,17 +198,19 @@ function Reward({ bottom, more, onKeep }: RewardProps) {
         <Text style={styles.badge}>{`${label.toUpperCase()} · ${percent}%`}</Text>
       </View>
       <View testID="chest-card" style={styles.card}>
-        <CardSlab
-          size="xl"
-          showName
-          rarity={card.rarity}
-          no={card.no}
-          name={card.name}
-          grade={`GRADE ${card.grade}`}
-          rarityLabel={label}
-          carLabel={ru.cards.carAlt[card.rarity]}
-          topLeft={label}
-        />
+        <CardReveal>
+          <CardSlab
+            size="xl"
+            showName
+            rarity={card.rarity}
+            no={card.no}
+            name={card.name}
+            grade={`GRADE ${card.grade}`}
+            rarityLabel={label}
+            carLabel={ru.cards.carAlt[card.rarity]}
+            topLeft={label}
+          />
+        </CardReveal>
       </View>
       <View style={styles.result}>
         <Text accessibilityRole="header" style={styles.resultName}>
@@ -207,7 +228,7 @@ function Reward({ bottom, more, onKeep }: RewardProps) {
         </View>
       </View>
       <View style={[styles.actions, { bottom: 48 + bottom }]}>
-        <Pressable
+        <PressableScale
           testID="chest-keep"
           accessibilityRole="button"
           onPress={onKeep}
@@ -216,9 +237,9 @@ function Reward({ bottom, more, onKeep }: RewardProps) {
           <SilverView style={styles.primary}>
             <Text style={styles.primaryText}>{t.keep}</Text>
           </SilverView>
-        </Pressable>
+        </PressableScale>
         <View style={styles.pair}>
-          <Pressable
+          <PressableScale
             testID="chest-more"
             accessibilityRole="button"
             accessibilityState={{ disabled: more < 1 }}
@@ -229,7 +250,7 @@ function Reward({ bottom, more, onKeep }: RewardProps) {
             <Text style={styles.secondText}>
               {t.more.replace('{n}', String(Math.max(more, 0)))}
             </Text>
-          </Pressable>
+          </PressableScale>
           <View
             accessibilityRole="button"
             accessibilityState={{ disabled: true }}
@@ -307,6 +328,7 @@ const useStyles = makeStyles(() => ({
   primary: { height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   primaryText: { fontFamily: fontFamilies.bold, fontSize: 16, color: '#1A1A1A' },
   flash: { position: 'absolute', left: 0, right: 0, top: 480, alignItems: 'center', gap: 6 },
+  flashChest: { position: 'absolute', top: -300, alignItems: 'center' },
   flashTitle: { fontFamily: fontFamilies.bold, fontSize: 26, color: '#FFE38A' },
   badgeRow: { position: 'absolute', top: 60, left: 0, right: 0, alignItems: 'center' },
   badge: {

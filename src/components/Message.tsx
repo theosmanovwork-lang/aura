@@ -1,7 +1,8 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AuraText } from './AuraText';
 import { makeStyles, radii, spacing, typography } from '../theme';
+import { PressableScale } from '../motion/PressableScale';
 
 type MessageProps = Readonly<{
   text: string;
@@ -15,9 +16,9 @@ export function Message({ text, action }: MessageProps) {
     <View style={styles.message}>
       <AuraText style={styles.text}>{text}</AuraText>
       {action ? (
-        <Pressable accessibilityRole="button" onPress={action.run} style={styles.button}>
+        <PressableScale accessibilityRole="button" onPress={action.run} style={styles.button}>
           <Text style={styles.buttonText}>{action.label}</Text>
-        </Pressable>
+        </PressableScale>
       ) : null}
     </View>
   );

@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { fontFamilies, makeStyles, useColors } from '../theme';
 import { Glyph } from './Glyph';
+import { PressableScale } from '../motion/PressableScale';
 
 type ScreenHeaderProps = Readonly<{
   title: string;
@@ -18,7 +19,7 @@ export function ScreenHeader({ title, backLabel, onBack, right }: ScreenHeaderPr
   const colors = useColors();
   return (
     <View style={styles.row}>
-      <Pressable
+      <PressableScale
         testID="screen-back"
         accessibilityRole="button"
         accessibilityLabel={backLabel}
@@ -26,7 +27,7 @@ export function ScreenHeader({ title, backLabel, onBack, right }: ScreenHeaderPr
         style={styles.round}
       >
         <Glyph name="chevronLeft" size={20} color={colors.text} strokeWidth={2.4} />
-      </Pressable>
+      </PressableScale>
       <Text accessibilityRole="header" style={styles.title}>
         {title}
       </Text>

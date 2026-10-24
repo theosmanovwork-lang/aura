@@ -1,10 +1,11 @@
-import { Pressable, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { AuraCoin } from '../../components/AuraIcon';
 import { Glyph } from '../../components/Glyph';
 import { formatPoints } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 type AuraPlateProps = Readonly<{ amount: number; onPress?: () => void }>;
 
@@ -14,7 +15,7 @@ export function AuraPlate({ amount, onPress }: AuraPlateProps) {
   const disabled = onPress === undefined;
   const text = ru.feed.pool.replace('{n}', formatPoints(amount));
   return (
-    <Pressable
+    <PressableScale
       testID="aura-plate"
       accessibilityRole="button"
       accessibilityLabel={text}
@@ -26,7 +27,7 @@ export function AuraPlate({ amount, onPress }: AuraPlateProps) {
       <AuraCoin size={20} tone="light" />
       <Text style={styles.text}>{formatPoints(amount)}</Text>
       <Glyph name="chevronRight" size={12} color="#FFFFFF" strokeWidth={3} />
-    </Pressable>
+    </PressableScale>
   );
 }
 

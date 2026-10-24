@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Stop, Text as SvgText } from 'react-native-svg';
 
 import { Avatar } from '../../components/Avatar';
@@ -11,6 +11,7 @@ import { demoClanProfile, type DemoClanMember } from '../../data/seed/demoPeople
 import { pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 type ClanScreenProps = Readonly<{
   clanId: string;
@@ -34,7 +35,7 @@ export function ClanScreen({ clanId, onBack, onOpenChat, onOpenUser }: ClanScree
     <ScrollView testID="clan-scroll" style={styles.page} contentContainerStyle={styles.content}>
       <View style={styles.hero}>
         <View style={[styles.heroTop, { top }]}>
-          <Pressable
+          <PressableScale
             testID="screen-back"
             accessibilityRole="button"
             accessibilityLabel={ru.common.back}
@@ -42,7 +43,7 @@ export function ClanScreen({ clanId, onBack, onOpenChat, onOpenUser }: ClanScree
             style={styles.heroBtn}
           >
             <Glyph name="chevronLeft" size={20} color="#FFFFFF" strokeWidth={2.4} />
-          </Pressable>
+          </PressableScale>
           <View accessibilityLabel={t.share} style={styles.heroBtn}>
             <Glyph name="share" size={20} color="#FFFFFF" />
           </View>
@@ -66,7 +67,7 @@ export function ClanScreen({ clanId, onBack, onOpenChat, onOpenUser }: ClanScree
 
       <View style={styles.body}>
         <View style={styles.actions}>
-          <Pressable
+          <PressableScale
             testID="clan-join"
             accessibilityRole="button"
             accessibilityState={{ selected: sent }}
@@ -82,8 +83,8 @@ export function ClanScreen({ clanId, onBack, onOpenChat, onOpenUser }: ClanScree
                 <Text style={styles.joinText}>{t.join}</Text>
               </SilverView>
             )}
-          </Pressable>
-          <Pressable
+          </PressableScale>
+          <PressableScale
             testID="clan-chat"
             accessibilityRole="button"
             accessibilityLabel={t.chat}
@@ -91,7 +92,7 @@ export function ClanScreen({ clanId, onBack, onOpenChat, onOpenUser }: ClanScree
             style={styles.chatBtn}
           >
             <Glyph name="chat" size={22} color="#1A1A1A" />
-          </Pressable>
+          </PressableScale>
         </View>
 
         <Stats />
@@ -229,7 +230,7 @@ function Members({ members, onOpenUser }: MembersProps) {
         <Text style={styles.link}>{t.all.replace('{n}', String(demoClanProfile.members))}</Text>
       </View>
       {members.map((member) => (
-        <Pressable
+        <PressableScale
           key={member.name}
           testID={`member-${member.name}`}
           accessibilityRole="button"
@@ -239,7 +240,7 @@ function Members({ members, onOpenUser }: MembersProps) {
         >
           <Text style={styles.place}>{member.place}</Text>
           <View style={member.ring ? [styles.ring, { borderColor: member.ring }] : styles.noRing}>
-            <Avatar initial={member.initial} tone={member.tone} size={36} />
+            <Avatar initial={member.initial} tone={member.tone} size={36} square />
           </View>
           <View style={styles.memberText}>
             <View style={styles.memberName}>
@@ -258,7 +259,7 @@ function Members({ members, onOpenUser }: MembersProps) {
             <Text style={styles.meta}>{member.meta}</Text>
           </View>
           <Text style={styles.points}>{member.points}</Text>
-        </Pressable>
+        </PressableScale>
       ))}
     </View>
   );
@@ -361,7 +362,7 @@ const useStyles = makeStyles((colors) => ({
     fontSize: 13,
     color: colors.textMuted,
   },
-  ring: { padding: 2, borderRadius: 22, borderWidth: 2 },
+  ring: { padding: 2, borderRadius: 20, borderWidth: 2 },
   noRing: { padding: 4 },
   memberText: { flex: 1, gap: 1 },
   memberName: { flexDirection: 'row', alignItems: 'center', gap: 6 },

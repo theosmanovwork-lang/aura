@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Avatar } from '../../components/Avatar';
 import { Glyph } from '../../components/Glyph';
@@ -8,13 +8,15 @@ import { demoGlobalChat, demoMyClan } from '../../data/seed/demoCommunity';
 import { formatPoints } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
+import { GrowBar } from '../../motion/GrowBar';
 
 /** The dark card of the global chat with its latest message. */
 export function GlobalChatCard() {
   const styles = useStyles();
   const t = ru.chats;
   return (
-    <Pressable
+    <PressableScale
       disabled
       accessibilityState={{ disabled: true }}
       testID="global-chat"
@@ -47,7 +49,7 @@ export function GlobalChatCard() {
         </View>
         <Text style={styles.lastTime}>{t.now}</Text>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -59,7 +61,7 @@ export function MyClanCard({ onOpen }: MyClanCardProps) {
   const t = ru.chats.clan;
   const clan = demoMyClan;
   return (
-    <Pressable
+    <PressableScale
       testID="my-clan"
       accessibilityRole="button"
       accessibilityLabel={t.open.replace('{name}', clan.name)}
@@ -92,13 +94,11 @@ export function MyClanCard({ onOpen }: MyClanCardProps) {
             </Text>
           </View>
           <View style={styles.track}>
-            <View
-              style={[styles.fill, { width: `${(clan.tasksDone / clan.tasksTotal) * 100}%` }]}
-            />
+            <GrowBar style={styles.fill} ratio={clan.tasksDone / clan.tasksTotal} />
           </View>
         </View>
       </SilverView>
-    </Pressable>
+    </PressableScale>
   );
 }
 

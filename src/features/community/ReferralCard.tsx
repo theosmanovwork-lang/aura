@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Glyph } from '../../components/Glyph';
 import { SilverView } from '../../components/SilverView';
@@ -6,6 +6,7 @@ import { Wave } from '../../components/Wave';
 import { demoReferralCode } from '../../data/seed/demoCommunity';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 type ReferralCardProps = Readonly<{ copied: boolean; onCopy: () => void }>;
 
@@ -23,7 +24,7 @@ export function ReferralCard({ copied, onCopy }: ReferralCardProps) {
       </Text>
       <Text style={styles.text}>{t.text}</Text>
       <View style={styles.row}>
-        <Pressable
+        <PressableScale
           testID="referral-copy"
           accessibilityRole="button"
           accessibilityLabel={t.copyLabel.replace('{code}', demoReferralCode)}
@@ -34,8 +35,8 @@ export function ReferralCard({ copied, onCopy }: ReferralCardProps) {
           <Text accessibilityLiveRegion="polite" style={[styles.hint, copied && styles.hintDone]}>
             {copied ? t.copied : t.copyHint}
           </Text>
-        </Pressable>
-        <Pressable
+        </PressableScale>
+        <PressableScale
           disabled
           accessibilityState={{ disabled: true }}
           accessibilityRole="button"
@@ -45,7 +46,7 @@ export function ReferralCard({ copied, onCopy }: ReferralCardProps) {
             <Glyph name="plus" size={16} color="#1A1A1A" strokeWidth={2.6} />
             <Text style={styles.inviteText}>{t.invite}</Text>
           </SilverView>
-        </Pressable>
+        </PressableScale>
       </View>
     </View>
   );

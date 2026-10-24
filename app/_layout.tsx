@@ -33,6 +33,9 @@ function Screens() {
           name="chest"
           options={{ presentation: 'fullScreenModal', animation: 'fade' }}
         />
+        <Stack.Screen name="topup" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="lot/[id]" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="onboarding" options={{ animation: 'fade' }} />
         {Object.entries(HEADER_TITLES).map(([name, title]) => (
           <Stack.Screen
             key={name}

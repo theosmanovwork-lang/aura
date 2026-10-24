@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { AuraCoin } from '../../components/AuraIcon';
 import { Glyph } from '../../components/Glyph';
@@ -14,6 +14,8 @@ import { fontFamilies, makeStyles } from '../../theme';
 import { useBalance } from '../wallet/useBalance';
 import { CollectionGrid } from './CollectionGrid';
 import { QuestsCard } from './QuestsCard';
+import { PressableScale } from '../../motion/PressableScale';
+import { success } from '../../motion/haptics';
 
 type CardsScreenProps = Readonly<{
   /** Change it to read the balance again (for example every time the tab comes into view). */
@@ -35,7 +37,7 @@ export function CardsScreen({ refreshKey = 0, onTopUp, onOpenChests }: CardsScre
         <Text accessibilityRole="header" style={styles.title}>
           {ru.cards.title}
         </Text>
-        <Pressable
+        <PressableScale
           onPress={onOpenChests}
           testID="open-chests"
           accessibilityRole="button"
@@ -49,7 +51,7 @@ export function CardsScreen({ refreshKey = 0, onTopUp, onOpenChests }: CardsScre
             </View>
           </SilverView>
           <Text style={styles.chestsText}>{ru.cards.openChests.replace('{count}', chests)}</Text>
-        </Pressable>
+        </PressableScale>
       </View>
 
       <View testID="balance-card" style={styles.balanceCard}>
@@ -64,7 +66,7 @@ export function CardsScreen({ refreshKey = 0, onTopUp, onOpenChests }: CardsScre
           </Text>
         </View>
         <Text style={styles.today}>{ru.cards.today}</Text>
-        <Pressable
+        <PressableScale
           accessibilityRole="button"
           onPress={onTopUp}
           testID="top-up"
@@ -74,10 +76,16 @@ export function CardsScreen({ refreshKey = 0, onTopUp, onOpenChests }: CardsScre
             <Glyph name="plus" size={16} color="#1A1A1A" strokeWidth={2.6} />
             <Text style={styles.topUpText}>{ru.cards.topUp}</Text>
           </SilverView>
-        </Pressable>
+        </PressableScale>
       </View>
 
-      <QuestsCard claimed={claimed} onClaim={() => setClaimed(true)} />
+      <QuestsCard
+        claimed={claimed}
+        onClaim={() => {
+          success();
+          setClaimed(true);
+        }}
+      />
       <CollectionGrid />
 
       <View style={styles.hint}>

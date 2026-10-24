@@ -1,6 +1,9 @@
 // Not re-exported from the package root, so the build path is the only way to get this type.
 import type { BottomTabBarProps } from 'expo-router/build/layouts/Tabs';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { Pop } from '../motion/Pop';
+import { PressableScale } from '../motion/PressableScale';
 
 import { ru } from '../i18n/ru';
 import {
@@ -55,8 +58,9 @@ function Bar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBa
           };
 
           return (
-            <Pressable
+            <PressableScale
               key={route.key}
+              haptic
               testID={`tab-item-${route.name}`}
               accessibilityRole="button"
               accessibilityLabel={spokenName(title, index + 1, count)}
@@ -64,7 +68,9 @@ function Bar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBa
               onPress={onPress}
               style={styles.item}
             >
-              {options.tabBarIcon?.({ focused, color, size: 24 })}
+              <Pop trigger={focused} peak={focused ? 1.28 : 1}>
+                {options.tabBarIcon?.({ focused, color, size: 24 })}
+              </Pop>
               <Text
                 testID={`tab-label-${route.name}`}
                 numberOfLines={1}
@@ -73,7 +79,7 @@ function Bar({ state, descriptors, emitter, navigateToTab, insets }: BottomTabBa
               >
                 {title}
               </Text>
-            </Pressable>
+            </PressableScale>
           );
         })}
       </View>

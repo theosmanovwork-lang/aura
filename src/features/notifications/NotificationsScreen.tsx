@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { Avatar } from '../../components/Avatar';
 import { Glyph, type GlyphName } from '../../components/Glyph';
@@ -13,6 +13,8 @@ import {
 } from '../../data/seed/demoNotifications';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
+import { Entrance } from '../../motion/Entrance';
 
 const FILTERS: readonly NoticeFilter[] = ['all', 'auction', 'invest', 'social'];
 const GROUPS = ['today', 'yesterday'] as const;
@@ -48,7 +50,7 @@ export function NotificationsScreen({ onBack, onOpen }: NotificationsScreenProps
       contentContainerStyle={[styles.content, { paddingTop: top }]}
     >
       <View style={styles.header}>
-        <Pressable
+        <PressableScale
           testID="screen-back"
           accessibilityRole="button"
           accessibilityLabel={t.back}
@@ -56,23 +58,23 @@ export function NotificationsScreen({ onBack, onOpen }: NotificationsScreenProps
           style={styles.round}
         >
           <Glyph name="chevronLeft" size={20} color={colors.text} strokeWidth={2.4} />
-        </Pressable>
+        </PressableScale>
         <Text accessibilityRole="header" style={styles.title}>
           {t.title}
         </Text>
-        <Pressable
+        <PressableScale
           testID="read-all"
           accessibilityRole="button"
           onPress={() => setReadAll(true)}
           style={styles.readAll}
         >
           <Text style={styles.readAllText}>{t.readAll}</Text>
-        </Pressable>
+        </PressableScale>
       </View>
 
       <View accessibilityRole="tablist" accessibilityLabel={t.filtersLabel} style={styles.filters}>
         {FILTERS.map((key) => (
-          <Pressable
+          <PressableScale
             key={key}
             testID={`filter-${key}`}
             accessibilityRole="tab"
@@ -83,7 +85,7 @@ export function NotificationsScreen({ onBack, onOpen }: NotificationsScreenProps
             <Text style={[styles.filterText, key === filter && styles.filterTextOn]}>
               {t.filters[key]}
             </Text>
-          </Pressable>
+          </PressableScale>
         ))}
       </View>
 
@@ -95,16 +97,17 @@ export function NotificationsScreen({ onBack, onOpen }: NotificationsScreenProps
           <View key={group} style={styles.group}>
             <Text style={styles.groupTitle}>{t.groups[group]}</Text>
             <View style={styles.list}>
-              {items.map((notice) => (
-                <Row
-                  key={notice.id}
-                  notice={notice}
-                  unread={notice.unread && !readAll && !seen.has(notice.id)}
-                  onPress={() => {
-                    setSeen((set) => new Set(set).add(notice.id));
-                    onOpen?.(notice);
-                  }}
-                />
+              {items.map((notice, index) => (
+                <Entrance key={notice.id} index={index}>
+                  <Row
+                    notice={notice}
+                    unread={notice.unread && !readAll && !seen.has(notice.id)}
+                    onPress={() => {
+                      setSeen((set) => new Set(set).add(notice.id));
+                      onOpen?.(notice);
+                    }}
+                  />
+                </Entrance>
               ))}
             </View>
           </View>
@@ -127,7 +130,7 @@ function Row({ notice, unread, onPress }: RowProps) {
     sold: [colors.surfaceMuted, colors.textSecondary],
   } as const;
   return (
-    <Pressable
+    <PressableScale
       testID={`notice-${notice.id}`}
       accessibilityRole="button"
       accessibilityLabel={`${notice.who} ${notice.text}, ${notice.time}${unread ? `, ${ru.notifications.unread}` : ''}`}
@@ -135,7 +138,7 @@ function Row({ notice, unread, onPress }: RowProps) {
       style={[styles.row, unread && styles.rowUnread]}
     >
       {kind === 'letter' ? (
-        <Avatar initial={notice.letter ?? ''} tone={notice.tone ?? 'ink'} size={40} />
+        <Avatar initial={notice.letter ?? ''} tone={notice.tone ?? 'ink'} size={40} square />
       ) : (
         <View style={[styles.icon, { backgroundColor: iconColors[kind][0] }]}>
           <Glyph name={ICONS[kind]} size={20} color={iconColors[kind][1]} strokeWidth={2.2} />
@@ -160,7 +163,7 @@ function Row({ notice, unread, onPress }: RowProps) {
         ) : null}
       </View>
       {unread ? <View testID={`unread-${notice.id}`} style={styles.dot} /> : null}
-    </Pressable>
+    </PressableScale>
   );
 }
 

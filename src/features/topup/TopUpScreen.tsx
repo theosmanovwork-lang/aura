@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { AuraCoin } from '../../components/AuraIcon';
 import { Glyph } from '../../components/Glyph';
@@ -12,6 +12,8 @@ import { formatPoints } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 import { useBalance } from '../wallet/useBalance';
+import { PressableScale } from '../../motion/PressableScale';
+import { success } from '../../motion/haptics';
 
 type TopUpScreenProps = Readonly<{ onBack: () => void }>;
 
@@ -89,10 +91,13 @@ export function TopUpScreen({ onBack }: TopUpScreenProps) {
       </ScrollView>
 
       <View style={[styles.bar, { paddingBottom: 12 + bottom }]}>
-        <Pressable
+        <PressableScale
           testID="topup-buy"
           accessibilityRole="button"
-          onPress={() => setBought(true)}
+          onPress={() => {
+            success();
+            setBought(true);
+          }}
           style={styles.buyWrap}
         >
           {bought ? (
@@ -110,7 +115,7 @@ export function TopUpScreen({ onBack }: TopUpScreenProps) {
               </Text>
             </SilverView>
           )}
-        </Pressable>
+        </PressableScale>
       </View>
     </View>
   );
@@ -127,7 +132,7 @@ function PackCard({ pack, on, onPick }: PackCardProps) {
   const styles = useStyles();
   const price = pack.price;
   return (
-    <Pressable
+    <PressableScale
       testID={`pack-${pack.amount}`}
       accessibilityRole="button"
       accessibilityLabel={ru.topup.packLabel
@@ -156,7 +161,7 @@ function PackCard({ pack, on, onPick }: PackCardProps) {
         <Text style={[styles.bonus, on && styles.bonusOn]}>{pack.bonus}</Text>
       </View>
       <Text style={[styles.price, on && styles.onInk]}>{price}</Text>
-    </Pressable>
+    </PressableScale>
   );
 }
 

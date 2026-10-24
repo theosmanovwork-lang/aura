@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { Avatar } from '../../components/Avatar';
 import { EmptyState } from '../../components/EmptyState';
@@ -19,6 +19,7 @@ import { useLatest } from '../useLatest';
 import { useLoad } from '../useLoad';
 import { loadProfile, type ProfileView } from './profileService';
 import { ProfileTabs, type ProfileTabKey } from './ProfileTabs';
+import { PressableScale } from '../../motion/PressableScale';
 
 const TAB_GLYPHS: Record<ProfileTabKey, GlyphName> = {
   posts: 'video',
@@ -122,7 +123,7 @@ function ProfileBody({
           <Text accessibilityRole="header" style={styles.handle}>
             {`@${profile.nickname}`}
           </Text>
-          <Pressable
+          <PressableScale
             testID="profile-settings"
             accessibilityRole="button"
             accessibilityLabel={t.settings}
@@ -130,7 +131,7 @@ function ProfileBody({
             style={styles.settings}
           >
             <Glyph name="sliders" size={20} color="#FFFFFF" />
-          </Pressable>
+          </PressableScale>
         </View>
 
         <View style={styles.who}>
@@ -158,7 +159,7 @@ function ProfileBody({
           >
             <Text style={styles.buttonSoftText}>{t.edit}</Text>
           </View>
-          <Pressable
+          <PressableScale
             testID="profile-earn"
             accessibilityRole="button"
             onPress={onOpenEarn}
@@ -166,7 +167,7 @@ function ProfileBody({
           >
             <Glyph name="trend" size={18} color={colors.onPrimary} strokeWidth={2.4} />
             <Text style={styles.buttonDarkText}>{t.tasks}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
 
         <ProfileTabs selected={tab} onSelect={onTab} />
@@ -198,7 +199,7 @@ function Tiles({
   const followers = formatPoints(demoProfile.followers);
   return (
     <View style={styles.tiles}>
-      <Pressable
+      <PressableScale
         testID="profile-available"
         accessibilityRole="button"
         accessibilityLabel={spoken(t.available, available)}
@@ -215,7 +216,7 @@ function Tiles({
           </Text>
           <Text style={[styles.tileLabel, styles.onDarkMuted]}>{t.available}</Text>
         </View>
-      </Pressable>
+      </PressableScale>
       <SilverView style={styles.tile}>
         <View
           accessible
@@ -268,7 +269,7 @@ function Empty({ tab, onOpenFeed }: EmptyProps) {
       title={title}
       text={text}
       action={
-        <Pressable
+        <PressableScale
           testID="profile-empty-action"
           accessibilityRole="button"
           accessibilityState={{ disabled: shoot }}
@@ -282,7 +283,7 @@ function Empty({ tab, onOpenFeed }: EmptyProps) {
           <Text style={styles.ctaText}>
             {shoot ? ru.screens.profile.shoot : ru.screens.profile.watch}
           </Text>
-        </Pressable>
+        </PressableScale>
       }
     />
   );

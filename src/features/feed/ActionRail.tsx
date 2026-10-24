@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AuraGlyph } from '../../components/AuraIcon';
 import { Glyph, type GlyphName } from '../../components/Glyph';
 import { SilverView } from '../../components/SilverView';
 import { formatCount } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
+import { knock } from '../../motion/haptics';
+import { Pop } from '../../motion/Pop';
+import { PressableScale } from '../../motion/PressableScale';
 import { fontFamilies, makeStyles } from '../../theme';
 
 type ActionRailProps = Readonly<{
@@ -33,7 +36,7 @@ function RailIcon({ testID, label, glyph, count, value, disabled = false, onPres
   const styles = useStyles();
   return (
     <View style={styles.item}>
-      <Pressable
+      <PressableScale
         testID={testID}
         accessibilityRole="button"
         accessibilityLabel={label}
@@ -44,7 +47,7 @@ function RailIcon({ testID, label, glyph, count, value, disabled = false, onPres
         style={styles.icon}
       >
         <Glyph name={glyph} size={32} color="#FFFFFF" strokeWidth={1.9} />
-      </Pressable>
+      </PressableScale>
       <Text style={styles.count}>{formatCount(count)}</Text>
     </View>
   );
@@ -63,20 +66,25 @@ export function ActionRail({
   return (
     <View testID="action-rail" style={styles.rail}>
       <View style={styles.item}>
-        <Pressable
+        <PressableScale
           testID="aura-button"
           accessibilityRole="button"
           accessibilityLabel={ru.feed.aura}
           accessibilityValue={{ text: formatCount(holders) }}
           accessibilityState={{ disabled: onOpenMarket === undefined }}
           disabled={onOpenMarket === undefined}
-          onPress={onOpenMarket}
+          onPress={() => {
+            knock();
+            onOpenMarket?.();
+          }}
           style={styles.icon}
         >
-          <SilverView style={styles.coin}>
-            <AuraGlyph size={24} color="#1A1A1A" />
-          </SilverView>
-        </Pressable>
+          <Pop trigger={holders}>
+            <SilverView style={styles.coin}>
+              <AuraGlyph size={24} color="#1A1A1A" />
+            </SilverView>
+          </Pop>
+        </PressableScale>
         <Text style={styles.count}>{formatCount(holders)}</Text>
       </View>
       <RailIcon

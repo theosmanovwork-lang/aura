@@ -1,8 +1,9 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Glyph } from '../../components/Glyph';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 export type TradeMode = 'auctions' | 'market';
 
@@ -25,7 +26,7 @@ export function TradeTabs({ mode, onChange, lotCount }: TradeTabsProps) {
         {MODES.map((id) => {
           const active = id === mode;
           return (
-            <Pressable
+            <PressableScale
               key={id}
               testID={`trade-tab-${id}`}
               accessibilityRole="tab"
@@ -34,13 +35,13 @@ export function TradeTabs({ mode, onChange, lotCount }: TradeTabsProps) {
               style={[styles.tab, active && styles.tabActive]}
             >
               <Text style={[styles.tabText, active && styles.tabTextActive]}>{t.tabs[id]}</Text>
-            </Pressable>
+            </PressableScale>
           );
         })}
       </View>
       <View style={styles.meta}>
         <Text style={styles.metaText}>{t.meta[mode].replace('{n}', String(lotCount))}</Text>
-        <Pressable
+        <PressableScale
           disabled
           accessibilityState={{ disabled: true }}
           accessibilityRole="button"
@@ -49,7 +50,7 @@ export function TradeTabs({ mode, onChange, lotCount }: TradeTabsProps) {
         >
           <Text style={styles.sortText}>{t.sort[mode]}</Text>
           <Glyph name="chevronDown" size={14} color={colors.text} strokeWidth={2.4} />
-        </Pressable>
+        </PressableScale>
       </View>
     </>
   );

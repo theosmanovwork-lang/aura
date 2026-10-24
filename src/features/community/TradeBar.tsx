@@ -1,10 +1,11 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Glyph } from '../../components/Glyph';
 import { SilverView } from '../../components/SilverView';
 import { useTabBarInset } from '../../components/useTabBarInset';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 /** The black button at the bottom: «Выставить карточку». It floats over the list. */
 export function TradeBar() {
@@ -13,7 +14,7 @@ export function TradeBar() {
   const bottom = useTabBarInset();
   return (
     <View pointerEvents="box-none" style={[styles.wrap, { bottom: bottom + 16 }]}>
-      <Pressable
+      <PressableScale
         disabled
         accessibilityState={{ disabled: true }}
         testID="trade-button"
@@ -25,7 +26,7 @@ export function TradeBar() {
           <Glyph name="plus" size={16} color="#1A1A1A" strokeWidth={2.8} />
         </SilverView>
         <Text style={[styles.text, { color: colors.onPrimary }]}>{ru.community.trade}</Text>
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }

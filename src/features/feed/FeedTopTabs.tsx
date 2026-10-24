@@ -1,15 +1,16 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { SilverView } from '../../components/SilverView';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 /** «Подписки | Рекомендации» drawn like the design; both are switched off until feeds exist. */
 export function FeedTopTabs() {
   const styles = useStyles();
   return (
     <View accessibilityRole="tablist" style={styles.tabs}>
-      <Pressable
+      <PressableScale
         accessibilityRole="tab"
         accessibilityLabel={ru.feed.tabs.following}
         accessibilityState={{ disabled: true, selected: false }}
@@ -17,8 +18,8 @@ export function FeedTopTabs() {
         style={styles.tab}
       >
         <Text style={[styles.label, styles.idle]}>{ru.feed.tabs.following}</Text>
-      </Pressable>
-      <Pressable
+      </PressableScale>
+      <PressableScale
         accessibilityRole="tab"
         accessibilityLabel={ru.feed.tabs.forYou}
         accessibilityState={{ disabled: true, selected: true }}
@@ -27,7 +28,7 @@ export function FeedTopTabs() {
       >
         <Text style={styles.label}>{ru.feed.tabs.forYou}</Text>
         <SilverView style={styles.indicator} />
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }

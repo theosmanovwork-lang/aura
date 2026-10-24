@@ -1,7 +1,8 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 export const PROFILE_TAB_KEYS = ['posts', 'investments', 'reposts'] as const;
 export type ProfileTabKey = (typeof PROFILE_TAB_KEYS)[number];
@@ -23,7 +24,7 @@ export function ProfileTabs({ selected, onSelect }: ProfileTabsProps) {
       {PROFILE_TAB_KEYS.map((key) => {
         const open = key === selected;
         return (
-          <Pressable
+          <PressableScale
             key={key}
             testID={`profile-tab-${key}`}
             accessibilityRole="tab"
@@ -34,7 +35,7 @@ export function ProfileTabs({ selected, onSelect }: ProfileTabsProps) {
             <Text style={[styles.label, open && styles.labelOpen]}>
               {ru.screens.profile.tabs[key]}
             </Text>
-          </Pressable>
+          </PressableScale>
         );
       })}
     </View>

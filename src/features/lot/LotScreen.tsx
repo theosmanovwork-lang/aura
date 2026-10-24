@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { AuraCoin } from '../../components/AuraIcon';
 import { Avatar } from '../../components/Avatar';
@@ -20,6 +20,8 @@ import { formatPoints } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 import { CardSlab } from '../cards/CardSlab';
+import { PressableScale } from '../../motion/PressableScale';
+import { success } from '../../motion/haptics';
 
 const BID_STEP = 100;
 const QUICK_BIDS = [100, 500, 1000] as const;
@@ -119,7 +121,7 @@ export function LotScreen({ lotId, onBack, onWriteSeller }: LotScreenProps) {
 
         <Text style={styles.label}>{t.yourBid}</Text>
         <View style={styles.stepper}>
-          <Pressable
+          <PressableScale
             testID="bid-dec"
             accessibilityRole="button"
             accessibilityLabel={t.decrease}
@@ -127,11 +129,11 @@ export function LotScreen({ lotId, onBack, onWriteSeller }: LotScreenProps) {
             style={styles.stepBtn}
           >
             <Glyph name="minus" size={20} color={colors.text} strokeWidth={2.6} />
-          </Pressable>
+          </PressableScale>
           <Text testID="bid-value" style={styles.bidField}>
             {formatPoints(bid)}
           </Text>
-          <Pressable
+          <PressableScale
             testID="bid-inc"
             accessibilityRole="button"
             accessibilityLabel={t.increase}
@@ -139,11 +141,11 @@ export function LotScreen({ lotId, onBack, onWriteSeller }: LotScreenProps) {
             style={styles.stepBtn}
           >
             <Glyph name="plus" size={20} color={colors.text} strokeWidth={2.6} />
-          </Pressable>
+          </PressableScale>
         </View>
         <View style={styles.quick}>
           {QUICK_BIDS.map((value) => (
-            <Pressable
+            <PressableScale
               key={value}
               testID={`bid-add-${value}`}
               accessibilityRole="button"
@@ -151,14 +153,17 @@ export function LotScreen({ lotId, onBack, onWriteSeller }: LotScreenProps) {
               style={styles.quickBtn}
             >
               <Text style={styles.quickText}>{`+${formatPoints(value)}`}</Text>
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
 
-        <Pressable
+        <PressableScale
           testID="bid-place"
           accessibilityRole="button"
-          onPress={() => setPlaced(true)}
+          onPress={() => {
+            success();
+            setPlaced(true);
+          }}
           style={[styles.cta, placed ? styles.ctaDone : styles.ctaInk]}
         >
           <Text style={[styles.ctaText, placed ? styles.ctaDoneText : styles.ctaInkText]}>
@@ -166,7 +171,7 @@ export function LotScreen({ lotId, onBack, onWriteSeller }: LotScreenProps) {
               ? t.placed.replace('{amount}', formatPoints(bid))
               : t.place.replace('{amount}', formatPoints(bid))}
           </Text>
-        </Pressable>
+        </PressableScale>
         <SilverView style={styles.cta}>
           <Text style={[styles.ctaText, styles.ctaSilverText]}>
             {t.buyNow.replace('{price}', lot.price)}
@@ -184,7 +189,7 @@ export function LotScreen({ lotId, onBack, onWriteSeller }: LotScreenProps) {
         </View>
         {demoBidHistory.map((item, index) => (
           <View key={`${item.name}-${item.amount}`} style={styles.history}>
-            <Avatar initial={item.initial} tone={item.color} size={36} />
+            <Avatar initial={item.initial} tone={item.color} size={36} square />
             <View style={styles.historyText}>
               <View style={styles.historyName}>
                 <Text style={styles.who}>{item.name}</Text>
@@ -207,14 +212,14 @@ export function LotScreen({ lotId, onBack, onWriteSeller }: LotScreenProps) {
               .replace('{clean}', String(demoSeller.clean))}
           </Text>
         </View>
-        <Pressable
+        <PressableScale
           testID="lot-write"
           accessibilityRole="button"
           onPress={onWriteSeller}
           style={styles.write}
         >
           <Text style={styles.writeText}>{t.write}</Text>
-        </Pressable>
+        </PressableScale>
       </View>
     </ScrollView>
   );

@@ -1,10 +1,12 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Glyph } from '../../components/Glyph';
 import { demoCollection, demoCollectionCounts } from '../../data/seed/demoCommunity';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 import { CardSlab } from './CardSlab';
+import { PressableScale } from '../../motion/PressableScale';
+import { Entrance } from '../../motion/Entrance';
 
 /** «Коллекция 14 / 60» with the filter button and the grid of cards (open ones and locked ones). */
 export function CollectionGrid() {
@@ -24,7 +26,7 @@ export function CollectionGrid() {
               .replace('{total}', String(demoCollectionCounts.total))}
           </Text>
         </View>
-        <Pressable
+        <PressableScale
           disabled
           accessibilityState={{ disabled: true }}
           accessibilityRole="button"
@@ -33,12 +35,17 @@ export function CollectionGrid() {
         >
           <Text style={styles.filterText}>{t.filter}</Text>
           <Glyph name="chevronDown" size={14} color={colors.text} strokeWidth={2.4} />
-        </Pressable>
+        </PressableScale>
       </View>
       <View style={styles.grid}>
-        {demoCollection.map((card) =>
+        {demoCollection.map((card, index) =>
           card.kind === 'open' ? (
-            <View key={card.id} style={styles.cell} testID={`collection-${card.id}`}>
+            <Entrance
+              key={card.id}
+              index={index}
+              style={styles.cell}
+              testID={`collection-${card.id}`}
+            >
               <CardSlab
                 size="small"
                 rarity={card.rarity}
@@ -54,10 +61,11 @@ export function CollectionGrid() {
                 </Text>
                 <Text style={styles.run}>{t.run.replace('{n}', card.run)}</Text>
               </View>
-            </View>
+            </Entrance>
           ) : (
-            <View
+            <Entrance
               key={card.id}
+              index={index}
               style={[styles.cell, styles.lockedCell]}
               testID={`collection-${card.id}`}
             >
@@ -73,7 +81,7 @@ export function CollectionGrid() {
                 <Text style={styles.rarity}>{t.locked}</Text>
                 <Text style={styles.run}>{t.notOpened}</Text>
               </View>
-            </View>
+            </Entrance>
           ),
         )}
       </View>

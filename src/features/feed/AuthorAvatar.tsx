@@ -1,10 +1,13 @@
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Avatar } from '../../components/Avatar';
 import { Glyph } from '../../components/Glyph';
 import { SilverView } from '../../components/SilverView';
 import { ru } from '../../i18n/ru';
+import { knock } from '../../motion/haptics';
+import { Pop } from '../../motion/Pop';
 import { makeStyles } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 const SIZE = 48;
 const BADGE = 28;
@@ -27,20 +30,25 @@ export function AuthorAvatar({ name, following, onToggleFollow }: AuthorAvatarPr
       <View style={styles.ring}>
         <Avatar initial={name.slice(0, 1).toUpperCase()} tone="brand" size={SIZE - 4} />
       </View>
-      <Pressable
+      <PressableScale
         testID="follow-button"
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityState={{ selected: following }}
-        onPress={onToggleFollow}
+        onPress={() => {
+          knock();
+          onToggleFollow();
+        }}
         style={styles.badgeHit}
       >
-        {following ? (
-          <View style={[styles.badge, styles.badgeDone]}>{badge}</View>
-        ) : (
-          <SilverView style={styles.badge}>{badge}</SilverView>
-        )}
-      </Pressable>
+        <Pop trigger={following} peak={1.5}>
+          {following ? (
+            <View style={[styles.badge, styles.badgeDone]}>{badge}</View>
+          ) : (
+            <SilverView style={styles.badge}>{badge}</SilverView>
+          )}
+        </Pop>
+      </PressableScale>
     </View>
   );
 }

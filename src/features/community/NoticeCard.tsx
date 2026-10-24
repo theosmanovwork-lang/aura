@@ -1,8 +1,9 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Glyph } from '../../components/Glyph';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 type NoticeCardProps = Readonly<{ onOpen?: () => void; onHide: () => void }>;
 
@@ -19,15 +20,15 @@ export function NoticeCard({ onOpen, onHide }: NoticeCardProps) {
       <Text numberOfLines={1} style={styles.title}>
         {t.title}
       </Text>
-      <Pressable
+      <PressableScale
         testID="notice-button"
         accessibilityRole="button"
         onPress={onOpen}
         style={styles.button}
       >
         <Text style={styles.buttonText}>{t.action}</Text>
-      </Pressable>
-      <Pressable
+      </PressableScale>
+      <PressableScale
         testID="notice-hide"
         accessibilityRole="button"
         accessibilityLabel={t.hide}
@@ -35,7 +36,7 @@ export function NoticeCard({ onOpen, onHide }: NoticeCardProps) {
         style={styles.hide}
       >
         <Glyph name="close" size={16} color={colors.textMuted} strokeWidth={2.4} />
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }

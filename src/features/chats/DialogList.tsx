@@ -4,6 +4,7 @@ import { Avatar } from '../../components/Avatar';
 import type { DemoDialog } from '../../data/seed/demoCommunity';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
+import { Entrance } from '../../motion/Entrance';
 
 type DialogListProps = Readonly<{
   dialogs: readonly DemoDialog[];
@@ -18,37 +19,38 @@ export function DialogList({ dialogs, onOpen }: DialogListProps) {
       {dialogs.map((dialog, index) => {
         const fresh = dialog.unread > 0;
         return (
-          <Pressable
-            key={dialog.id}
-            testID={`dialog-${dialog.id}`}
-            accessibilityRole="button"
-            accessibilityLabel={`${dialog.name}, ${dialog.message}${fresh ? `, ${ru.chats.unread.replace('{n}', String(dialog.unread))}` : ''}`}
-            onPress={() => onOpen(dialog.id)}
-            style={({ pressed }) => [styles.row, pressed && styles.pressed]}
-          >
-            <View style={styles.avatar}>
-              <Avatar initial={dialog.initial} tone={dialog.tone} size={52} square />
-              {dialog.online ? <View style={styles.online} /> : null}
-            </View>
-            <View style={styles.texts}>
-              <View style={styles.top}>
-                <Text numberOfLines={1} style={styles.name}>
-                  {dialog.name}
-                </Text>
-                <Text style={[styles.time, fresh && styles.timeFresh]}>{dialog.time}</Text>
+          <Entrance key={dialog.id} index={index}>
+            <Pressable
+              testID={`dialog-${dialog.id}`}
+              accessibilityRole="button"
+              accessibilityLabel={`${dialog.name}, ${dialog.message}${fresh ? `, ${ru.chats.unread.replace('{n}', String(dialog.unread))}` : ''}`}
+              onPress={() => onOpen(dialog.id)}
+              style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+            >
+              <View style={styles.avatar}>
+                <Avatar initial={dialog.initial} tone={dialog.tone} size={52} square />
+                {dialog.online ? <View style={styles.online} /> : null}
               </View>
-              <View style={styles.top}>
-                <Text numberOfLines={1} style={[styles.message, fresh && styles.messageFresh]}>
-                  {dialog.message}
-                </Text>
-                {fresh ? (
-                  <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{dialog.unread}</Text>
-                  </View>
-                ) : null}
+              <View style={styles.texts}>
+                <View style={styles.top}>
+                  <Text numberOfLines={1} style={styles.name}>
+                    {dialog.name}
+                  </Text>
+                  <Text style={[styles.time, fresh && styles.timeFresh]}>{dialog.time}</Text>
+                </View>
+                <View style={styles.top}>
+                  <Text numberOfLines={1} style={[styles.message, fresh && styles.messageFresh]}>
+                    {dialog.message}
+                  </Text>
+                  {fresh ? (
+                    <View style={styles.badge}>
+                      <Text style={styles.badgeText}>{dialog.unread}</Text>
+                    </View>
+                  ) : null}
+                </View>
               </View>
-            </View>
-          </Pressable>
+            </Pressable>
+          </Entrance>
         );
       })}
     </View>

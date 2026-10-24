@@ -1,12 +1,14 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Glyph } from '../../components/Glyph';
 import { useTabBarInset } from '../../components/useTabBarInset';
 import { videoPrice } from '../../domain/videoPrice';
 import { ru } from '../../i18n/ru';
+import { knock } from '../../motion/haptics';
+import { CoinBurst, type BurstPoint } from '../../motion/CoinBurst';
 import { fontFamilies, makeStyles, PAUSE_BUTTON_SIZE, scrim, useColors } from '../../theme';
 import { ActionRail } from './ActionRail';
 import { AuraPlate } from './AuraPlate';
@@ -70,6 +72,13 @@ function ActiveCard({ item, height, focused, onOpenMarket, onOpenComments }: Act
   const { video, authorName, commentCount } = item;
   const [paused, setPaused] = useState(false);
   const [following, setFollowing] = useState(false);
+  const [bursts, setBursts] = useState<readonly BurstPoint[]>([]);
+  const lastTap = useRef(0);
+  const nextBurst = useRef(0);
+  const removeBurst = useCallback(
+    (id: number) => setBursts((list) => list.filter((burst) => burst.id !== id)),
+    [],
+  );
   const bottomInset = useTabBarInset();
   const source = useMemo(() => resolveVideoSource(video.videoUri), [video.videoUri]);
 
@@ -80,7 +89,18 @@ function ActiveCard({ item, height, focused, onOpenMarket, onOpenComments }: Act
         testID="video-surface"
         accessibilityRole="button"
         accessibilityLabel={paused ? ru.feed.resume : ru.feed.pause}
-        onPress={() => setPaused((current) => !current)}
+        onPress={(event) => {
+          setPaused((current) => !current);
+          const now = Date.now();
+          const double = now - lastTap.current < DOUBLE_TAP_MS;
+          lastTap.current = now;
+          if (!double) return;
+          // The second tap undoes the pause of the first one and throws coins from the finger.
+          knock();
+          const { locationX, locationY } = event.nativeEvent;
+          nextBurst.current += 1;
+          setBursts((list) => [...list, { id: nextBurst.current, x: locationX, y: locationY }]);
+        }}
         style={StyleSheet.absoluteFill}
       />
 
@@ -141,9 +161,16 @@ function ActiveCard({ item, height, focused, onOpenMarket, onOpenComments }: Act
           onOpenComments={() => onOpenComments?.(video.id)}
         />
       </View>
+
+      {bursts.map((at) => (
+        <CoinBurst key={at.id} at={at} onDone={removeBurst} />
+      ))}
     </View>
   );
 }
+
+/** Two taps this close are a double tap. */
+const DOUBLE_TAP_MS = 300;
 
 /** The info text stays clear of the action rail on the right. */
 const INFO_RIGHT_SPACE = 90;

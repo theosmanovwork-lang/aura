@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Avatar, type AvatarTone } from '../../components/Avatar';
 import { demoClans } from '../../data/seed/demoCommunity';
@@ -6,6 +6,7 @@ import { formatCount, pluralRu } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, medals } from '../../theme';
 import type { AuthorRatingRow } from '../hub/hubService';
+import { PressableScale } from '../../motion/PressableScale';
 
 const PLAYER_TONES: readonly AvatarTone[] = ['ink', 'green', 'red'];
 const TOP = 3;
@@ -22,7 +23,7 @@ type RowProps = Readonly<{
 function Row({ onPress, place, avatar, name, caption, testID }: RowProps) {
   const styles = useStyles();
   return (
-    <Pressable
+    <PressableScale
       testID={testID}
       accessibilityRole="button"
       accessibilityLabel={`${place}. ${name}, ${caption}`}
@@ -39,7 +40,7 @@ function Row({ onPress, place, avatar, name, caption, testID }: RowProps) {
         </Text>
         <Text style={styles.caption}>{caption}</Text>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }
 
@@ -92,14 +93,14 @@ export function ClansCard({ onOpenClan }: ClansCardProps) {
           <Text style={styles.headTitle}>{ru.community.clans}</Text>
           <Text style={styles.headSub}>{ru.community.clansSub}</Text>
         </View>
-        <Pressable
+        <PressableScale
           disabled
           accessibilityState={{ disabled: true }}
           accessibilityRole="button"
           accessibilityLabel={ru.community.all}
         >
           <Text style={styles.all}>{ru.community.all}</Text>
-        </Pressable>
+        </PressableScale>
       </View>
       {demoClans.map((clan, index) => (
         <Row

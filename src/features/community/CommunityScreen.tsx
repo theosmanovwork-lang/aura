@@ -19,6 +19,7 @@ import { ReferralCard } from './ReferralCard';
 import { TradeTabs, type TradeMode } from './TradeTabs';
 import { TradeBar } from './TradeBar';
 import { useCopyCode } from './useCopyCode';
+import { Entrance } from '../../motion/Entrance';
 
 type CommunityScreenProps = Readonly<{
   /** Change it to load the data again (for example every time the tab comes into view). */
@@ -100,10 +101,10 @@ export function CommunityScreen({
         <TradeTabs mode={mode} onChange={setMode} lotCount={lots.length} />
 
         <View style={styles.grid}>
-          {lots.map((lot) => (
-            <View key={lot.id} style={styles.cell}>
+          {lots.map((lot, index) => (
+            <Entrance key={lot.id} index={index} style={styles.cell}>
               <LotCard lot={lot} mode={mode} onOpen={onOpenLot} />
-            </View>
+            </Entrance>
           ))}
         </View>
       </ScrollView>

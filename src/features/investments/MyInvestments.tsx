@@ -1,5 +1,5 @@
 import { useCallback, type ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Wave } from '../../components/Wave';
@@ -11,6 +11,7 @@ import { fontFamilies, makeStyles, spacing, typography } from '../../theme';
 import { formatPrice } from '../market/marketFormat';
 import { useLoad } from '../useLoad';
 import { loadMyInvestments, type InvestmentView } from './investmentService';
+import { PressableScale } from '../../motion/PressableScale';
 
 const MINUS = '−';
 const TILE = 40;
@@ -31,7 +32,7 @@ const spoken = (view: InvestmentView): string =>
 function Row({ view, onOpen }: Readonly<{ view: InvestmentView; onOpen?: (id: string) => void }>) {
   const styles = useStyles();
   return (
-    <Pressable
+    <PressableScale
       testID={`investment-row-${view.investment.id}`}
       accessibilityRole="button"
       accessibilityLabel={spoken(view)}
@@ -53,7 +54,7 @@ function Row({ view, onOpen }: Readonly<{ view: InvestmentView; onOpen?: (id: st
         <AuraText style={styles.amount}>{`${signed(view.result)} ${ru.wallet.sparks[0]}`}</AuraText>
         <Text style={styles.caption}>{percentText(view.percent).trim()}</Text>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }
 

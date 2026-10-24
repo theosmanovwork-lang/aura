@@ -1,13 +1,5 @@
 import { useState } from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { AuraCoin } from '../../components/AuraIcon';
 import { Avatar } from '../../components/Avatar';
@@ -20,6 +12,8 @@ import { demoMessages, type DemoMessage } from '../../data/seed/demoPeople';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 import { RARITY_STYLES } from '../cards/rarity';
+import { PressableScale } from '../../motion/PressableScale';
+import { Entrance } from '../../motion/Entrance';
 
 type Trade = 'open' | 'accepted' | 'declined';
 
@@ -58,7 +52,7 @@ export function DialogScreen({ dialogId, onBack, onOpenProfile }: DialogScreenPr
       style={styles.page}
     >
       <View style={[styles.header, { paddingTop: top }]}>
-        <Pressable
+        <PressableScale
           testID="screen-back"
           accessibilityRole="button"
           accessibilityLabel={ru.common.back}
@@ -66,8 +60,8 @@ export function DialogScreen({ dialogId, onBack, onOpenProfile }: DialogScreenPr
           style={styles.iconBtn}
         >
           <Glyph name="chevronLeft" size={22} color={colors.text} strokeWidth={2.4} />
-        </Pressable>
-        <Pressable
+        </PressableScale>
+        <PressableScale
           testID="dialog-profile"
           accessibilityRole="button"
           accessibilityLabel={t.openProfile.replace('{name}', dialog.name)}
@@ -82,7 +76,7 @@ export function DialogScreen({ dialogId, onBack, onOpenProfile }: DialogScreenPr
             <Text style={styles.name}>{dialog.name}</Text>
             {dialog.online ? <Text style={styles.status}>{t.online}</Text> : null}
           </View>
-        </Pressable>
+        </PressableScale>
         <View accessibilityLabel={t.more} style={styles.iconBtn}>
           <Glyph name="sliders" size={20} color={colors.text} />
         </View>
@@ -103,9 +97,9 @@ export function DialogScreen({ dialogId, onBack, onOpenProfile }: DialogScreenPr
           />
         ))}
         {mine.map((text, index) => (
-          <View key={`m${index}`} style={[styles.bubble, styles.out]}>
+          <Entrance key={`m${index}`} rise={12} style={[styles.bubble, styles.out]}>
             <Text style={styles.outText}>{text}</Text>
-          </View>
+          </Entrance>
         ))}
         <Text style={styles.seen}>{t.read}</Text>
       </ScrollView>
@@ -125,7 +119,7 @@ export function DialogScreen({ dialogId, onBack, onOpenProfile }: DialogScreenPr
           returnKeyType="send"
           style={styles.input}
         />
-        <Pressable
+        <PressableScale
           testID="dialog-send"
           accessibilityRole="button"
           accessibilityLabel={t.send}
@@ -140,7 +134,7 @@ export function DialogScreen({ dialogId, onBack, onOpenProfile }: DialogScreenPr
             color={ready ? colors.onPrimary : colors.textMuted}
             strokeWidth={2.4}
           />
-        </Pressable>
+        </PressableScale>
       </View>
     </KeyboardAvoidingView>
   );
@@ -234,22 +228,22 @@ function TradeOffer({ give, take, trade, onAccept, onDecline }: TradeOfferProps)
       </View>
       {trade === 'open' ? (
         <View style={styles.offerButtons}>
-          <Pressable
+          <PressableScale
             testID="trade-decline"
             accessibilityRole="button"
             onPress={onDecline}
             style={[styles.offerBtn, styles.decline]}
           >
             <Text style={styles.declineText}>{t.decline}</Text>
-          </Pressable>
-          <Pressable
+          </PressableScale>
+          <PressableScale
             testID="trade-accept"
             accessibilityRole="button"
             onPress={onAccept}
             style={[styles.offerBtn, styles.accept]}
           >
             <Text style={styles.acceptText}>{t.accept}</Text>
-          </Pressable>
+          </PressableScale>
         </View>
       ) : (
         <View style={[styles.offerBtn, styles.result]}>

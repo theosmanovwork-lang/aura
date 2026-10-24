@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { Glyph } from '../../components/Glyph';
 import { ScreenHeader } from '../../components/ScreenHeader';
@@ -8,6 +8,7 @@ import { useTopInset } from '../../components/useTopInset';
 import { demoPerson } from '../../data/seed/demoPeople';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 /** 12 400 → «12,4 тыс.»: one decimal, so one hundred more followers can be seen. */
 const formatFollowers = (n: number): string =>
@@ -74,7 +75,7 @@ export function PersonScreen({
             {person.name}
           </Text>
           <Text style={styles.bio}>{person.bio}</Text>
-          <Pressable
+          <PressableScale
             testID="person-clan"
             accessibilityRole="button"
             onPress={onOpenClan}
@@ -88,7 +89,7 @@ export function PersonScreen({
                 .replace('{name}', person.clan.name)
                 .replace('{role}', ru.clan.role[person.clan.role])}
             </Text>
-          </Pressable>
+          </PressableScale>
         </View>
       </View>
 
@@ -109,7 +110,7 @@ export function PersonScreen({
       </View>
 
       <View style={styles.buttons}>
-        <Pressable
+        <PressableScale
           testID="person-follow"
           accessibilityRole="button"
           accessibilityState={{ selected: following }}
@@ -119,15 +120,15 @@ export function PersonScreen({
           <Text style={[styles.btnText, !following && styles.followText]}>
             {following ? t.subscribed : t.follow}
           </Text>
-        </Pressable>
-        <Pressable
+        </PressableScale>
+        <PressableScale
           testID="person-write"
           accessibilityRole="button"
           onPress={onWrite}
           style={[styles.btn, styles.write]}
         >
           <Text style={styles.btnText}>{t.write}</Text>
-        </Pressable>
+        </PressableScale>
         <View
           accessibilityRole="button"
           accessibilityLabel={t.gift}
@@ -142,7 +143,7 @@ export function PersonScreen({
 
       <View accessibilityRole="tablist" accessibilityLabel={t.tabsLabel} style={styles.tabs}>
         {TABS.map((key) => (
-          <Pressable
+          <PressableScale
             key={key}
             testID={`person-tab-${key}`}
             accessibilityRole="tab"
@@ -152,14 +153,14 @@ export function PersonScreen({
           >
             <Text style={[styles.tabLabel, key === tab && styles.tabLabelOn]}>{t.tabs[key]}</Text>
             <View style={[styles.bar, key === tab && styles.barOn]} />
-          </Pressable>
+          </PressableScale>
         ))}
       </View>
 
       {tab === 'posts' ? (
         <View style={styles.grid}>
           {person.tiles.map((tile, index) => (
-            <Pressable
+            <PressableScale
               key={index}
               testID={`person-tile-${index}`}
               accessibilityRole="button"
@@ -173,7 +174,7 @@ export function PersonScreen({
                 <Glyph name="video" size={12} color="#FFFFFF" filled strokeWidth={1} />
                 <Text style={styles.viewsText}>{tile.views}</Text>
               </View>
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
       ) : (

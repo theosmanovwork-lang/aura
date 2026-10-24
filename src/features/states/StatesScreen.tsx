@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Glyph } from '../../components/Glyph';
@@ -11,6 +11,7 @@ import { Toast } from '../../components/Toast';
 import { useTopInset } from '../../components/useTopInset';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 type StatesScreenProps = Readonly<{ onBack: () => void }>;
 
@@ -152,7 +153,7 @@ export function StatesScreen({ onBack }: StatesScreenProps) {
           <Skeleton width={18} height={18} radius={9} />
           <Text style={styles.busyText}>{t.sending}</Text>
         </View>
-        <Pressable
+        <PressableScale
           accessibilityRole="button"
           accessibilityLabel={t.ended}
           disabled
@@ -160,7 +161,7 @@ export function StatesScreen({ onBack }: StatesScreenProps) {
           style={[styles.busy, styles.busyOff]}
         >
           <Text style={styles.busyOffText}>{t.ended}</Text>
-        </Pressable>
+        </PressableScale>
         <View style={[styles.busy, styles.busyDark]}>
           <Glyph name="check" size={18} color="#FFFFFF" strokeWidth={2.6} />
           <Text style={styles.busyText}>{t.accepted}</Text>

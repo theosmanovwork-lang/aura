@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
 import { Button } from '../../components/Button';
@@ -24,6 +24,7 @@ import { formatPrice } from './marketFormat';
 import { PositionCard } from './PositionCard';
 import { PriceChart } from './PriceChart';
 import { useMarketMoves } from './useMarketMoves';
+import { PressableScale } from '../../motion/PressableScale';
 
 type VideoMarketScreenProps = Readonly<{
   videoId: string;
@@ -60,7 +61,7 @@ function Header({ market }: Readonly<{ market: VideoMarket }>) {
           {market.video.title}
         </Text>
       </View>
-      <Pressable
+      <PressableScale
         testID="market-share"
         accessibilityRole="button"
         accessibilityLabel={ru.market.actions.share}
@@ -69,7 +70,7 @@ function Header({ market }: Readonly<{ market: VideoMarket }>) {
         style={styles.share}
       >
         <Glyph name="share" size={24} color={colors.textMuted} />
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }
@@ -102,7 +103,7 @@ function Related({ videos, onOpen }: RelatedProps) {
       </Text>
       {videos.length === 0 ? <Text style={styles.label}>{ru.market.noRelated}</Text> : null}
       {videos.map((video) => (
-        <Pressable
+        <PressableScale
           key={video.id}
           testID={`related-${video.id}`}
           accessibilityRole="button"
@@ -114,7 +115,7 @@ function Related({ videos, onOpen }: RelatedProps) {
             {video.title}
           </Text>
           <Text style={styles.relatedPrice}>{formatPrice(videoPrice(video))}</Text>
-        </Pressable>
+        </PressableScale>
       ))}
     </View>
   );

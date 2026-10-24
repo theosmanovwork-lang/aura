@@ -1,9 +1,10 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { AuraCoin } from '../../components/AuraIcon';
 import { Glyph } from '../../components/Glyph';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
+import { PressableScale } from '../../motion/PressableScale';
 
 type Day = Readonly<{ n: number; weekday: string; reward: string; chest: boolean }>;
 
@@ -47,7 +48,7 @@ export function QuestsCard({ claimed, onClaim }: QuestsCardProps) {
           <DayCell key={day.n} day={day} claimed={claimed} />
         ))}
       </View>
-      <Pressable
+      <PressableScale
         testID="quest-claim"
         accessibilityRole="button"
         accessibilityState={{ disabled: claimed }}
@@ -58,7 +59,7 @@ export function QuestsCard({ claimed, onClaim }: QuestsCardProps) {
         <Text style={[styles.claimText, claimed && styles.claimTextDone]}>
           {claimed ? t.claimed : t.claim}
         </Text>
-      </Pressable>
+      </PressableScale>
     </View>
   );
 }
