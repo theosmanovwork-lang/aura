@@ -28,7 +28,7 @@ export default function TabsLayout() {
                 name={glyph}
                 size={24}
                 color={typeof color === 'string' ? color : '#000000'}
-                strokeWidth={focused ? 2.4 : 2}
+                strokeWidth={focused ? 2.6 : 2}
                 filled={focused && glyph === 'person'}
                 testID={`tab-icon-${glyph}${focused ? '-open' : ''}`}
               />

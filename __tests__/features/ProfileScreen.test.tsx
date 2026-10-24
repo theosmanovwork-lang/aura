@@ -39,21 +39,27 @@ describe('ProfileScreen', () => {
     await renderProfile();
     await screen.findByText('@mira.wav');
 
-    expect(screen.getByText(ru.screens.profile.stats.balance)).toBeTruthy();
+    expect(screen.getByText(ru.screens.profile.stats.available)).toBeTruthy();
     expect(screen.getByText(ru.screens.profile.stats.followers)).toBeTruthy();
     expect(screen.getByText(ru.screens.profile.stats.rank)).toBeTruthy();
     expect(screen.getByText('#3')).toBeTruthy();
   });
 
-  test('the edit and tasks buttons are drawn and switched off', async () => {
-    await renderProfile();
+  test('the edit button is only drawn; «Заработать» and the balance tile open their screens', async () => {
+    const onOpenEarn = jest.fn();
+    const onOpenTopUp = jest.fn();
+    await renderProfile({ onOpenEarn, onOpenTopUp });
     await screen.findByText('@mira.wav');
 
-    for (const label of [ru.screens.profile.edit, ru.screens.profile.tasks]) {
-      expect(screen.getByRole('button', { name: label }).props.accessibilityState.disabled).toBe(
-        true,
-      );
-    }
+    expect(
+      screen.getByRole('button', { name: ru.screens.profile.edit }).props.accessibilityState
+        .disabled,
+    ).toBe(true);
+    await fireEvent.press(screen.getByTestId('profile-earn'));
+    await fireEvent.press(screen.getByTestId('profile-available'));
+
+    expect(onOpenEarn).toHaveBeenCalledTimes(1);
+    expect(onOpenTopUp).toHaveBeenCalledTimes(1);
   });
 
   test('the settings button opens the settings', async () => {
@@ -113,7 +119,7 @@ describe('ProfileScreen', () => {
     await fireEvent.press(row);
 
     expect(onOpenVideo).toHaveBeenCalledWith('video-1');
-    expect(screen.getByTestId('profile-available')).toHaveTextContent('100', { exact: false });
+    expect(screen.getByTestId('portfolio')).toHaveTextContent('100', { exact: false });
   });
 
   test('a failed load shows an error with a retry button', async () => {

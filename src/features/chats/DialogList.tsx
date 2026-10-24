@@ -24,14 +24,10 @@ export function DialogList({ dialogs, onOpen }: DialogListProps) {
             accessibilityRole="button"
             accessibilityLabel={`${dialog.name}, ${dialog.message}${fresh ? `, ${ru.chats.unread.replace('{n}', String(dialog.unread))}` : ''}`}
             onPress={() => onOpen(dialog.id)}
-            style={({ pressed }) => [
-              styles.row,
-              index < dialogs.length - 1 && styles.line,
-              pressed && styles.pressed,
-            ]}
+            style={({ pressed }) => [styles.row, pressed && styles.pressed]}
           >
             <View style={styles.avatar}>
-              <Avatar initial={dialog.initial} tone={dialog.tone} size={52} square={dialog.clan} />
+              <Avatar initial={dialog.initial} tone={dialog.tone} size={52} square />
               {dialog.online ? <View style={styles.online} /> : null}
             </View>
             <View style={styles.texts}>
@@ -68,7 +64,6 @@ const useStyles = makeStyles((colors) => ({
     paddingVertical: 12,
     paddingHorizontal: 14,
   },
-  line: { borderBottomWidth: 1, borderBottomColor: colors.border },
   pressed: { backgroundColor: colors.hover },
   avatar: { width: 52, height: 52 },
   online: {
@@ -84,19 +79,19 @@ const useStyles = makeStyles((colors) => ({
   },
   texts: { flex: 1, minWidth: 0, gap: 3 },
   top: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-  name: { flexShrink: 1, fontFamily: fontFamilies.extrabold, fontSize: 15, color: colors.text },
+  name: { flexShrink: 1, fontFamily: fontFamilies.bold, fontSize: 15, color: colors.text },
   time: { fontFamily: fontFamilies.bold, fontSize: 12, color: colors.textMuted },
   timeFresh: { color: colors.textSecondary },
   message: { flex: 1, fontFamily: fontFamilies.medium, fontSize: 14, color: colors.textMuted },
-  messageFresh: { fontFamily: fontFamilies.bold, color: colors.text },
+  messageFresh: { fontFamily: fontFamilies.semibold, color: colors.text },
   badge: {
     minWidth: 22,
     height: 22,
     paddingHorizontal: 6,
-    borderRadius: 11,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.primary,
   },
-  badgeText: { fontFamily: fontFamilies.extrabold, fontSize: 12, color: colors.onPrimary },
+  badgeText: { fontFamily: fontFamilies.bold, fontSize: 12, color: colors.onPrimary },
 }));

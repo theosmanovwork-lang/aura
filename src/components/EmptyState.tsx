@@ -37,7 +37,7 @@ const useStyles = makeStyles((colors) => ({
     backgroundColor: colors.surfaceMuted,
   },
   title: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 17,
     color: colors.text,
     textAlign: 'center',

@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
 import { useTabBarInset } from '../../components/useTabBarInset';
@@ -120,8 +120,6 @@ const useStyles = makeStyles((colors) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
   },
   label: { ...typography.body, color: colors.text, flexShrink: 1 },
   danger: { color: colors.destructive },

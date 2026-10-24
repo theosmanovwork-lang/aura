@@ -175,7 +175,7 @@ const useStyles = makeStyles((colors) => ({
   content: { paddingHorizontal: 16, paddingBottom: 48, gap: 20 },
   section: { gap: 10 },
   sectionTitle: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 12,
     letterSpacing: 0.6,
     textTransform: 'uppercase',
@@ -196,7 +196,7 @@ const useStyles = makeStyles((colors) => ({
   },
   iconBoxRed: { backgroundColor: colors.negativeSoft },
   title: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 16,
     color: colors.text,
     textAlign: 'center',
@@ -226,7 +226,7 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'center',
     backgroundColor: colors.primary,
   },
-  retryText: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: colors.onPrimary },
+  retryText: { fontFamily: fontFamilies.bold, fontSize: 14, color: colors.onPrimary },
   fieldBlock: { gap: 6 },
   field: {
     height: 52,
@@ -246,7 +246,7 @@ const useStyles = makeStyles((colors) => ({
     borderRadius: 11,
     overflow: 'hidden',
     lineHeight: 22,
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 11,
     color: colors.destructive,
     backgroundColor: colors.negativeSoft,
@@ -266,7 +266,7 @@ const useStyles = makeStyles((colors) => ({
     backgroundColor: '#1A1A1A',
   },
   fundsText: { flex: 1, gap: 2 },
-  fundsTitle: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: '#FFFFFF' },
+  fundsTitle: { fontFamily: fontFamilies.bold, fontSize: 14, color: '#FFFFFF' },
   fundsSub: { fontFamily: fontFamilies.semibold, fontSize: 12, color: '#B5AC9D' },
   fundsBtn: {
     height: 40,
@@ -275,7 +275,7 @@ const useStyles = makeStyles((colors) => ({
     overflow: 'hidden',
     justifyContent: 'center',
   },
-  fundsBtnText: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: '#1A1A1A' },
+  fundsBtnText: { fontFamily: fontFamilies.bold, fontSize: 13, color: '#1A1A1A' },
   busy: {
     height: 52,
     borderRadius: 14,
@@ -286,6 +286,6 @@ const useStyles = makeStyles((colors) => ({
   },
   busyDark: { backgroundColor: '#1A1A1A' },
   busyOff: { backgroundColor: colors.border },
-  busyText: { fontFamily: fontFamilies.extrabold, fontSize: 15, color: '#FFFFFF' },
-  busyOffText: { fontFamily: fontFamilies.extrabold, fontSize: 15, color: colors.textMuted },
+  busyText: { fontFamily: fontFamilies.bold, fontSize: 15, color: '#FFFFFF' },
+  busyOffText: { fontFamily: fontFamilies.bold, fontSize: 15, color: colors.textMuted },
 }));

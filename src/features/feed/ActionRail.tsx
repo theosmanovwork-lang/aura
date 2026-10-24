@@ -115,7 +115,7 @@ const useStyles = makeStyles((colors) => ({
   likeOn: { backgroundColor: '#1A1A1A', borderWidth: 2, borderColor: '#C7CBD1' },
   quiet: { opacity: 0.85 },
   count: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 13,
     color: colors.onVideo,
     textShadowColor: colors.textShadow,

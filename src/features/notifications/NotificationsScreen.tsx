@@ -178,7 +178,7 @@ const useStyles = makeStyles((colors) => ({
   },
   title: {
     flex: 1,
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 22,
     letterSpacing: -0.6,
     color: colors.text,
@@ -190,7 +190,7 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'center',
     backgroundColor: colors.surface,
   },
-  readAllText: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: colors.text },
+  readAllText: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.text },
   filters: { flexDirection: 'row', gap: 8 },
   filter: {
     height: 36,
@@ -200,7 +200,7 @@ const useStyles = makeStyles((colors) => ({
     backgroundColor: colors.surface,
   },
   filterOn: { backgroundColor: colors.primary },
-  filterText: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: colors.text },
+  filterText: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.text },
   filterTextOn: { color: colors.onPrimary },
   empty: {
     paddingVertical: 32,
@@ -212,7 +212,7 @@ const useStyles = makeStyles((colors) => ({
   group: { marginTop: 8, gap: 8 },
   groupTitle: {
     paddingHorizontal: 4,
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 13,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
@@ -223,15 +223,13 @@ const useStyles = makeStyles((colors) => ({
     flexDirection: 'row',
     gap: 12,
     padding: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
     backgroundColor: colors.surface,
   },
   rowUnread: { backgroundColor: colors.surfaceMuted },
   icon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   texts: { flex: 1, minWidth: 0, gap: 4 },
   text: { fontFamily: fontFamilies.medium, fontSize: 14, lineHeight: 20, color: colors.text },
-  who: { fontFamily: fontFamilies.extrabold },
+  who: { fontFamily: fontFamilies.bold },
   time: { fontFamily: fontFamilies.semibold, fontSize: 12, color: colors.textMuted },
   action: {
     alignSelf: 'flex-start',
@@ -243,7 +241,7 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'center',
   },
   actionDark: { backgroundColor: colors.primary },
-  actionText: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: colors.onPrimary },
+  actionText: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.onPrimary },
   actionInk: { color: '#1A1A1A' },
   dot: { width: 8, height: 8, marginTop: 6, borderRadius: 4, backgroundColor: '#E5483A' },
 }));

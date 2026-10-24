@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
-import { AuraCoin, AuraGlyph } from '../../components/AuraIcon';
+import { AuraCoin } from '../../components/AuraIcon';
 import { Glyph } from '../../components/Glyph';
 import { SilverView } from '../../components/SilverView';
+import { Wave } from '../../components/Wave';
 import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { demoChests } from '../../data/seed/demoCommunity';
 import { formatPoints } from '../../i18n/format';
 import { countLabel } from '../../i18n/plural';
 import { ru } from '../../i18n/ru';
-import { fontFamilies, makeStyles, silver } from '../../theme';
+import { fontFamilies, makeStyles } from '../../theme';
 import { useBalance } from '../wallet/useBalance';
 import { CollectionGrid } from './CollectionGrid';
 import { QuestsCard } from './QuestsCard';
@@ -52,9 +53,8 @@ export function CardsScreen({ refreshKey = 0, onTopUp, onOpenChests }: CardsScre
       </View>
 
       <View testID="balance-card" style={styles.balanceCard}>
-        <View style={styles.bigGlyph}>
-          <AuraGlyph size={160} color={silver.coin} />
-        </View>
+        <Wave />
+        <SilverView style={styles.dot} />
         <Text style={styles.balanceLabel}>{ru.cards.balance}</Text>
         <View style={styles.balanceRow}>
           <AuraCoin size={34} tone="light" />
@@ -103,7 +103,7 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'space-between',
   },
   title: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 30,
     letterSpacing: -0.9,
     color: colors.text,
@@ -138,8 +138,8 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'center',
     backgroundColor: '#E5483A',
   },
-  chestBadgeText: { fontFamily: fontFamilies.extrabold, fontSize: 10, color: '#FFFFFF' },
-  chestsText: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: colors.onPrimary },
+  chestBadgeText: { fontFamily: fontFamilies.bold, fontSize: 10, color: '#FFFFFF' },
+  chestsText: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.onPrimary },
   balanceCard: {
     overflow: 'hidden',
     padding: 20,
@@ -147,7 +147,7 @@ const useStyles = makeStyles((colors) => ({
     gap: 6,
     backgroundColor: colors.heroCard,
   },
-  bigGlyph: { position: 'absolute', right: -40, top: -44, opacity: 0.14 },
+  dot: { position: 'absolute', right: 22, top: 20, width: 16, height: 16, borderRadius: 8 },
   balanceLabel: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.heroMuted },
   balanceRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   balance: {
@@ -158,16 +158,15 @@ const useStyles = makeStyles((colors) => ({
   },
   balanceWord: { color: '#D7DAE0' },
   today: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.heroMuted },
-  topUpWrap: { marginTop: 8, alignSelf: 'flex-start' },
+  topUpWrap: { marginTop: 14, borderRadius: 14, overflow: 'hidden' },
   topUp: {
-    height: 44,
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 20,
-    borderRadius: 22,
+    justifyContent: 'center',
+    gap: 8,
   },
-  topUpText: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: '#1A1A1A' },
+  topUpText: { fontFamily: fontFamilies.bold, fontSize: 15, color: '#1A1A1A' },
   hint: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -176,7 +175,7 @@ const useStyles = makeStyles((colors) => ({
     borderRadius: 20,
     borderWidth: 2,
     borderStyle: 'dashed',
-    borderColor: colors.fieldBorder,
+    borderColor: '#D9D2C3',
   },
   hintIcon: {
     width: 44,
@@ -187,6 +186,6 @@ const useStyles = makeStyles((colors) => ({
     backgroundColor: colors.surfaceMuted,
   },
   hintTexts: { flex: 1, gap: 2 },
-  hintTitle: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: colors.text },
+  hintTitle: { fontFamily: fontFamilies.bold, fontSize: 14, color: colors.text },
   hintText: { fontFamily: fontFamilies.semibold, fontSize: 12, color: colors.textMuted },
 }));

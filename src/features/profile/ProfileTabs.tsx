@@ -29,12 +29,11 @@ export function ProfileTabs({ selected, onSelect }: ProfileTabsProps) {
             accessibilityRole="tab"
             accessibilityState={{ selected: open }}
             onPress={() => onSelect(key)}
-            style={styles.tab}
+            style={[styles.tab, open && styles.tabOpen]}
           >
             <Text style={[styles.label, open && styles.labelOpen]}>
               {ru.screens.profile.tabs[key]}
             </Text>
-            <View style={[styles.bar, open && styles.barOpen]} />
           </Pressable>
         );
       })}
@@ -43,15 +42,16 @@ export function ProfileTabs({ selected, onSelect }: ProfileTabsProps) {
 }
 
 const useStyles = makeStyles((colors) => ({
-  row: {
-    flexDirection: 'row',
-    marginTop: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+  row: { flexDirection: 'row', gap: 6, marginTop: 4 },
+  tab: {
+    flex: 1,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.surfaceMuted,
   },
-  tab: { flex: 1, height: 44, alignItems: 'center', justifyContent: 'flex-end', gap: 9 },
-  label: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: colors.textMuted },
-  labelOpen: { color: colors.text },
-  bar: { width: 40, height: 3, borderRadius: 2, backgroundColor: 'transparent' },
-  barOpen: { backgroundColor: colors.text },
+  tabOpen: { backgroundColor: colors.primary },
+  label: { fontFamily: fontFamilies.bold, fontSize: 14, color: colors.textSecondary },
+  labelOpen: { color: colors.onPrimary },
 }));

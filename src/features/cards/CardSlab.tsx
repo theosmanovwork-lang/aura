@@ -184,7 +184,7 @@ const useStyles = makeStyles(() => ({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  stripText: { fontFamily: fontFamilies.extrabold, fontSize: 10, letterSpacing: 0.3 },
+  stripText: { fontFamily: fontFamilies.bold, fontSize: 10, letterSpacing: 0.3 },
   art: { overflow: 'hidden' },
   fill: { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
   bigCircle: {
@@ -211,7 +211,7 @@ const useStyles = makeStyles(() => ({
   },
   pillLeft: { left: 7 },
   pillRight: { right: 7, backgroundColor: 'rgba(26,26,26,0.72)' },
-  pillText: { fontFamily: fontFamilies.extrabold, fontSize: 10 },
+  pillText: { fontFamily: fontFamilies.bold, fontSize: 10 },
   pillTextLight: { color: '#FFFFFF' },
   name: {
     position: 'absolute',

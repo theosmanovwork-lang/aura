@@ -47,6 +47,7 @@ export function CommunityScreen({
   const load = useCallback(() => loadRatings(repos), [repos]);
   const { state, reload } = useLoad(load, refreshKey);
   const [query, setQuery] = useState('');
+  const [noticeShown, setNoticeShown] = useState(true);
   const [mode, setMode] = useState<TradeMode>('auctions');
   const referral = useCopyCode(demoReferralCode);
 
@@ -86,7 +87,9 @@ export function CommunityScreen({
           />
         </View>
 
-        <NoticeCard onOpen={onOpenNotifications} />
+        {noticeShown ? (
+          <NoticeCard onOpen={onOpenNotifications} onHide={() => setNoticeShown(false)} />
+        ) : null}
         <ReferralCard copied={referral.copied} onCopy={() => void referral.copy()} />
 
         <View style={styles.columns}>
@@ -119,7 +122,7 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'space-between',
   },
   title: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 30,
     letterSpacing: -0.9,
     color: colors.text,

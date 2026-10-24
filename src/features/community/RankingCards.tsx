@@ -54,7 +54,10 @@ export function PlayersCard({ authors, onOpenUser }: PlayersCardProps) {
   return (
     <View testID="players-card" style={styles.card}>
       <View style={styles.head}>
-        <Text style={styles.headTitle}>{ru.community.rating}</Text>
+        <View>
+          <Text style={styles.headTitle}>{ru.community.rating}</Text>
+          <Text style={styles.headSub}>{ru.community.ratingSub}</Text>
+        </View>
       </View>
       {authors.slice(0, TOP).map((author, index) => (
         <Row
@@ -85,7 +88,10 @@ export function ClansCard({ onOpenClan }: ClansCardProps) {
   return (
     <View testID="clans-card" style={styles.card}>
       <View style={styles.head}>
-        <Text style={styles.headTitle}>{ru.community.clans}</Text>
+        <View>
+          <Text style={styles.headTitle}>{ru.community.clans}</Text>
+          <Text style={styles.headSub}>{ru.community.clansSub}</Text>
+        </View>
         <Pressable
           disabled
           accessibilityState={{ disabled: true }}
@@ -127,14 +133,14 @@ const useStyles = makeStyles((colors) => ({
     backgroundColor: colors.surface,
   },
   head: {
-    height: 20,
     marginBottom: 4,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
-  headTitle: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: colors.text },
-  all: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: colors.text },
+  headTitle: { fontFamily: fontFamilies.bold, fontSize: 15, color: colors.text },
+  headSub: { fontFamily: fontFamilies.medium, fontSize: 11, color: colors.textMuted },
+  all: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.text },
   row: { height: 40, flexDirection: 'row', alignItems: 'center', gap: 7 },
   medal: {
     width: 22,
@@ -143,8 +149,8 @@ const useStyles = makeStyles((colors) => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  medalText: { fontFamily: fontFamilies.extrabold, fontSize: 11, color: '#1A1A1A' },
+  medalText: { fontFamily: fontFamilies.bold, fontSize: 11, color: '#1A1A1A' },
   names: { flex: 1, minWidth: 0 },
-  name: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: colors.text },
+  name: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.text },
   caption: { fontFamily: fontFamilies.bold, fontSize: 11, color: colors.textMuted },
 }));

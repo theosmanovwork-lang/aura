@@ -56,18 +56,18 @@ describe('CardsScreen', () => {
     expect(screen.getByTestId('quest-day-14')).toHaveTextContent(ru.cards.quests.chestReward, {
       exact: false,
     });
-    expect(screen.getByText(ru.cards.quests.progress.replace('{n}', '11'))).toBeTruthy();
-    expect(screen.getByText(ru.cards.quests.chestDay)).toBeTruthy();
+    expect(screen.getByText(ru.cards.quests.streak.replace('{n}', '11'))).toBeTruthy();
+    expect(screen.getByText(ru.cards.quests.claim)).toBeTruthy();
   });
 
-  test('claiming today moves the progress and the button turns into a done message', async () => {
+  test('claiming today moves the streak and the button turns into a done message', async () => {
     await renderCards();
     await screen.findByTestId('balance-card');
 
     await fireEvent.press(screen.getByTestId('quest-claim'));
 
     expect(screen.getByText(ru.cards.quests.claimed)).toBeTruthy();
-    expect(screen.getByText(ru.cards.quests.progress.replace('{n}', '12'))).toBeTruthy();
+    expect(screen.getByText(ru.cards.quests.streak.replace('{n}', '12'))).toBeTruthy();
     expect(screen.getByTestId('quest-claim').props.accessibilityState.disabled).toBe(true);
   });
 
@@ -76,7 +76,11 @@ describe('CardsScreen', () => {
     await screen.findByTestId('balance-card');
 
     expect(
-      screen.getByText(`${demoCollectionCounts.have} / ${demoCollectionCounts.total}`),
+      screen.getByText(
+        ru.cards.collectionSub
+          .replace('{have}', String(demoCollectionCounts.have))
+          .replace('{total}', String(demoCollectionCounts.total)),
+      ),
     ).toBeTruthy();
     const open = demoCollection.filter((c) => c.kind === 'open');
     const locked = demoCollection.filter((c) => c.kind === 'locked');

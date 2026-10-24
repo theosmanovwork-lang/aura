@@ -83,7 +83,7 @@ describe('palettes', () => {
   });
 
   test('a warm cream page with white cards in the light palette, a warm dark page in the dark one', () => {
-    expect(lightColors.background).toBe('#F5F1E8');
+    expect(lightColors.background).toBe('#F4F3F0');
     expect(lightColors.surface).toBe('#FFFFFF');
     expect(darkColors.background).toBe('#121110');
   });

@@ -226,3 +226,14 @@ export const demoProfile = {
   bio: 'Снимаю закаты и крыши · Москва',
   followers: 1204,
 } as const;
+
+/** The clan the user is in, for the card on the Chats tab. */
+export const demoMyClan = {
+  id: 'clan-neon',
+  name: 'Неон',
+  initial: 'Н',
+  place: 1,
+  members: 48,
+  tasksDone: 4,
+  tasksTotal: 6,
+} as const;

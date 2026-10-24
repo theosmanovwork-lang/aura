@@ -26,29 +26,29 @@ const TABULAR: 'tabular-nums'[] = ['tabular-nums'];
 
 export const typography = {
   /** The biggest text: a hero line. */
-  display: { fontFamily: fontFamilies.extrabold, fontSize: 34, lineHeight: 40, letterSpacing: -1 },
+  display: { fontFamily: fontFamilies.bold, fontSize: 34, lineHeight: 40, letterSpacing: -1 },
   /** The title of a screen: «Сообщество», «Чаты». */
-  title: { fontFamily: fontFamilies.extrabold, fontSize: 30, lineHeight: 36, letterSpacing: -0.9 },
+  title: { fontFamily: fontFamilies.bold, fontSize: 30, lineHeight: 36, letterSpacing: -0.9 },
   /** A section heading. */
-  heading: { fontFamily: fontFamilies.extrabold, fontSize: 18, lineHeight: 24 },
+  heading: { fontFamily: fontFamilies.bold, fontSize: 18, lineHeight: 24 },
   lead: { fontFamily: fontFamilies.medium, fontSize: 16, lineHeight: 24 },
   body: { fontFamily: fontFamilies.medium, fontSize: 15, lineHeight: 22 },
-  bodyStrong: { fontFamily: fontFamilies.extrabold, fontSize: 15, lineHeight: 22 },
+  bodyStrong: { fontFamily: fontFamilies.bold, fontSize: 15, lineHeight: 22 },
   bodySmall: { fontFamily: fontFamilies.medium, fontSize: 13, lineHeight: 18 },
   /** A name in a list. */
-  titleSmall: { fontFamily: fontFamilies.extrabold, fontSize: 14, lineHeight: 18 },
+  titleSmall: { fontFamily: fontFamilies.bold, fontSize: 14, lineHeight: 18 },
   caption: { fontFamily: fontFamilies.semibold, fontSize: 12, lineHeight: 16 },
   /** Label under an icon in the tab bar. */
   tabLabel: { fontFamily: fontFamilies.bold, fontSize: 10, lineHeight: 14 },
   labelCaps: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 11,
     lineHeight: 15,
     letterSpacing: 0.6,
     textTransform: 'uppercase',
   },
   eyebrow: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 12,
     lineHeight: 16,
     letterSpacing: 0.6,
@@ -69,13 +69,13 @@ export const typography = {
     fontVariant: TABULAR,
   },
   figure: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 14,
     lineHeight: 20,
     fontVariant: TABULAR,
   },
   figureSmall: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 11,
     lineHeight: 15,
     fontVariant: TABULAR,

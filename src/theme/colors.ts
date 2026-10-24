@@ -85,15 +85,15 @@ const overVideo = {
 } as const;
 
 export const lightColors: Palette = {
-  background: '#F5F1E8',
+  background: '#F4F3F0',
   surface: '#FFFFFF',
   surfaceMuted: '#ECEDEF',
   surfaceRaised: '#ECEDEF',
   hover: 'rgba(26, 26, 26, 0.05)',
-  border: '#EEE8DC',
+  border: '#ECEBE7',
   fieldBorder: '#8E8578',
   tabBar: '#FFFFFF',
-  tabBarBorder: '#E6E0D4',
+  tabBarBorder: 'rgba(0, 0, 0, 0)',
 
   text: '#1A1A1A',
   textSecondary: '#4A4F57',

@@ -172,7 +172,7 @@ const useStyles = makeStyles((colors) => ({
   },
   info: { paddingLeft: 16, paddingRight: INFO_RIGHT_SPACE, gap: 8 },
   caption: { gap: 8 },
-  author: { fontFamily: fontFamilies.extrabold, fontSize: 16, color: colors.onVideo },
+  author: { fontFamily: fontFamilies.bold, fontSize: 16, color: colors.onVideo },
   title: { fontFamily: fontFamilies.medium, fontSize: 14, lineHeight: 20, color: colors.onVideo },
   rail: { position: 'absolute', right: 8, alignItems: 'center', gap: 16 },
 }));

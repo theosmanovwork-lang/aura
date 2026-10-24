@@ -1,12 +1,13 @@
 import { useCallback, type ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { AuraText } from '../../components/AuraText';
+import { Wave } from '../../components/Wave';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { formatDateTime } from '../../i18n/format';
 import { ru } from '../../i18n/ru';
-import { makeStyles, radii, spacing, typography } from '../../theme';
+import { fontFamilies, makeStyles, spacing, typography } from '../../theme';
 import { formatPrice } from '../market/marketFormat';
 import { useLoad } from '../useLoad';
 import { loadMyInvestments, type InvestmentView } from './investmentService';
@@ -56,6 +57,36 @@ function Row({ view, onOpen }: Readonly<{ view: InvestmentView; onOpen?: (id: st
   );
 }
 
+function Portfolio({ views }: Readonly<{ views: readonly InvestmentView[] }>) {
+  const styles = useStyles();
+  const held = views.filter((v) => v.open);
+  const total = views.reduce((sum, v) => sum + v.result, 0);
+  const put = held.reduce((sum, v) => sum + v.investment.invested, 0);
+  return (
+    <View testID="portfolio" style={styles.portfolio}>
+      <Wave />
+      <View style={styles.portfolioLeft}>
+        <Text style={styles.portfolioLabel}>
+          {ru.investments.portfolio.replace(
+            '{n}',
+            `${held.length} ${ru.investments.portfolioForms[0]}`,
+          )}
+        </Text>
+        <Text style={styles.portfolioValue}>
+          {`${formatPrice(put)} `}
+          <Text style={styles.portfolioWord}>{ru.cards.coinsWord}</Text>
+        </Text>
+      </View>
+      <View style={styles.portfolioRight}>
+        <Text style={[styles.portfolioDelta, total < 0 && styles.negative]}>{signed(total)}</Text>
+        <Text style={[styles.portfolioDeltaSmall, total < 0 && styles.negative]}>
+          {ru.investments.total}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 type MyInvestmentsProps = Readonly<{
   refreshKey?: number;
   onOpenVideo?: (videoId: string) => void;
@@ -82,6 +113,7 @@ export function MyInvestments({ refreshKey = 0, onOpenVideo, renderEmpty }: MyIn
 
   return (
     <View style={styles.section}>
+      <Portfolio views={state.data} />
       <Text style={styles.title} accessibilityRole="header">
         {ru.investments.title}
       </Text>
@@ -93,28 +125,52 @@ export function MyInvestments({ refreshKey = 0, onOpenVideo, renderEmpty }: MyIn
 }
 
 const useStyles = makeStyles((colors) => ({
-  section: { gap: spacing.sm },
-  title: { ...typography.bodyStrong, color: colors.text },
+  section: { gap: 8, paddingTop: 4 },
+  title: { ...typography.bodyStrong, color: colors.text, paddingTop: spacing.sm },
+  portfolio: {
+    overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: colors.heroCard,
+  },
+  portfolioLeft: { gap: 2 },
+  portfolioLabel: { fontFamily: fontFamilies.semibold, fontSize: 12, color: colors.heroMuted },
+  portfolioValue: {
+    fontFamily: fontFamilies.displayHeavy,
+    fontSize: 20,
+    letterSpacing: -0.5,
+    color: colors.onHeroCard,
+  },
+  portfolioWord: { color: '#D7DAE0' },
+  portfolioRight: { alignItems: 'flex-end', gap: 2 },
+  portfolioDelta: { fontFamily: fontFamilies.bold, fontSize: 15, color: '#7FE0B8' },
+  portfolioDeltaSmall: { fontFamily: fontFamilies.bold, fontSize: 12, color: '#7FE0B8' },
+  negative: { color: '#FF8A80' },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
+    gap: 12,
+    minHeight: 56,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    backgroundColor: colors.surface,
   },
   tile: {
     width: TILE,
     height: TILE,
-    borderRadius: radii.control,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surfaceMuted,
   },
   tileLetter: { ...typography.heading, color: colors.text },
-  text: { flex: 1, gap: spacing.xxs },
-  name: { ...typography.titleSmall, color: colors.text },
-  caption: { ...typography.caption, color: colors.textMuted },
-  result: { alignItems: 'flex-end', gap: spacing.xxs },
-  amount: { ...typography.figure, color: colors.text },
+  text: { flex: 1, gap: 1 },
+  name: { fontFamily: fontFamilies.bold, fontSize: 14, color: colors.text },
+  caption: { fontFamily: fontFamilies.medium, fontSize: 12, color: colors.textMuted },
+  result: { alignItems: 'flex-end', gap: 1 },
+  amount: { fontFamily: fontFamilies.bold, fontSize: 14, color: colors.text },
 }));

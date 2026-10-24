@@ -19,7 +19,9 @@ export function CollectionGrid() {
             {t.collection}
           </Text>
           <Text style={styles.count}>
-            {demoCollectionCounts.have} / {demoCollectionCounts.total}
+            {t.collectionSub
+              .replace('{have}', String(demoCollectionCounts.have))
+              .replace('{total}', String(demoCollectionCounts.total))}
           </Text>
         </View>
         <Pressable
@@ -83,24 +85,22 @@ const useStyles = makeStyles((colors) => ({
   head: {
     marginTop: 12,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
   },
-  title: { flexDirection: 'row', alignItems: 'baseline', gap: 8 },
-  heading: { fontFamily: fontFamilies.extrabold, fontSize: 18, color: colors.text },
-  count: { fontFamily: fontFamilies.bold, fontSize: 14, color: colors.textMuted },
+  title: { gap: 2 },
+  heading: { fontFamily: fontFamilies.bold, fontSize: 20, letterSpacing: -0.3, color: colors.text },
+  count: { fontFamily: fontFamilies.medium, fontSize: 12, color: colors.textMuted },
   filter: {
     height: 36,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     paddingHorizontal: 12,
-    borderRadius: 18,
-    borderWidth: 1.5,
-    borderColor: colors.fieldBorder,
-    backgroundColor: colors.surface,
+    borderRadius: 12,
+    backgroundColor: colors.surfaceMuted,
   },
-  filterText: { fontFamily: fontFamilies.extrabold, fontSize: 13, color: colors.text },
+  filterText: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.text },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   cell: { width: '30.5%', gap: 6 },
   lockedCell: { opacity: 0.6 },
@@ -119,15 +119,15 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'center',
     backgroundColor: '#8E8578',
   },
-  lockedNo: { fontFamily: fontFamilies.extrabold, fontSize: 10, color: '#FFFFFF' },
+  lockedNo: { fontFamily: fontFamilies.bold, fontSize: 10, color: '#FFFFFF' },
   lockedArt: {
     height: 124,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#E6E0D4',
+    backgroundColor: '#E6E4DF',
   },
   caption: { paddingHorizontal: 2 },
-  rarity: { fontFamily: fontFamilies.extrabold, fontSize: 12, color: colors.text },
+  rarity: { fontFamily: fontFamilies.bold, fontSize: 12, color: colors.text },
   run: { fontFamily: fontFamilies.bold, fontSize: 11, color: colors.textMuted },
 }));

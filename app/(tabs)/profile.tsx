@@ -13,6 +13,8 @@ export default function ProfileTab() {
       onOpenSettings={() => router.push('/settings')}
       onOpenVideo={(id) => router.push({ pathname: '/video/[id]', params: { id } })}
       onOpenFeed={() => router.navigate('/')}
+      onOpenTopUp={() => router.push('/topup')}
+      onOpenEarn={() => router.navigate('/cards')}
     />
   );
 }

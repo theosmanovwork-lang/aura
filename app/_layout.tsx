@@ -43,7 +43,7 @@ function Screens() {
               headerShadowVisible: false,
               headerStyle: { backgroundColor: colors.background },
               headerTintColor: colors.text,
-              headerTitleStyle: { fontFamily: fontFamilies.extrabold },
+              headerTitleStyle: { fontFamily: fontFamilies.bold },
             }}
           />
         ))}

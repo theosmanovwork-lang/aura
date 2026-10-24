@@ -48,7 +48,7 @@ const useStyles = makeStyles((colors) => ({
   title: {
     flex: 1,
     textAlign: 'center',
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 17,
     color: colors.text,
   },

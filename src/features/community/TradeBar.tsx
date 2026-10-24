@@ -1,41 +1,45 @@
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { Glyph } from '../../components/Glyph';
+import { SilverView } from '../../components/SilverView';
 import { useTabBarInset } from '../../components/useTabBarInset';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 
-/** The black pill at the bottom: «Аукцион / Торги». It floats over the list. */
+/** The black button at the bottom: «Выставить карточку». It floats over the list. */
 export function TradeBar() {
   const styles = useStyles();
   const colors = useColors();
   const bottom = useTabBarInset();
   return (
-    <Pressable
-      disabled
-      accessibilityState={{ disabled: true }}
-      testID="trade-button"
-      accessibilityRole="button"
-      accessibilityLabel={ru.community.trade}
-      style={[styles.pill, { bottom: bottom + 8 }]}
-    >
-      <Glyph name="swap" size={22} color={colors.onPrimary} strokeWidth={2.2} />
-      <Text style={[styles.text, { color: colors.onPrimary }]}>{ru.community.trade}</Text>
-    </Pressable>
+    <View pointerEvents="box-none" style={[styles.wrap, { bottom: bottom + 16 }]}>
+      <Pressable
+        disabled
+        accessibilityState={{ disabled: true }}
+        testID="trade-button"
+        accessibilityRole="button"
+        accessibilityLabel={ru.community.trade}
+        style={styles.pill}
+      >
+        <SilverView style={styles.mark}>
+          <Glyph name="plus" size={16} color="#1A1A1A" strokeWidth={2.8} />
+        </SilverView>
+        <Text style={[styles.text, { color: colors.onPrimary }]}>{ru.community.trade}</Text>
+      </Pressable>
+    </View>
   );
 }
 
 const useStyles = makeStyles((colors) => ({
+  wrap: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
   pill: {
-    position: 'absolute',
-    alignSelf: 'center',
     height: 52,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     paddingLeft: 18,
     paddingRight: 22,
-    borderRadius: 26,
+    borderRadius: 16,
     backgroundColor: colors.primary,
     shadowColor: '#1A1A1A',
     shadowOpacity: 0.28,
@@ -43,5 +47,6 @@ const useStyles = makeStyles((colors) => ({
     shadowOffset: { width: 0, height: 10 },
     elevation: 6,
   },
-  text: { fontFamily: fontFamilies.extrabold, fontSize: 15 },
+  mark: { width: 26, height: 26, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
+  text: { fontFamily: fontFamilies.bold, fontSize: 15 },
 }));

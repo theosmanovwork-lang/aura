@@ -5,28 +5,28 @@ import { Glyph } from '../../components/Glyph';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 
-type Day = Readonly<{ n: number; reward: string; chest: boolean }>;
+type Day = Readonly<{ n: number; weekday: string; reward: string; chest: boolean }>;
 
-/** A week of the monthly calendar: the days around today (day 12), with the chest on day 14. */
+/** A week of the monthly calendar: the days around today (the 12th), with the chest on the 14th. */
 const WEEK: readonly Day[] = [
-  { n: 9, reward: '50', chest: false },
-  { n: 10, reward: '50', chest: false },
-  { n: 11, reward: '75', chest: false },
-  { n: 12, reward: '100', chest: false },
-  { n: 13, reward: '100', chest: false },
-  { n: 14, reward: ru.cards.quests.chestReward, chest: true },
-  { n: 15, reward: '150', chest: false },
+  { n: 9, weekday: ru.cards.quests.weekdays[0], reward: '+50', chest: false },
+  { n: 10, weekday: ru.cards.quests.weekdays[1], reward: '+50', chest: false },
+  { n: 11, weekday: ru.cards.quests.weekdays[2], reward: '+75', chest: false },
+  { n: 12, weekday: ru.cards.quests.weekdays[3], reward: '+100', chest: false },
+  { n: 13, weekday: ru.cards.quests.weekdays[4], reward: '+100', chest: false },
+  { n: 14, weekday: ru.cards.quests.weekdays[5], reward: ru.cards.quests.chestReward, chest: true },
+  { n: 15, weekday: ru.cards.quests.weekdays[6], reward: '+150', chest: false },
 ];
 const TODAY = 12;
-const DAYS_IN_MONTH = 31;
+const STREAK_BEFORE_TODAY = 11;
 
 type QuestsCardProps = Readonly<{ claimed: boolean; onClaim: () => void }>;
 
-/** «Ежедневные квесты»: the calendar of rewards and the «Забрать» button for today (the claim is only drawn). */
+/** «Ежедневные квесты»: the week of rewards and the «Забрать» button for today (the claim is only drawn). */
 export function QuestsCard({ claimed, onClaim }: QuestsCardProps) {
   const styles = useStyles();
   const t = ru.cards.quests;
-  const done = TODAY - 1 + (claimed ? 1 : 0);
+  const streak = STREAK_BEFORE_TODAY + (claimed ? 1 : 0);
   return (
     <View style={styles.card}>
       <View style={styles.head}>
@@ -34,22 +34,12 @@ export function QuestsCard({ claimed, onClaim }: QuestsCardProps) {
           <Text accessibilityRole="header" style={styles.title}>
             {t.title}
           </Text>
-          <Text style={styles.subtitle}>{t.subtitle}</Text>
+          <Text testID="quest-streak" style={styles.subtitle}>
+            {t.streak.replace('{n}', String(streak))}
+          </Text>
         </View>
         <View style={styles.month}>
           <Text style={styles.monthText}>{t.month}</Text>
-        </View>
-      </View>
-      <View style={styles.progress}>
-        <View style={styles.progressLabels}>
-          <Text style={styles.small}>{t.progress.replace('{n}', String(done))}</Text>
-          <Text style={styles.small}>{t.chestDay}</Text>
-        </View>
-        <View style={styles.track}>
-          <View
-            testID="quest-progress"
-            style={[styles.fill, { width: `${(done / DAYS_IN_MONTH) * 100}%` }]}
-          />
         </View>
       </View>
       <View style={styles.week}>
@@ -78,20 +68,23 @@ function DayCell({ day, claimed }: Readonly<{ day: Day; claimed: boolean }>) {
   const colors = useColors();
   const finished = day.n < TODAY || (day.n === TODAY && claimed);
   const today = day.n === TODAY && !claimed;
+  const ink = today ? colors.onPrimary : finished ? colors.textMuted : colors.text;
+  const sub = today ? '#CFC6B6' : colors.textMuted;
   return (
     <View
       testID={`quest-day-${day.n}`}
       style={[styles.day, finished && styles.dayDone, today && styles.dayToday]}
     >
-      <Text style={styles.dayLabel}>{ru.cards.quests.day.replace('{n}', String(day.n))}</Text>
+      <Text style={[styles.weekday, { color: sub }]}>{day.weekday}</Text>
+      <Text style={[styles.dayNumber, { color: ink }]}>{day.n}</Text>
       {finished ? (
-        <Glyph name="check" size={20} color={colors.textSecondary} strokeWidth={2.8} />
+        <Glyph name="check" size={20} color={colors.textMuted} strokeWidth={2.8} />
       ) : day.chest ? (
-        <Glyph name="chest" size={20} color={colors.text} strokeWidth={2.2} />
+        <Glyph name="chest" size={20} color={ink} strokeWidth={2.2} />
       ) : (
-        <AuraCoin size={20} />
+        <AuraCoin size={20} tone={today ? 'light' : 'dark'} />
       )}
-      <Text style={styles.dayLabel}>{day.reward}</Text>
+      <Text style={[styles.reward, { color: sub }]}>{day.reward}</Text>
     </View>
   );
 }
@@ -100,7 +93,7 @@ const useStyles = makeStyles((colors) => ({
   card: { padding: 16, borderRadius: 20, gap: 12, backgroundColor: colors.surface },
   head: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 },
   headTexts: { flex: 1, gap: 2 },
-  title: { fontFamily: fontFamilies.extrabold, fontSize: 16, color: colors.text },
+  title: { fontFamily: fontFamilies.bold, fontSize: 16, color: colors.text },
   subtitle: { fontFamily: fontFamilies.medium, fontSize: 13, color: colors.textMuted },
   month: {
     height: 24,
@@ -109,27 +102,22 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'center',
     backgroundColor: colors.surfaceMuted,
   },
-  monthText: { fontFamily: fontFamilies.extrabold, fontSize: 12, color: colors.textSecondary },
-  progress: { gap: 6 },
-  progressLabels: { flexDirection: 'row', justifyContent: 'space-between' },
-  small: { fontFamily: fontFamilies.bold, fontSize: 12, color: colors.textMuted },
-  track: { height: 8, borderRadius: 4, overflow: 'hidden', backgroundColor: colors.border },
-  fill: { height: 8, borderRadius: 4, backgroundColor: colors.primary },
+  monthText: { fontFamily: fontFamilies.bold, fontSize: 12, color: colors.textSecondary },
   week: { flexDirection: 'row', gap: 6 },
   day: {
     flex: 1,
-    height: 74,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    height: 88,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 4,
+    gap: 3,
     backgroundColor: colors.background,
   },
-  dayDone: { backgroundColor: colors.surfaceMuted },
-  dayToday: { backgroundColor: colors.surface, borderColor: colors.text },
-  dayLabel: { fontFamily: fontFamilies.extrabold, fontSize: 11, color: colors.text },
+  dayDone: { backgroundColor: 'transparent' },
+  dayToday: { backgroundColor: colors.primary },
+  weekday: { fontFamily: fontFamilies.medium, fontSize: 10 },
+  dayNumber: { fontFamily: fontFamilies.bold, fontSize: 15, lineHeight: 17 },
+  reward: { fontFamily: fontFamilies.bold, fontSize: 10 },
   claim: {
     height: 48,
     borderRadius: 14,
@@ -137,7 +125,7 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'center',
     backgroundColor: colors.primary,
   },
-  claimDone: { backgroundColor: colors.border },
-  claimText: { fontFamily: fontFamilies.extrabold, fontSize: 15, color: colors.onPrimary },
+  claimDone: { backgroundColor: colors.surfaceMuted },
+  claimText: { fontFamily: fontFamilies.bold, fontSize: 15, color: colors.onPrimary },
   claimTextDone: { color: colors.textMuted },
 }));

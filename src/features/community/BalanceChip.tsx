@@ -31,5 +31,5 @@ const useStyles = makeStyles((colors) => ({
     borderRadius: 18,
     backgroundColor: colors.surface,
   },
-  text: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: colors.text },
+  text: { fontFamily: fontFamilies.bold, fontSize: 14, color: colors.text },
 }));

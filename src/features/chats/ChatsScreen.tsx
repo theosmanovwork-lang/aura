@@ -7,13 +7,16 @@ import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { demoDialogs } from '../../data/seed/demoCommunity';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
-import { ClanCard, GlobalChatCard } from './ChatCards';
+import { GlobalChatCard, MyClanCard } from './ChatCards';
 import { DialogList } from './DialogList';
 
 /** Chats of the design: the global chat, the clan invitation and the conversations (made up for now). */
-type ChatsScreenProps = Readonly<{ onOpenDialog?: (dialogId: string) => void }>;
+type ChatsScreenProps = Readonly<{
+  onOpenDialog?: (dialogId: string) => void;
+  onOpenClan?: (clanId: string) => void;
+}>;
 
-export function ChatsScreen({ onOpenDialog }: ChatsScreenProps) {
+export function ChatsScreen({ onOpenDialog, onOpenClan }: ChatsScreenProps) {
   const styles = useStyles();
   const colors = useColors();
   const content = useTabScreenContent(styles.content);
@@ -41,16 +44,16 @@ export function ChatsScreen({ onOpenDialog }: ChatsScreenProps) {
           </Pressable>
         </View>
         <GlobalChatCard />
-        <ClanCard />
+        <MyClanCard onOpen={onOpenClan} />
         <View style={styles.sectionHead}>
-          <Text accessibilityRole="header" style={styles.section}>
-            {ru.chats.messages}
-          </Text>
-          {fresh > 0 ? (
-            <View style={styles.count}>
-              <Text style={styles.countText}>{ru.chats.fresh.replace('{n}', String(fresh))}</Text>
-            </View>
-          ) : null}
+          <View style={styles.sectionTexts}>
+            <Text accessibilityRole="header" style={styles.section}>
+              {ru.chats.messages}
+            </Text>
+            <Text style={styles.sectionSub}>
+              {ru.chats.messagesSub.replace('{n}', String(fresh))}
+            </Text>
+          </View>
         </View>
         <DialogList
           dialogs={dialogs}
@@ -84,7 +87,7 @@ const useStyles = makeStyles((colors) => ({
     justifyContent: 'space-between',
   },
   title: {
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 30,
     letterSpacing: -0.9,
     color: colors.text,
@@ -92,7 +95,7 @@ const useStyles = makeStyles((colors) => ({
   round: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surface,
@@ -100,24 +103,18 @@ const useStyles = makeStyles((colors) => ({
   sectionHead: {
     marginTop: 12,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
   },
-  section: { fontFamily: fontFamilies.extrabold, fontSize: 18, color: colors.text },
-  count: {
-    height: 24,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    justifyContent: 'center',
-    backgroundColor: colors.surfaceMuted,
-  },
-  countText: { fontFamily: fontFamilies.extrabold, fontSize: 12, color: colors.textSecondary },
+  sectionTexts: { gap: 2 },
+  section: { fontFamily: fontFamilies.bold, fontSize: 20, letterSpacing: -0.3, color: colors.text },
+  sectionSub: { fontFamily: fontFamilies.medium, fontSize: 12, color: colors.textMuted },
   fab: {
     position: 'absolute',
     right: 16,
     width: 56,
     height: 56,
-    borderRadius: 28,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.primary,

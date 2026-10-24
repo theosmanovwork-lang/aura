@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
-import { AuraCoin } from '../../components/AuraIcon';
-import { AuraText } from '../../components/AuraText';
 import { Avatar } from '../../components/Avatar';
 import { EmptyState } from '../../components/EmptyState';
 import { Glyph, type GlyphName } from '../../components/Glyph';
 import { Message } from '../../components/Message';
+import { SilverView } from '../../components/SilverView';
+import { Wave, WAVE_FILL } from '../../components/Wave';
 import { useTabScreenContent } from '../../components/useTabScreenContent';
 import { useRepositories } from '../../data/RepositoriesProvider';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
@@ -26,6 +26,9 @@ const TAB_GLYPHS: Record<ProfileTabKey, GlyphName> = {
   reposts: 'repost',
 };
 
+const HEADER_HEIGHT = 190;
+const SHEET_TOP = 158;
+
 type ProfileScreenProps = Readonly<{
   now?: () => number;
   /** Change it to load the profile again (for example every time the tab comes into view). */
@@ -33,6 +36,8 @@ type ProfileScreenProps = Readonly<{
   onOpenSettings?: () => void;
   onOpenVideo?: (videoId: string) => void;
   onOpenFeed?: () => void;
+  onOpenTopUp?: () => void;
+  onOpenEarn?: () => void;
 }>;
 
 export function ProfileScreen({
@@ -41,6 +46,8 @@ export function ProfileScreen({
   onOpenSettings,
   onOpenVideo,
   onOpenFeed,
+  onOpenTopUp,
+  onOpenEarn,
 }: ProfileScreenProps) {
   const repos = useRepositories();
   const clock = useLatest(now);
@@ -69,6 +76,8 @@ export function ProfileScreen({
       onOpenSettings={onOpenSettings}
       onOpenVideo={onOpenVideo}
       onOpenFeed={onOpenFeed}
+      onOpenTopUp={onOpenTopUp}
+      onOpenEarn={onOpenEarn}
     />
   );
 }
@@ -81,6 +90,8 @@ type BodyProps = Readonly<{
   onOpenSettings?: () => void;
   onOpenVideo?: (videoId: string) => void;
   onOpenFeed?: () => void;
+  onOpenTopUp?: () => void;
+  onOpenEarn?: () => void;
 }>;
 
 function ProfileBody({
@@ -91,116 +102,153 @@ function ProfileBody({
   onOpenSettings,
   onOpenVideo,
   onOpenFeed,
+  onOpenTopUp,
+  onOpenEarn,
 }: BodyProps) {
   const styles = useStyles();
   const colors = useColors();
   const content = useTabScreenContent(styles.content);
   const t = ru.screens.profile;
   return (
-    <ScrollView testID="profile-scroll" style={styles.page} contentContainerStyle={content}>
-      <View style={styles.topBar}>
-        <View style={styles.side} />
-        <Text accessibilityRole="header" style={styles.handle}>
-          {`@${profile.nickname}`}
-        </Text>
-        <Pressable
-          testID="profile-settings"
-          accessibilityRole="button"
-          accessibilityLabel={t.settings}
-          onPress={onOpenSettings}
-          style={styles.side}
-        >
-          <View style={styles.round}>
-            <Glyph name="sliders" size={20} color={colors.text} />
-          </View>
-        </Pressable>
+    <View style={styles.page}>
+      <View pointerEvents="none" style={styles.header}>
+        <SilverView style={styles.circle} />
+        <View style={styles.goldDot} />
       </View>
+      <View pointerEvents="none" style={styles.sheet} />
+      <ScrollView testID="profile-scroll" style={styles.scroll} contentContainerStyle={content}>
+        <View style={styles.topBar}>
+          <View style={styles.side} />
+          <Text accessibilityRole="header" style={styles.handle}>
+            {`@${profile.nickname}`}
+          </Text>
+          <Pressable
+            testID="profile-settings"
+            accessibilityRole="button"
+            accessibilityLabel={t.settings}
+            onPress={onOpenSettings}
+            style={styles.settings}
+          >
+            <Glyph name="sliders" size={20} color="#FFFFFF" />
+          </Pressable>
+        </View>
 
-      <View style={styles.who}>
-        <View style={styles.avatarRing}>
-          <Avatar
-            testID="profile-avatar"
-            initial={profile.nickname.slice(0, 1).toUpperCase()}
-            tone="brand"
-            size={88}
+        <View style={styles.who}>
+          <View style={styles.avatarRing}>
+            <Avatar
+              testID="profile-avatar"
+              initial={profile.nickname.slice(0, 1).toUpperCase()}
+              tone="brand"
+              size={78}
+            />
+          </View>
+          <Text style={styles.name}>{demoProfile.displayName}</Text>
+          <Text style={styles.bio}>{demoProfile.bio}</Text>
+        </View>
+
+        <Tiles profile={profile} onOpenTopUp={onOpenTopUp} />
+
+        <View style={styles.buttons}>
+          <View
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel={t.edit}
+            accessibilityState={{ disabled: true }}
+            style={[styles.button, styles.buttonSoft]}
+          >
+            <Text style={styles.buttonSoftText}>{t.edit}</Text>
+          </View>
+          <Pressable
+            testID="profile-earn"
+            accessibilityRole="button"
+            onPress={onOpenEarn}
+            style={[styles.button, styles.buttonDark]}
+          >
+            <Glyph name="trend" size={18} color={colors.onPrimary} strokeWidth={2.4} />
+            <Text style={styles.buttonDarkText}>{t.tasks}</Text>
+          </Pressable>
+        </View>
+
+        <ProfileTabs selected={tab} onSelect={onTab} />
+
+        {tab === 'investments' ? (
+          <MyInvestments
+            refreshKey={refreshKey}
+            onOpenVideo={onOpenVideo}
+            renderEmpty={() => <Empty tab="investments" onOpenFeed={onOpenFeed} />}
           />
-        </View>
-        <Text style={styles.name}>{demoProfile.displayName}</Text>
-        <Text style={styles.bio}>{demoProfile.bio}</Text>
-      </View>
-
-      <Stats profile={profile} />
-
-      <View testID="profile-available" style={styles.available}>
-        <View style={styles.availableLeft}>
-          <Text style={styles.availableLabel}>{t.available}</Text>
-          <View style={styles.availableRow}>
-            <AuraCoin size={22} />
-            <Text testID="profile-balance" style={styles.availableValue}>
-              {formatPoints(profile.balance)}
-            </Text>
-          </View>
-        </View>
-        <Text style={styles.invested}>
-          {`${formatPoints(profile.inInvestments)}\n${t.invested}`}
-        </Text>
-      </View>
-
-      <View style={styles.buttons}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ disabled: true }}
-          disabled
-          style={[styles.button, styles.buttonLine]}
-        >
-          <Text style={styles.buttonLineText}>{t.edit}</Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ disabled: true }}
-          disabled
-          style={[styles.button, styles.buttonDark]}
-        >
-          <Text style={styles.buttonDarkText}>{t.tasks}</Text>
-        </Pressable>
-      </View>
-
-      <ProfileTabs selected={tab} onSelect={onTab} />
-
-      {tab === 'investments' ? (
-        <MyInvestments
-          refreshKey={refreshKey}
-          onOpenVideo={onOpenVideo}
-          renderEmpty={() => <Empty tab="investments" onOpenFeed={onOpenFeed} />}
-        />
-      ) : (
-        <Empty tab={tab} onOpenFeed={onOpenFeed} />
-      )}
-    </ScrollView>
+        ) : (
+          <Empty tab={tab} onOpenFeed={onOpenFeed} />
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
-function Stats({ profile }: Readonly<{ profile: ProfileView }>) {
+function Tiles({
+  profile,
+  onOpenTopUp,
+}: Readonly<{ profile: ProfileView; onOpenTopUp?: () => void }>) {
   const styles = useStyles();
   const t = ru.screens.profile.stats;
+  const rank = profile.rank === null ? '—' : `#${profile.rank}`;
+  const spoken = (label: string, value: string) =>
+    ru.screens.profile.statsLabel.replace('{label}', label).replace('{value}', value);
+  const available = formatPoints(profile.balance);
+  const followers = formatPoints(demoProfile.followers);
   return (
-    <View style={styles.stats}>
-      <View style={styles.stat}>
-        <View style={styles.statRow}>
-          <AuraCoin size={16} />
-          <Text style={styles.statValue}>
-            {formatPoints(profile.balance + profile.inInvestments)}
-          </Text>
+    <View style={styles.tiles}>
+      <Pressable
+        testID="profile-available"
+        accessibilityRole="button"
+        accessibilityLabel={spoken(t.available, available)}
+        onPress={onOpenTopUp}
+        style={[styles.tile, styles.tileDark]}
+      >
+        <Wave size={60} />
+        <View style={[styles.tileIcon, styles.tileIconDark]}>
+          <Glyph name="plus" size={16} color="#FFFFFF" strokeWidth={2.4} />
         </View>
-        <Text style={styles.statLabel}>{t.balance}</Text>
-      </View>
-      <View style={[styles.stat, styles.statMiddle]}>
-        <Text style={styles.statValue}>{formatPoints(demoProfile.followers)}</Text>
-        <Text style={styles.statLabel}>{t.followers}</Text>
-      </View>
-      <View style={styles.stat}>
-        <Text style={styles.statValue}>{profile.rank === null ? '—' : `#${profile.rank}`}</Text>
-        <Text style={styles.statLabel}>{t.rank}</Text>
+        <View>
+          <Text testID="profile-balance" style={[styles.tileValue, styles.onDark]}>
+            {available}
+          </Text>
+          <Text style={[styles.tileLabel, styles.onDarkMuted]}>{t.available}</Text>
+        </View>
+      </Pressable>
+      <SilverView style={styles.tile}>
+        <View
+          accessible
+          accessibilityLabel={spoken(t.followers, followers)}
+          style={styles.tileFill}
+        >
+          <Wave size={60} fill={WAVE_FILL.onChrome} />
+          <View style={[styles.tileIcon, styles.tileIconInk]}>
+            <Glyph name="person" size={16} color="#1A1A1A" strokeWidth={2.2} />
+          </View>
+          <View>
+            <Text testID="profile-followers" style={[styles.tileValue, styles.onSilver]}>
+              {followers}
+            </Text>
+            <Text style={[styles.tileLabel, styles.onSilverMuted]}>{t.followers}</Text>
+          </View>
+        </View>
+      </SilverView>
+      <View
+        accessible
+        accessibilityLabel={spoken(t.rank, rank)}
+        style={[styles.tile, styles.tileBrand]}
+      >
+        <Wave size={80} fill={WAVE_FILL.onUltramarine} />
+        <View style={[styles.tileIcon, styles.tileIconBrand]}>
+          <Glyph name="arrowUp" size={16} color="#FFFFFF" strokeWidth={2.6} />
+        </View>
+        <View>
+          <Text testID="profile-rank" style={[styles.tileValue, styles.onDark]}>
+            {rank}
+          </Text>
+          <Text style={[styles.tileLabel, styles.onBrandMuted]}>{t.rank}</Text>
+        </View>
       </View>
     </View>
   );
@@ -231,9 +279,9 @@ function Empty({ tab, onOpenFeed }: EmptyProps) {
           {shoot ? (
             <Glyph name="plus" size={16} color={colors.onPrimary} strokeWidth={2.6} />
           ) : null}
-          <AuraText style={styles.ctaText}>
+          <Text style={styles.ctaText}>
             {shoot ? ru.screens.profile.shoot : ru.screens.profile.watch}
-          </AuraText>
+          </Text>
         </Pressable>
       }
     />
@@ -242,86 +290,125 @@ function Empty({ tab, onOpenFeed }: EmptyProps) {
 
 const useStyles = makeStyles((colors) => ({
   page: { flex: 1, backgroundColor: colors.background },
+  header: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: HEADER_HEIGHT,
+    overflow: 'hidden',
+    backgroundColor: '#1A1A1A',
+  },
+  circle: {
+    position: 'absolute',
+    left: -50,
+    top: 80,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    opacity: 0.85,
+  },
+  goldDot: {
+    position: 'absolute',
+    left: 318,
+    top: 118,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#E8B04B',
+  },
+  sheet: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: SHEET_TOP,
+    bottom: 0,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    backgroundColor: colors.background,
+  },
+  scroll: { flex: 1 },
   content: { paddingHorizontal: 16, gap: 12 },
   topBar: { height: 44, flexDirection: 'row', alignItems: 'center' },
-  side: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  side: { width: 44, height: 44 },
   handle: {
     flex: 1,
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 17,
     textAlign: 'center',
-    color: colors.text,
+    color: '#FFFFFF',
   },
-  round: {
+  settings: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: 'rgba(255,255,255,0.14)',
   },
   who: { alignItems: 'center', gap: 4 },
   avatarRing: {
-    width: 94,
-    height: 94,
-    borderRadius: 47,
-    borderWidth: 3,
-    borderColor: '#C7CBD1',
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    borderWidth: 5,
+    borderColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+    backgroundColor: colors.brand,
   },
   name: {
     marginTop: 8,
-    fontFamily: fontFamilies.extrabold,
+    fontFamily: fontFamilies.bold,
     fontSize: 20,
     letterSpacing: -0.4,
     color: colors.text,
   },
   bio: { fontFamily: fontFamilies.semibold, fontSize: 13, color: colors.textMuted },
-  stats: {
-    flexDirection: 'row',
-    paddingVertical: 16,
-    paddingHorizontal: 4,
-    borderRadius: 20,
-    backgroundColor: colors.surface,
-  },
-  stat: { flex: 1, alignItems: 'center', gap: 2 },
-  statMiddle: { borderLeftWidth: 1, borderRightWidth: 1, borderColor: colors.border },
-  statRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  statValue: { fontFamily: fontFamilies.extrabold, fontSize: 17, color: colors.text },
-  statLabel: { fontFamily: fontFamilies.bold, fontSize: 12, color: colors.textMuted },
-  available: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  tiles: { flexDirection: 'row', gap: 10 },
+  tile: {
+    flex: 1,
+    height: 92,
+    padding: 12,
+    borderRadius: 16,
+    overflow: 'hidden',
     justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    backgroundColor: colors.surfaceMuted,
   },
-  availableLeft: { gap: 2 },
-  availableLabel: { fontFamily: fontFamilies.extrabold, fontSize: 12, color: colors.textSecondary },
-  availableRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  availableValue: { fontFamily: fontFamilies.displayHeavy, fontSize: 22, color: colors.text },
-  invested: {
-    textAlign: 'right',
-    fontFamily: fontFamilies.bold,
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.textSecondary,
+  tileFill: { flex: 1, justifyContent: 'space-between' },
+  tileDark: { backgroundColor: '#1A1A1A' },
+  tileBrand: { backgroundColor: '#3A3FD4' },
+  tileIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  tileIconDark: { backgroundColor: 'rgba(255,255,255,0.12)' },
+  tileIconInk: { backgroundColor: 'rgba(26,26,26,0.08)' },
+  tileIconBrand: { backgroundColor: 'rgba(255,255,255,0.16)' },
+  tileValue: { fontFamily: fontFamilies.bold, fontSize: 17, letterSpacing: -0.3 },
+  tileLabel: { fontFamily: fontFamilies.medium, fontSize: 11 },
+  onDark: { color: '#FFFFFF' },
+  onDarkMuted: { color: '#B5AC9D' },
+  onBrandMuted: { color: '#C9CBF5' },
+  onSilver: { color: '#1A1A1A' },
+  onSilverMuted: { color: '#4A4F57' },
   buttons: { flexDirection: 'row', gap: 8 },
   button: {
     flex: 1,
     height: 48,
     borderRadius: 14,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 6,
   },
-  buttonLine: { borderWidth: 1.5, borderColor: colors.text, backgroundColor: colors.surface },
-  buttonLineText: { fontFamily: fontFamilies.extrabold, fontSize: 15, color: colors.text },
+  buttonSoft: { backgroundColor: colors.surfaceMuted, opacity: 0.7 },
+  buttonSoftText: { fontFamily: fontFamilies.bold, fontSize: 15, color: colors.text },
   buttonDark: { backgroundColor: colors.primary },
-  buttonDarkText: { fontFamily: fontFamilies.extrabold, fontSize: 15, color: colors.onPrimary },
+  buttonDarkText: { fontFamily: fontFamilies.bold, fontSize: 15, color: colors.onPrimary },
   cta: {
     marginTop: 8,
     height: 44,
@@ -332,5 +419,5 @@ const useStyles = makeStyles((colors) => ({
     borderRadius: 14,
     backgroundColor: colors.primary,
   },
-  ctaText: { fontFamily: fontFamilies.extrabold, fontSize: 14, color: colors.onPrimary },
+  ctaText: { fontFamily: fontFamilies.bold, fontSize: 14, color: colors.onPrimary },
 }));
