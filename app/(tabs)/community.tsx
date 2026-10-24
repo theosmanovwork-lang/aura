@@ -12,6 +12,7 @@ export default function CommunityTab() {
       refreshKey={refreshKey}
       onOpenLot={(id) => router.push({ pathname: '/lot/[id]', params: { id } })}
       onOpenUser={(handle) => router.push({ pathname: '/user/[handle]', params: { handle } })}
+      onOpenNotifications={() => router.push('/notifications')}
       onOpenClan={(id) => router.push({ pathname: '/clan/[id]', params: { id } })}
     />
   );

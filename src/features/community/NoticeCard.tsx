@@ -4,10 +4,10 @@ import { Glyph } from '../../components/Glyph';
 import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, spacing } from '../../theme';
 
-type NoticeCardProps = Readonly<{ on: boolean; onToggle: () => void }>;
+type NoticeCardProps = Readonly<{ onOpen?: () => void }>;
 
 /** «Не пропусти аукцион»: the card with the bell and the button that turns the reminder on. */
-export function NoticeCard({ on, onToggle }: NoticeCardProps) {
+export function NoticeCard({ onOpen }: NoticeCardProps) {
   const styles = useStyles();
   const t = ru.community.notice;
   return (
@@ -22,11 +22,10 @@ export function NoticeCard({ on, onToggle }: NoticeCardProps) {
       <Pressable
         testID="notice-button"
         accessibilityRole="button"
-        accessibilityState={{ selected: on }}
-        onPress={onToggle}
+        onPress={onOpen}
         style={styles.button}
       >
-        <Text style={styles.buttonText}>{on ? t.done : t.action}</Text>
+        <Text style={styles.buttonText}>{t.action}</Text>
       </Pressable>
     </View>
   );

@@ -9,6 +9,9 @@ import ChatRoute from '../app/chat/[id]';
 import ChestRoute from '../app/chest';
 import ClanRoute from '../app/clan/[id]';
 import LotRoute from '../app/lot/[id]';
+import StatesRoute from '../app/dev/states';
+import NotificationsRoute from '../app/notifications';
+import OnboardingRoute from '../app/onboarding';
 import SettingsRoute from '../app/settings';
 import TopUpRoute from '../app/topup';
 import UserRoute from '../app/user/[handle]';
@@ -25,6 +28,9 @@ export const routes = {
   '(tabs)/profile': ProfileTab,
   settings: SettingsRoute,
   topup: TopUpRoute,
+  notifications: NotificationsRoute,
+  onboarding: OnboardingRoute,
+  'dev/states': StatesRoute,
   chest: ChestRoute,
   'lot/[id]': LotRoute,
   'chat/[id]': ChatRoute,

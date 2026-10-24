@@ -12,19 +12,41 @@ import {
   useColors,
 } from '../../theme';
 
-type Item = Readonly<{ key: keyof typeof ru.settings.items; kind?: 'switch' | 'danger' }>;
+export type SettingsTarget = 'notifications' | 'onboarding' | 'states';
+
+type Item = Readonly<{
+  key: keyof typeof ru.settings.items;
+  kind?: 'switch' | 'danger';
+  /** Where the line leads; a line without a target is only drawn. */
+  target?: SettingsTarget;
+}>;
 
 const GROUPS: readonly Readonly<{
   key: keyof typeof ru.settings.groups;
   items: readonly Item[];
 }>[] = [
   { key: 'account', items: [{ key: 'predictions' }] },
-  { key: 'content', items: [{ key: 'notifications' }, { key: 'darkMode', kind: 'switch' }] },
+  {
+    key: 'content',
+    items: [
+      { key: 'notifications', target: 'notifications' },
+      { key: 'darkMode', kind: 'switch' },
+    ],
+  },
   { key: 'help', items: [{ key: 'support' }, { key: 'legal' }] },
   { key: 'login', items: [{ key: 'logout', kind: 'danger' }] },
+  {
+    key: 'mockups',
+    items: [
+      { key: 'onboarding', target: 'onboarding' },
+      { key: 'states', target: 'states' },
+    ],
+  },
 ];
 
-function Row({ item }: Readonly<{ item: Item }>) {
+type RowProps = Readonly<{ item: Item; onOpen?: (target: SettingsTarget) => void }>;
+
+function Row({ item, onOpen }: RowProps) {
   const styles = useStyles();
   const colors = useColors();
   const label = ru.settings.items[item.key];
@@ -47,8 +69,9 @@ function Row({ item }: Readonly<{ item: Item }>) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
-      accessibilityState={{ disabled: true }}
-      disabled
+      accessibilityState={{ disabled: !item.target }}
+      disabled={!item.target}
+      onPress={item.target ? () => onOpen?.(item.target as SettingsTarget) : undefined}
       style={styles.row}
     >
       <Text style={[styles.label, danger && styles.danger]}>{label}</Text>
@@ -60,7 +83,9 @@ function Row({ item }: Readonly<{ item: Item }>) {
 }
 
 /** The settings list of the reference; every line is drawn, none works yet. */
-export function SettingsScreen() {
+type SettingsScreenProps = Readonly<{ onOpen?: (target: SettingsTarget) => void }>;
+
+export function SettingsScreen({ onOpen }: SettingsScreenProps) {
   const styles = useStyles();
   const bottomInset = useTabBarInset();
   return (
@@ -75,7 +100,7 @@ export function SettingsScreen() {
             {ru.settings.groups[group.key]}
           </Text>
           {group.items.map((item) => (
-            <Row key={item.key} item={item} />
+            <Row key={item.key} item={item} onOpen={onOpen} />
           ))}
         </View>
       ))}

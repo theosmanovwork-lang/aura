@@ -26,6 +26,7 @@ type CommunityScreenProps = Readonly<{
   onOpenLot?: (lotId: string) => void;
   onOpenUser?: (name: string) => void;
   onOpenClan?: (clanId: string) => void;
+  onOpenNotifications?: () => void;
 }>;
 
 const matches = (text: string, query: string) =>
@@ -36,6 +37,7 @@ export function CommunityScreen({
   onOpenLot,
   onOpenUser,
   onOpenClan,
+  onOpenNotifications,
 }: CommunityScreenProps) {
   const styles = useStyles();
   const colors = useColors();
@@ -46,7 +48,6 @@ export function CommunityScreen({
   const { state, reload } = useLoad(load, refreshKey);
   const [query, setQuery] = useState('');
   const [mode, setMode] = useState<TradeMode>('auctions');
-  const [noticeOn, setNoticeOn] = useState(false);
   const referral = useCopyCode(demoReferralCode);
 
   const lots = useMemo(
@@ -85,7 +86,7 @@ export function CommunityScreen({
           />
         </View>
 
-        <NoticeCard on={noticeOn} onToggle={() => setNoticeOn((on) => !on)} />
+        <NoticeCard onOpen={onOpenNotifications} />
         <ReferralCard copied={referral.copied} onCopy={() => void referral.copy()} />
 
         <View style={styles.columns}>

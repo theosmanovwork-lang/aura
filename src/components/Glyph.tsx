@@ -123,6 +123,24 @@ const DRAWINGS = {
     </>
   ),
   stats: <Path d="M5 20V10M12 20V4M19 20v-7" />,
+  gavel: <Path d="M14 5l5 5M4 20l7-7M9 10l5 5M12 3l9 9-3 3-9-9z" />,
+  star: <Path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" />,
+  alert: <Path d="M12 3a9 9 0 1 1 0 18a9 9 0 1 1 0-18zM12 8v5M12 16.5h.01" />,
+  wifiOff: (
+    <Path d="M2 8.5a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16.5a5 5 0 0 1 6 0M12 20h.01M3 3l18 18" />
+  ),
+  searchOff: (
+    <>
+      <Circle cx="11" cy="11" r="6.5" />
+      <Path d="M20 20l-4.2-4.2M8.5 11h5" />
+    </>
+  ),
+  gift: (
+    <>
+      <Rect x="3" y="8" width="18" height="5" rx="1.5" />
+      <Path d="M5 13v7h14v-7M12 8v12M12 8C10.5 4.5 7 4.5 7 6.5S10 8 12 8zM12 8c1.5-3.5 5-3.5 5-1.5S14 8 12 8z" />
+    </>
+  ),
 } as const;
 
 export type GlyphName = keyof typeof DRAWINGS;

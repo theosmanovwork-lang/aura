@@ -13,10 +13,13 @@ import { ru } from '../../src/i18n/ru';
 
 jest.mock('expo-clipboard', () => ({ setStringAsync: jest.fn(async () => true) }));
 
-const renderCommunity = async (repos = createMemoryRepositories(seed)) => {
+const renderCommunity = async (
+  repos = createMemoryRepositories(seed),
+  onOpenNotifications?: () => void,
+) => {
   await render(
     <RepositoriesProvider repositories={repos}>
-      <CommunityScreen />
+      <CommunityScreen onOpenNotifications={onOpenNotifications} />
     </RepositoriesProvider>,
   );
   return repos;
@@ -93,14 +96,15 @@ describe('CommunityScreen', () => {
     expect(screen.queryAllByTestId(/^lot-/)).toHaveLength(0);
   });
 
-  test('the reminder button turns on and the referral code is copied', async () => {
-    await renderCommunity();
+  test('the reminder button opens the notifications and the referral code is copied', async () => {
+    const onOpenNotifications = jest.fn();
+    await renderCommunity(undefined, onOpenNotifications);
     await screen.findByTestId('players-card');
 
     await fireEvent.press(screen.getByTestId('notice-button'));
     await fireEvent.press(screen.getByTestId('referral-copy'));
 
-    expect(screen.getByText(ru.community.notice.done)).toBeTruthy();
+    expect(onOpenNotifications).toHaveBeenCalled();
     expect(await screen.findByText(ru.community.referral.copied)).toBeTruthy();
     expect(Clipboard.setStringAsync).toHaveBeenCalledWith('MIRA-77');
   });
