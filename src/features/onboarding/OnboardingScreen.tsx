@@ -18,6 +18,8 @@ import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles, useColors } from '../../theme';
 import { ageOn, checkNickname, daysInMonth } from './nickname';
 import { PressableScale } from '../../motion/PressableScale';
+import { Entrance } from '../../motion/Entrance';
+import { GrowBar } from '../../motion/GrowBar';
 
 type Step = 'welcome' | 'nick' | 'age' | 'interests';
 const ORDER: readonly Step[] = ['welcome', 'nick', 'age', 'interests'];
@@ -83,13 +85,15 @@ function Welcome({
           {t.title}
         </Text>
         {t.props.map(([title, text], i) => (
-          <View key={title} style={styles.prop}>
-            <Text style={styles.propNo}>{i + 1}</Text>
-            <View>
-              <Text style={styles.propTitle}>{title}</Text>
-              <Text style={styles.propText}>{text}</Text>
+          <Entrance key={title} index={i + 1} rise={18}>
+            <View style={styles.prop}>
+              <Text style={styles.propNo}>{i + 1}</Text>
+              <View>
+                <Text style={styles.propTitle}>{title}</Text>
+                <Text style={styles.propText}>{text}</Text>
+              </View>
             </View>
-          </View>
+          </Entrance>
         ))}
       </View>
       <View style={[styles.bottom, { paddingBottom: 24 + bottom }]}>
@@ -138,7 +142,7 @@ function Frame({ step, onBack, children }: FrameProps) {
           <Glyph name="chevronLeft" size={20} color={colors.text} strokeWidth={2.4} />
         </PressableScale>
         <View style={styles.track}>
-          <View style={[styles.fill, { width: `${(step / 3) * 100}%` }]} />
+          <GrowBar style={styles.fill} ratio={step / 3} />
         </View>
         <Text testID="onboarding-step" style={styles.stepText}>
           {ru.onboarding.step.replace('{n}', String(step))}

@@ -1,8 +1,11 @@
 import { useFonts } from 'expo-font';
-import { Stack, usePathname } from 'expo-router';
+import { Stack, router, usePathname, useRootNavigationState } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
 import { StatusBar } from 'react-native';
 
 import { RepositoriesProvider } from '../src/data/RepositoriesProvider';
+import { LaunchSplash } from '../src/features/launch/LaunchSplash';
+import { LAUNCH_ENABLED } from '../src/features/launch/launchConfig';
 import { ru } from '../src/i18n/ru';
 import { fontAssets, fontFamilies, ThemeProvider, useColors, useScheme } from '../src/theme';
 
@@ -13,7 +16,19 @@ const HEADER_TITLES = {
   settings: ru.settings.title,
 } as const;
 
-function Screens() {
+/** Once the launch splash is over the welcome flow opens on top of the tabs (every start of the app). */
+function useWelcomeAfterLaunch(launched: boolean) {
+  const navigationReady = useRootNavigationState()?.key !== undefined;
+  const opened = useRef(false);
+  useEffect(() => {
+    if (!LAUNCH_ENABLED || !launched || !navigationReady || opened.current) return;
+    opened.current = true;
+    router.push('/onboarding');
+  }, [launched, navigationReady]);
+}
+
+function Screens({ launched }: Readonly<{ launched: boolean }>) {
+  useWelcomeAfterLaunch(launched);
   const colors = useColors();
   const scheme = useScheme();
   // The feed (the first tab, at the root path) is video: its clock and battery icons are always light.
@@ -61,11 +76,18 @@ function Screens() {
 
 export default function RootLayout() {
   // The app opens at once in the phone's font and switches when the fonts are ready (or stays if they fail).
-  useFonts(fontAssets);
+  const [fontsLoaded, fontError] = useFonts(fontAssets);
+  const [launched, setLaunched] = useState(!LAUNCH_ENABLED);
   return (
     <ThemeProvider>
       <RepositoriesProvider>
-        <Screens />
+        <Screens launched={launched} />
+        {launched ? null : (
+          <LaunchSplash
+            ready={fontsLoaded || fontError !== null}
+            onDone={() => setLaunched(true)}
+          />
+        )}
       </RepositoriesProvider>
     </ThemeProvider>
   );
