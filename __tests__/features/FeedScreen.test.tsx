@@ -5,6 +5,7 @@ import { createMemoryRepositories } from '../../src/data/memory';
 import type { Repositories } from '../../src/data/repositories';
 import { seed } from '../../src/data/seed';
 import { FeedScreen } from '../../src/features/feed/FeedScreen';
+import { formatCount } from '../../src/i18n/plural';
 import { ru } from '../../src/i18n/ru';
 import { players, resetPlayers } from '../../test-utils/expoVideoMock';
 
@@ -86,52 +87,6 @@ describe('FeedScreen', () => {
     expect(screen.getByLabelText(ru.feed.pause)).toBeTruthy();
   });
 
-  test('a like is shown, counted and saved', async () => {
-    const repos = await renderFeed();
-    await screen.findByText(NEWEST.title);
-    expect(screen.getByText(String(NEWEST.likeCount))).toBeTruthy();
-
-    await fireEvent.press(screen.getByLabelText(ru.feed.like));
-
-    expect(await screen.findByLabelText(ru.feed.unlike)).toBeTruthy();
-    expect(screen.getByText(String(NEWEST.likeCount + 1))).toBeTruthy();
-    expect(await repos.likes.has('user-me', NEWEST.id)).toBe(true);
-  });
-
-  test('tells the user when a like could not be saved and keeps the old state', async () => {
-    const repos = createMemoryRepositories(seed);
-    jest.spyOn(repos.likes, 'add').mockRejectedValue(new Error('disk full'));
-    await renderFeed(repos);
-    await screen.findByText(NEWEST.title);
-
-    await fireEvent.press(screen.getByLabelText(ru.feed.like));
-
-    expect(await screen.findByText(ru.feed.actionError)).toBeTruthy();
-    expect(screen.getByLabelText(ru.feed.like)).toBeTruthy();
-    expect(screen.getByText(String(NEWEST.likeCount))).toBeTruthy();
-  });
-
-  test('pressing the like again removes it', async () => {
-    const repos = await renderFeed();
-    await screen.findByText(NEWEST.title);
-
-    await fireEvent.press(screen.getByLabelText(ru.feed.like));
-    await fireEvent.press(await screen.findByLabelText(ru.feed.unlike));
-
-    expect(await screen.findByLabelText(ru.feed.like)).toBeTruthy();
-    expect(screen.getByText(String(NEWEST.likeCount))).toBeTruthy();
-    expect(await repos.likes.has('user-me', NEWEST.id)).toBe(false);
-  });
-
-  test('a like from an earlier visit is still shown', async () => {
-    const repos = createMemoryRepositories(seed);
-    await repos.likes.add({ userId: 'user-me', videoId: NEWEST.id, createdAt: 1 });
-
-    await renderFeed(repos);
-
-    expect(await screen.findByLabelText(ru.feed.unlike)).toBeTruthy();
-  });
-
   test('swiping to the next video switches the player and counts its view', async () => {
     const repos = await renderFeed();
     await screen.findByText(NEWEST.title);
@@ -211,33 +166,12 @@ describe('FeedScreen', () => {
     expect(player.play).toHaveBeenCalled();
   });
 
-  test('the error message disappears by itself and is announced as an alert', async () => {
-    jest.useFakeTimers();
-    try {
-      const repos = createMemoryRepositories(seed);
-      jest.spyOn(repos.likes, 'add').mockRejectedValue(new Error('disk full'));
-      await renderFeed(repos);
-      await screen.findByText(NEWEST.title);
-
-      await fireEvent.press(screen.getByLabelText(ru.feed.like));
-      const toast = await screen.findByText(ru.feed.actionError);
-      expect(toast.props.accessibilityRole).toBe('alert');
-
-      await act(async () => {
-        jest.advanceTimersByTime(5000);
-      });
-      expect(screen.queryByText(ru.feed.actionError)).toBeNull();
-    } finally {
-      jest.useRealTimers();
-    }
-  });
-
-  test('the like button tells screen readers how many likes the video has', async () => {
+  test('the Aura button tells screen readers how many people hold shares of the video', async () => {
     await renderFeed();
     await screen.findByText(NEWEST.title);
 
-    expect(screen.getByLabelText(ru.feed.like).props.accessibilityValue).toEqual({
-      text: String(NEWEST.likeCount),
+    expect(screen.getByLabelText(ru.feed.aura).props.accessibilityValue).toEqual({
+      text: formatCount(NEWEST.likeCount),
     });
   });
 });

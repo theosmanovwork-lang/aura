@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, Text, View, type LayoutChangeEvent } from 'react-native';
+import { FlatList, View, type LayoutChangeEvent } from 'react-native';
 
 import { Message } from '../../components/Message';
 import { useTopInset } from '../../components/useTopInset';
 import { CURRENT_USER_ID } from '../../data/seed'; // temporary: a real profile arrives with onboarding
 import { ru } from '../../i18n/ru';
-import { makeStyles, spacing, ThemeProvider, typography } from '../../theme';
+import { makeStyles, spacing, ThemeProvider } from '../../theme';
 import { CommentsSheet } from '../comments/CommentsSheet';
 import { FeedTopTabs } from './FeedTopTabs';
 import { TopButton } from './TopButton';
@@ -33,8 +33,7 @@ export function FeedScreen(props: FeedScreenProps) {
 
 function FeedContent({ focused = true, onOpenVideo }: FeedScreenProps) {
   const styles = useStyles();
-  const { state, actionFailed, like, markViewed, setCommentCount, reload } =
-    useFeed(CURRENT_USER_ID);
+  const { state, markViewed, setCommentCount, reload } = useFeed(CURRENT_USER_ID);
   const topInset = useTopInset();
   const [commentsFor, setCommentsFor] = useState<string | null>(null);
   const [height, setHeight] = useState(0);
@@ -84,7 +83,6 @@ function FeedContent({ focused = true, onOpenVideo }: FeedScreenProps) {
               height={height}
               isActive={index === activeIndex}
               focused={focused}
-              onToggleLike={like}
               onOpenMarket={onOpenVideo}
               onOpenComments={setCommentsFor}
             />
@@ -117,15 +115,6 @@ function FeedContent({ focused = true, onOpenVideo }: FeedScreenProps) {
           onCountChange={setCommentCount}
         />
       </ThemeProvider>
-      {actionFailed ? (
-        <Text
-          style={[styles.toast, { top: topInset }]}
-          accessibilityRole="alert"
-          accessibilityLiveRegion="polite"
-        >
-          {ru.feed.actionError}
-        </Text>
-      ) : null}
     </View>
   );
 }
@@ -139,16 +128,5 @@ const useStyles = makeStyles((colors) => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  toast: {
-    ...typography.caption,
-    position: 'absolute',
-    alignSelf: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: spacing.sm,
-    color: colors.text,
-    backgroundColor: colors.surface,
-    overflow: 'hidden',
   },
 }));

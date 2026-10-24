@@ -9,32 +9,27 @@ import { ru } from '../../i18n/ru';
 import { fontFamilies, makeStyles } from '../../theme';
 
 type ActionRailProps = Readonly<{
-  liked: boolean;
-  likeCount: number;
+  /** How many people hold shares of the video. */
+  holders: number;
   commentCount: number;
-  onToggleLike: () => void;
+  repostCount: number;
+  shareCount: number;
+  onOpenMarket?: () => void;
   onOpenComments: () => void;
 }>;
 
-type RoundProps = Readonly<{
+type IconProps = Readonly<{
   testID: string;
   label: string;
   glyph: GlyphName;
-  count?: number;
+  count: number;
   value?: string;
   disabled?: boolean;
   onPress?: () => void;
 }>;
 
-function RoundAction({
-  testID,
-  label,
-  glyph,
-  count,
-  value,
-  disabled = false,
-  onPress,
-}: RoundProps) {
+/** An icon straight on the video, no plate behind it, with its count under it. */
+function RailIcon({ testID, label, glyph, count, value, disabled = false, onPress }: IconProps) {
   const styles = useStyles();
   return (
     <View style={styles.item}>
@@ -46,21 +41,22 @@ function RoundAction({
         accessibilityState={{ disabled }}
         disabled={disabled}
         onPress={onPress}
-        style={[styles.round, styles.plate, disabled && styles.quiet]}
+        style={styles.icon}
       >
-        <Glyph name={glyph} size={26} color="#FFFFFF" />
+        <Glyph name={glyph} size={32} color="#FFFFFF" strokeWidth={1.9} />
       </Pressable>
-      {count === undefined ? null : <Text style={styles.count}>{formatCount(count)}</Text>}
+      <Text style={styles.count}>{formatCount(count)}</Text>
     </View>
   );
 }
 
-/** The column of actions on the right edge of a video: Aura (the like), comments, repost, share. */
+/** The column of actions on the right edge of a video: shares (the Aura coin), comments, repost, share. */
 export function ActionRail({
-  liked,
-  likeCount,
+  holders,
   commentCount,
-  onToggleLike,
+  repostCount,
+  shareCount,
+  onOpenMarket,
   onOpenComments,
 }: ActionRailProps): ReactNode {
   const styles = useStyles();
@@ -68,26 +64,22 @@ export function ActionRail({
     <View testID="action-rail" style={styles.rail}>
       <View style={styles.item}>
         <Pressable
-          testID="like-button"
+          testID="aura-button"
           accessibilityRole="button"
-          accessibilityLabel={liked ? ru.feed.unlike : ru.feed.like}
-          accessibilityState={{ selected: liked }}
-          accessibilityValue={{ text: formatCount(likeCount) }}
-          onPress={onToggleLike}
+          accessibilityLabel={ru.feed.aura}
+          accessibilityValue={{ text: formatCount(holders) }}
+          accessibilityState={{ disabled: onOpenMarket === undefined }}
+          disabled={onOpenMarket === undefined}
+          onPress={onOpenMarket}
+          style={styles.icon}
         >
-          {liked ? (
-            <View testID="like-icon-on" style={[styles.round, styles.likeOn]}>
-              <AuraGlyph size={28} color="#C7CBD1" />
-            </View>
-          ) : (
-            <SilverView testID="like-icon" style={styles.round}>
-              <AuraGlyph size={28} color="#1A1A1A" />
-            </SilverView>
-          )}
+          <SilverView style={styles.coin}>
+            <AuraGlyph size={24} color="#1A1A1A" />
+          </SilverView>
         </Pressable>
-        <Text style={styles.count}>{formatCount(likeCount)}</Text>
+        <Text style={styles.count}>{formatCount(holders)}</Text>
       </View>
-      <RoundAction
+      <RailIcon
         testID="comments-button"
         label={ru.comments.open}
         glyph="chat"
@@ -95,31 +87,35 @@ export function ActionRail({
         value={formatCount(commentCount)}
         onPress={onOpenComments}
       />
-      <RoundAction testID="soon-repost" label={ru.feed.soon.repost} glyph="repost" disabled />
-      <RoundAction testID="soon-share" label={ru.feed.soon.share} glyph="share" disabled />
+      <RailIcon
+        testID="soon-repost"
+        label={ru.feed.soon.repost}
+        glyph="repost"
+        count={repostCount}
+        disabled
+      />
+      <RailIcon
+        testID="soon-share"
+        label={ru.feed.soon.share}
+        glyph="share"
+        count={shareCount}
+        disabled
+      />
     </View>
   );
 }
 
 const useStyles = makeStyles((colors) => ({
-  rail: { alignItems: 'center', gap: 16 },
-  item: { alignItems: 'center', gap: 4 },
-  round: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  plate: { backgroundColor: colors.onVideoPlate },
-  likeOn: { backgroundColor: '#1A1A1A', borderWidth: 2, borderColor: '#C7CBD1' },
-  quiet: { opacity: 0.85 },
+  rail: { alignItems: 'center', gap: 12 },
+  item: { alignItems: 'center', gap: 2 },
+  icon: { width: 48, height: 44, alignItems: 'center', justifyContent: 'center' },
+  coin: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
   count: {
     fontFamily: fontFamilies.bold,
-    fontSize: 13,
+    fontSize: 12,
     color: colors.onVideo,
     textShadowColor: colors.textShadow,
     textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    textShadowRadius: 2,
   },
 }));

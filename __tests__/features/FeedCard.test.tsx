@@ -26,7 +26,7 @@ async function renderFeed(onOpenVideo = jest.fn()) {
   await fireEvent(await screen.findByTestId('feed-container'), 'layout', {
     nativeEvent: { layout: { x: 0, y: 0, width: 390, height: 700 } },
   });
-  await screen.findByTestId('like-button');
+  await screen.findByTestId('aura-button');
   return { repos, onOpenVideo };
 }
 
@@ -51,12 +51,10 @@ describe('feed card of the design', () => {
   test('bottom left: the pool chip, @author and the description', async () => {
     await renderFeed();
 
-    expect(screen.getByText(`@${AUTHOR.nickname}`)).toBeTruthy();
+    expect(screen.getByText(AUTHOR.nickname)).toBeTruthy();
     expect(screen.getByText(NEWEST.title)).toBeTruthy();
     // Showing the video counts one view, which moves the price by one.
-    expect(
-      await screen.findByText(ru.feed.pool.replace('{n}', formatPoints(videoPrice(NEWEST) + 1))),
-    ).toBeTruthy();
+    expect(await screen.findByText(formatPoints(videoPrice(NEWEST) + 1))).toBeTruthy();
   });
 
   test('the pool chip opens the page of the video', async () => {
@@ -81,14 +79,13 @@ describe('feed card of the design', () => {
     expect(screen.getByRole('button', { name: follow })).toBeTruthy();
   });
 
-  test('the Aura button likes the video: the counter goes up and the button is dark', async () => {
-    await renderFeed();
-    const before = screen.getByTestId('like-button').props.accessibilityValue.text;
+  test('the Aura coin opens the page of the video and shows how many hold shares', async () => {
+    const { onOpenVideo } = await renderFeed();
+    expect(screen.getByTestId('aura-button').props.accessibilityValue.text).toMatch(/\d/);
 
-    await fireEvent.press(screen.getByTestId('like-button'));
+    await fireEvent.press(screen.getByTestId('aura-button'));
 
-    expect(screen.getByTestId('like-button').props.accessibilityValue.text).not.toBe(before);
-    expect(await screen.findByTestId('like-icon-on', { hidden: true })).toBeTruthy();
+    expect(onOpenVideo).toHaveBeenCalledWith(NEWEST.id);
   });
 
   test('the comments button shows the real count and opens the sheet', async () => {

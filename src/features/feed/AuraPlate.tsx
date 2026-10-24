@@ -23,8 +23,8 @@ export function AuraPlate({ amount, onPress }: AuraPlateProps) {
       onPress={onPress}
       style={styles.plate}
     >
-      <AuraCoin size={14} tone="light" />
-      <Text style={styles.text}>{text}</Text>
+      <AuraCoin size={20} tone="light" />
+      <Text style={styles.text}>{formatPoints(amount)}</Text>
       <Glyph name="chevronRight" size={12} color="#FFFFFF" strokeWidth={3} />
     </Pressable>
   );
@@ -33,13 +33,14 @@ export function AuraPlate({ amount, onPress }: AuraPlateProps) {
 const useStyles = makeStyles((colors) => ({
   plate: {
     alignSelf: 'flex-start',
-    height: 28,
+    height: 30,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: 10,
-    borderRadius: 14,
-    backgroundColor: 'rgba(26,26,26,0.6)',
+    paddingLeft: 5,
+    paddingRight: 10,
+    borderRadius: 15,
+    backgroundColor: 'rgba(26,26,26,0.55)',
   },
-  text: { fontFamily: fontFamilies.bold, fontSize: 12, color: colors.onVideo },
+  text: { fontFamily: fontFamilies.bold, fontSize: 13, color: colors.onVideo },
 }));

@@ -5,53 +5,50 @@ import { formatCount } from '../../src/i18n/plural';
 import { ru } from '../../src/i18n/ru';
 
 const renderRail = async (props: Partial<Parameters<typeof ActionRail>[0]> = {}) => {
-  const onToggleLike = jest.fn();
+  const onOpenMarket = jest.fn();
   const onOpenComments = jest.fn();
   await render(
     <ActionRail
-      liked={false}
-      likeCount={260}
-      commentCount={3}
-      onToggleLike={onToggleLike}
+      holders={2400}
+      commentCount={318}
+      repostCount={96}
+      shareCount={41}
+      onOpenMarket={onOpenMarket}
       onOpenComments={onOpenComments}
       {...props}
     />,
   );
-  return { onToggleLike, onOpenComments };
+  return { onOpenMarket, onOpenComments };
 };
 
 describe('ActionRail', () => {
-  test('shows the like count and calls the handler when the Aura button is pressed', async () => {
-    const { onToggleLike } = await renderRail();
-    await screen.findByText('260');
-
-    await fireEvent.press(screen.getByLabelText(ru.feed.like));
-
-    expect(onToggleLike).toHaveBeenCalledTimes(1);
-  });
-
-  test('the like is drawn on silver before liking and dark after', async () => {
+  test('shows the counts of the four buttons straight on the video', async () => {
     await renderRail();
-    expect(await screen.findByTestId('like-icon', { hidden: true })).toBeTruthy();
-    expect(screen.queryByTestId('like-icon-on', { hidden: true })).toBeNull();
 
-    await renderRail({ liked: true });
-
-    expect(await screen.findByTestId('like-icon-on', { hidden: true })).toBeTruthy();
+    for (const text of [formatCount(2400), '318', '96', '41']) {
+      expect(await screen.findByText(text)).toBeTruthy();
+    }
   });
 
-  test('tells screen readers the like count and whether it is selected', async () => {
-    await renderRail({ liked: true, likeCount: 1500 });
+  test('the Aura coin opens the shares of the video and tells the holders to screen readers', async () => {
+    const { onOpenMarket } = await renderRail();
+    const button = await screen.findByTestId('aura-button');
 
-    const button = await screen.findByTestId('like-button');
+    await fireEvent.press(button);
 
-    expect(button.props.accessibilityValue.text).toBe(formatCount(1500));
-    expect(button.props.accessibilityLabel).toBe(ru.feed.unlike);
-    expect(button.props.accessibilityState.selected).toBe(true);
+    expect(onOpenMarket).toHaveBeenCalledTimes(1);
+    expect(button.props.accessibilityLabel).toBe(ru.feed.aura);
+    expect(button.props.accessibilityValue.text).toBe(formatCount(2400));
+  });
+
+  test('without a handler the Aura coin is switched off', async () => {
+    await renderRail({ onOpenMarket: undefined });
+
+    expect((await screen.findByTestId('aura-button')).props.accessibilityState.disabled).toBe(true);
   });
 
   test('the comments button shows the count and opens the comments', async () => {
-    const { onOpenComments } = await renderRail({ commentCount: 318 });
+    const { onOpenComments } = await renderRail();
 
     const button = await screen.findByTestId('comments-button');
     await fireEvent.press(button);

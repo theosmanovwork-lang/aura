@@ -48,7 +48,6 @@ type VideoCardProps = Readonly<{
   isActive: boolean;
   /** False while another tab is open: the video must not keep playing behind it. */
   focused: boolean;
-  onToggleLike: (videoId: string) => void;
   /** Opens the page of the video (its price and the user's position). */
   onOpenMarket?: (videoId: string) => void;
   /** Opens the comments sheet of the video. */
@@ -65,17 +64,10 @@ export function VideoCard({ isActive, ...rest }: VideoCardProps) {
 type ActiveCardProps = Omit<VideoCardProps, 'isActive'>;
 
 /** Leaving the screen unmounts this, so a paused video always starts playing when it returns. */
-function ActiveCard({
-  item,
-  height,
-  focused,
-  onToggleLike,
-  onOpenMarket,
-  onOpenComments,
-}: ActiveCardProps) {
+function ActiveCard({ item, height, focused, onOpenMarket, onOpenComments }: ActiveCardProps) {
   const styles = useStyles();
   const colors = useColors();
-  const { video, liked, authorName, commentCount } = item;
+  const { video, authorName, commentCount } = item;
   const [paused, setPaused] = useState(false);
   const [following, setFollowing] = useState(false);
   const bottomInset = useTabBarInset();
@@ -127,7 +119,7 @@ function ActiveCard({
           onPress={onOpenMarket ? () => onOpenMarket(video.id) : undefined}
         />
         <View pointerEvents="none" style={styles.caption}>
-          {authorName ? <Text style={styles.author}>{`@${authorName}`}</Text> : null}
+          {authorName ? <Text style={styles.author}>{authorName}</Text> : null}
           <Text style={styles.title} numberOfLines={3}>
             {video.title}
           </Text>
@@ -141,10 +133,11 @@ function ActiveCard({
           onToggleFollow={() => setFollowing((on) => !on)}
         />
         <ActionRail
-          liked={liked}
-          likeCount={video.likeCount}
+          holders={video.likeCount}
           commentCount={commentCount}
-          onToggleLike={() => onToggleLike(video.id)}
+          repostCount={Math.round(video.likeCount / 25)}
+          shareCount={Math.round(video.likeCount / 60)}
+          onOpenMarket={onOpenMarket ? () => onOpenMarket(video.id) : undefined}
           onOpenComments={() => onOpenComments?.(video.id)}
         />
       </View>
