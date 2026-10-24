@@ -108,6 +108,7 @@ const useStyles = makeStyles((colors) => ({
   iconCard: {
     flex: 1,
     padding: 12,
+    paddingTop: 32,
     borderRadius: 20,
     alignItems: 'center',
     gap: 10,
