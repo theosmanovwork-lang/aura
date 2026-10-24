@@ -148,6 +148,9 @@ const DRAWINGS = {
 
 export type GlyphName = keyof typeof DRAWINGS;
 
+/** Every icon name, for the component showcase. */
+export const GLYPH_NAMES = Object.keys(DRAWINGS) as readonly GlyphName[];
+
 type GlyphProps = Readonly<{
   name: GlyphName;
   size?: number;

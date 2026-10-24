@@ -12,7 +12,7 @@ import {
   useColors,
 } from '../../theme';
 
-export type SettingsTarget = 'notifications' | 'onboarding' | 'states';
+export type SettingsTarget = 'notifications' | 'onboarding' | 'states' | 'brand' | 'showcase';
 
 type Item = Readonly<{
   key: keyof typeof ru.settings.items;
@@ -40,6 +40,8 @@ const GROUPS: readonly Readonly<{
     items: [
       { key: 'onboarding', target: 'onboarding' },
       { key: 'states', target: 'states' },
+      { key: 'brand', target: 'brand' },
+      { key: 'showcase', target: 'showcase' },
     ],
   },
 ];

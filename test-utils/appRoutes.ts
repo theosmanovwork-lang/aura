@@ -9,6 +9,8 @@ import ChatRoute from '../app/chat/[id]';
 import ChestRoute from '../app/chest';
 import ClanRoute from '../app/clan/[id]';
 import LotRoute from '../app/lot/[id]';
+import BrandRoute from '../app/dev/brand';
+import ComponentsRoute from '../app/dev/components';
 import StatesRoute from '../app/dev/states';
 import NotificationsRoute from '../app/notifications';
 import OnboardingRoute from '../app/onboarding';
@@ -32,6 +34,8 @@ export const routes = {
   notifications: NotificationsRoute,
   onboarding: OnboardingRoute,
   'dev/states': StatesRoute,
+  'dev/brand': BrandRoute,
+  'dev/components': ComponentsRoute,
   chest: ChestRoute,
   'lot/[id]': LotRoute,
   'chat/[id]': ChatRoute,

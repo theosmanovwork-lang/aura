@@ -15,9 +15,10 @@ describe('SettingsScreen', () => {
   test('has an item for every line of the reference, all switched off for now', async () => {
     await render(<SettingsScreen />);
 
-    const { darkMode, notifications, onboarding, states, ...buttons } = ru.settings.items;
+    const { darkMode, notifications, onboarding, states, brand, showcase, ...buttons } =
+      ru.settings.items;
     expect(darkMode).toBeTruthy();
-    expect([notifications, onboarding, states]).toHaveLength(3);
+    expect([notifications, onboarding, states, brand, showcase]).toHaveLength(5);
     for (const label of Object.values(buttons)) {
       const item = screen.getByRole('button', { name: label });
       expect(item.props.accessibilityState.disabled).toBe(true);

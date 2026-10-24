@@ -6,6 +6,8 @@ const ROUTES = {
   notifications: '/notifications',
   onboarding: '/onboarding',
   states: '/dev/states',
+  brand: '/dev/brand',
+  showcase: '/dev/components',
 } as const;
 
 export default function SettingsRoute() {
